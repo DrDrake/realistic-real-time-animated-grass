@@ -1,0 +1,3 @@
+syntax: glob
+Uncut/bin/
+Uncut/obj/

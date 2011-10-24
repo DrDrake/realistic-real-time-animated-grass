@@ -1,0 +1,178 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{FB7BCD14-94B3-40B4-A159-EB22CBB4F5F1}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Uncut</RootNamespace>
+    <AssemblyName>Uncut</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Uncut.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\sdx_icon_black.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="SlimDX, Version=4.0.12.43, Culture=neutral, PublicKeyToken=b1b0c32fd1ffe4f9, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\SlimDX SDK (September 2011)\Bin\net20\x64\SlimDX.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Foundation\Asset.cs" />
+    <Compile Include="Foundation\Components\IResource.cs" />
+    <Compile Include="Foundation\Configuration.cs" />
+    <Compile Include="Foundation\Foundation.cs" />
+    <Compile Include="Foundation\Utility\Camera.cs" />
+    <Compile Include="Foundation\Utility\TextConsole.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Foundation\Rendering\DeviceContext10.cs" />
+    <Compile Include="Foundation\Rendering\DeviceContext2D.cs" />
+    <Compile Include="Foundation\Rendering\DeviceContext9.cs" />
+    <Compile Include="Foundation\Rendering\DeviceSettings10.cs" />
+    <Compile Include="Foundation\Rendering\DeviceSettings2D.cs" />
+    <Compile Include="Foundation\Rendering\DeviceSettings9.cs" />
+    <Compile Include="Foundation\Rendering\DynamicPrimitiveBuffer.cs" />
+    <Compile Include="Foundation\Rendering\DynamicPrimitiveBuffer10.cs" />
+    <Compile Include="Foundation\Rendering\DynamicPrimitiveBuffer9.cs" />
+    <Compile Include="Foundation\Rendering\Mesh\MeshData.cs" />
+    <Compile Include="Foundation\Rendering\Mesh\SmdLoader.cs" />
+    <Compile Include="Foundation\Rendering\PrimitiveTopology.cs" />
+    <Compile Include="Foundation\Rendering\Primitive\ColoredVertex.cs" />
+    <Compile Include="Foundation\Rendering\Primitive\TexturedVertex.cs" />
+    <Compile Include="Foundation\Rendering\Primitive\TransformedColorVertex.cs" />
+    <Compile Include="Foundation\Rendering\UI\DefaultVisual.cs" />
+    <Compile Include="Foundation\Rendering\UI\IElementVisual.cs" />
+    <Compile Include="Foundation\Rendering\UI\Text.cs" />
+    <Compile Include="Foundation\Rendering\UI\UserInterfaceRenderer.cs" />
+    <Compile Include="Foundation\Rendering\UI\UserInterfaceRenderer10.cs" />
+    <Compile Include="Foundation\Rendering\UI\UserInterfaceRenderer9.cs" />
+    <Compile Include="SimpleCube.cs" />
+    <Compile Include="SimpleGrass.cs" />
+    <Compile Include="SimpleModel.cs" />
+    <Compile Include="Foundation\SlimSceneController.cs" />
+    <Compile Include="Foundation\Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SampleJupiterController.cs" />
+    <Compile Include="SampleTriangleController.cs" />
+    <Compile Include="Foundation\UI\Binding\Bindable.cs" />
+    <Compile Include="Foundation\UI\Binding\Binding.cs" />
+    <Compile Include="Foundation\UI\Binding\IBindable.cs" />
+    <Compile Include="Foundation\UI\Element.cs" />
+    <Compile Include="Foundation\UI\ElementContainer.cs" />
+    <Compile Include="Foundation\UI\UserInterface.cs" />
+    <Compile Include="Foundation\Utility\Clock.cs" />
+    <Compile Include="SimplePlane.cs" />
+    <Compile Include="TestViewController.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\jupiter.SMD">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\SimpleTriangle10.fx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <EmbeddedResource Include="Resources\UserInterface10.fx" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SimpleModel10.fx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sdx_icon_black.ico" />
+    <None Include="Resources\jupiter.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Readme Ressources.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DefaultCamera.fx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
