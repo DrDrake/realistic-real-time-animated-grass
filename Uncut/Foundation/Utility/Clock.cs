@@ -36,6 +36,17 @@ namespace Uncut.Utility {
 			return result;
 		}
 
+        //Methode Hinzugefügt: Gibt Zeit in Sekunden seit start/update an.
+        public float Check() {
+            float result = 0.0f;
+            if( isRunning ) {
+                long last = count;
+                result = (float)( Stopwatch.GetTimestamp() - last ) / frequency;
+            }
+
+            return result;
+        }
+
 		#endregion
 		#region Implementation Detail
 
