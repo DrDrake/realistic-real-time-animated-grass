@@ -1,9 +1,7 @@
 ﻿/*
- * System.String test = Asset.Dir("Textures").Dir2("Gras").File2("Leaf.png");
- * test = Asset.File("a.fx");
- * System.String test = Asset.Dir("one").file("two.f");
- * test = Asset.File("one.f");
- * test = Asset.Dir("one").dir("two").file("three.f");
+ * Asset.File("Icon.ico") = Resources\\Icon.ico
+ * Asset.Dir("Textures").file("Grass.png") = Resources\\Textures\\Grass.png
+ * Asset.Dir("Models").dir("Sampels").file("jupiter.smd") = Resources\\Models\\Samples\\jupiter.smd
  */
 
 

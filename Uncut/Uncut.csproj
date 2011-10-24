@@ -66,8 +66,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Foundation\Asset.cs" />
+    <Compile Include="Foundation\Components\IResource.cs" />
     <Compile Include="Foundation\Configuration.cs" />
     <Compile Include="Foundation\Foundation.cs" />
+    <Compile Include="Foundation\Utility\Camera.cs" />
+    <Compile Include="Foundation\Utility\TextConsole.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -94,6 +97,8 @@
     <Compile Include="Foundation\Rendering\UI\UserInterfaceRenderer.cs" />
     <Compile Include="Foundation\Rendering\UI\UserInterfaceRenderer10.cs" />
     <Compile Include="Foundation\Rendering\UI\UserInterfaceRenderer9.cs" />
+    <Compile Include="SimpleCube.cs" />
+    <Compile Include="SimpleGrass.cs" />
     <Compile Include="SimpleModel.cs" />
     <Compile Include="Foundation\SlimSceneController.cs" />
     <Compile Include="Foundation\Program.cs" />
@@ -107,6 +112,8 @@
     <Compile Include="Foundation\UI\ElementContainer.cs" />
     <Compile Include="Foundation\UI\UserInterface.cs" />
     <Compile Include="Foundation\Utility\Clock.cs" />
+    <Compile Include="SimplePlane.cs" />
+    <Compile Include="TestViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -154,6 +161,11 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DefaultCamera.fx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

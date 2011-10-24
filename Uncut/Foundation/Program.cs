@@ -7,7 +7,7 @@ namespace Uncut
         [STAThread]
         static void Main(string[] args)
         {
-            using (SlimSceneController sceneController = new SampleJupiterController()) //SampleTriangleController
+            using (SlimSceneController sceneController = new TestViewController()) //SampleTriangleController, SampleJupiterController
             {
                 sceneController.Run();
             }
