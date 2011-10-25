@@ -51,7 +51,7 @@
     <StartupObject>Uncut.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\sdx_icon_black.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\icons\sdx_icon_black.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SlimDX, Version=4.0.12.43, Culture=neutral, PublicKeyToken=b1b0c32fd1ffe4f9, processorArchitecture=AMD64">
@@ -65,85 +65,74 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Foundation\Asset.cs" />
-    <Compile Include="Foundation\Components\IResource.cs" />
-    <Compile Include="Foundation\Configuration.cs" />
-    <Compile Include="Foundation\Foundation.cs" />
-    <Compile Include="Foundation\Utility\Camera.cs" />
-    <Compile Include="Foundation\Utility\TextConsole.cs" />
+    <Compile Include="src\Foundation\Asset.cs" />
+    <Compile Include="src\Foundation\Components\IResource.cs" />
+    <Compile Include="src\Foundation\Configuration.cs" />
+    <Compile Include="src\Foundation\Utility\TextConsole.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Foundation\Rendering\DeviceContext10.cs" />
-    <Compile Include="Foundation\Rendering\DeviceContext2D.cs" />
-    <Compile Include="Foundation\Rendering\DeviceContext9.cs" />
-    <Compile Include="Foundation\Rendering\DeviceSettings10.cs" />
-    <Compile Include="Foundation\Rendering\DeviceSettings2D.cs" />
-    <Compile Include="Foundation\Rendering\DeviceSettings9.cs" />
-    <Compile Include="Foundation\Rendering\DynamicPrimitiveBuffer.cs" />
-    <Compile Include="Foundation\Rendering\DynamicPrimitiveBuffer10.cs" />
-    <Compile Include="Foundation\Rendering\DynamicPrimitiveBuffer9.cs" />
-    <Compile Include="Foundation\Rendering\Mesh\MeshData.cs" />
-    <Compile Include="Foundation\Rendering\Mesh\SmdLoader.cs" />
-    <Compile Include="Foundation\Rendering\PrimitiveTopology.cs" />
-    <Compile Include="Foundation\Rendering\Primitive\ColoredVertex.cs" />
-    <Compile Include="Foundation\Rendering\Primitive\TexturedVertex.cs" />
-    <Compile Include="Foundation\Rendering\Primitive\TransformedColorVertex.cs" />
-    <Compile Include="Foundation\Rendering\UI\DefaultVisual.cs" />
-    <Compile Include="Foundation\Rendering\UI\IElementVisual.cs" />
-    <Compile Include="Foundation\Rendering\UI\Text.cs" />
-    <Compile Include="Foundation\Rendering\UI\UserInterfaceRenderer.cs" />
-    <Compile Include="Foundation\Rendering\UI\UserInterfaceRenderer10.cs" />
-    <Compile Include="Foundation\Rendering\UI\UserInterfaceRenderer9.cs" />
-    <Compile Include="SimpleCube.cs" />
-    <Compile Include="SimpleGrass.cs" />
-    <Compile Include="SimpleModel.cs" />
-    <Compile Include="Foundation\SlimSceneController.cs" />
-    <Compile Include="Foundation\Program.cs" />
+    <Compile Include="src\Foundation\Rendering\DeviceContext10.cs" />
+    <Compile Include="src\Foundation\Rendering\DeviceContext2D.cs" />
+    <Compile Include="src\Foundation\Rendering\DeviceContext9.cs" />
+    <Compile Include="src\Foundation\Rendering\DeviceSettings10.cs" />
+    <Compile Include="src\Foundation\Rendering\DeviceSettings2D.cs" />
+    <Compile Include="src\Foundation\Rendering\DeviceSettings9.cs" />
+    <Compile Include="src\Foundation\Rendering\DynamicPrimitiveBuffer.cs" />
+    <Compile Include="src\Foundation\Rendering\DynamicPrimitiveBuffer10.cs" />
+    <Compile Include="src\Foundation\Rendering\DynamicPrimitiveBuffer9.cs" />
+    <Compile Include="src\Foundation\Rendering\Mesh\MeshData.cs" />
+    <Compile Include="src\Foundation\Rendering\Mesh\SmdLoader.cs" />
+    <Compile Include="src\Foundation\Rendering\PrimitiveTopology.cs" />
+    <Compile Include="src\Foundation\Rendering\Primitive\ColoredVertex.cs" />
+    <Compile Include="src\Foundation\Rendering\Primitive\TexturedVertex.cs" />
+    <Compile Include="src\Foundation\Rendering\Primitive\TransformedColorVertex.cs" />
+    <Compile Include="src\Foundation\Rendering\UI\DefaultVisual.cs" />
+    <Compile Include="src\Foundation\Rendering\UI\IElementVisual.cs" />
+    <Compile Include="src\Foundation\Rendering\UI\Text.cs" />
+    <Compile Include="src\Foundation\Rendering\UI\UserInterfaceRenderer.cs" />
+    <Compile Include="src\Foundation\Rendering\UI\UserInterfaceRenderer10.cs" />
+    <Compile Include="src\Foundation\Rendering\UI\UserInterfaceRenderer9.cs" />
+    <Compile Include="src\Entities\SimpleCube.cs" />
+    <Compile Include="src\Entities\SimpleGrass.cs" />
+    <Compile Include="src\Entities\SimpleModel.cs" />
+    <Compile Include="src\Foundation\SlimSceneController.cs" />
+    <Compile Include="src\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SampleJupiterController.cs" />
-    <Compile Include="SampleTriangleController.cs" />
-    <Compile Include="Foundation\UI\Binding\Bindable.cs" />
-    <Compile Include="Foundation\UI\Binding\Binding.cs" />
-    <Compile Include="Foundation\UI\Binding\IBindable.cs" />
-    <Compile Include="Foundation\UI\Element.cs" />
-    <Compile Include="Foundation\UI\ElementContainer.cs" />
-    <Compile Include="Foundation\UI\UserInterface.cs" />
-    <Compile Include="Foundation\Utility\Clock.cs" />
-    <Compile Include="SimplePlane.cs" />
-    <Compile Include="TestViewController.cs" />
+    <Compile Include="src\Foundation\UI\Binding\Bindable.cs" />
+    <Compile Include="src\Foundation\UI\Binding\Binding.cs" />
+    <Compile Include="src\Foundation\UI\Binding\IBindable.cs" />
+    <Compile Include="src\Foundation\UI\Element.cs" />
+    <Compile Include="src\Foundation\UI\ElementContainer.cs" />
+    <Compile Include="src\Foundation\UI\UserInterface.cs" />
+    <Compile Include="src\Foundation\Utility\Clock.cs" />
+    <Compile Include="src\Entities\SimplePlane.cs" />
+    <Compile Include="src\Foundation\Utility\Camera.cs" />
+    <Compile Include="src\Foundation\Utility\InputController.cs" />
+    <Compile Include="src\Foundation\Utility\Soundmanager.cs" />
+    <Compile Include="src\Foundation\Utility\SimpleModel.cs" />
+    <Compile Include="src\TestViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\jupiter.SMD">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\SimpleTriangle10.fx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <None Include="Resources\mesh\Cylinder.smd" />
+    <None Include="Resources\mesh\jupiter.SMD" />
+    <None Include="Resources\shader\ModelTextured.fx" />
     <EmbeddedResource Include="Resources\UserInterface10.fx" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\SimpleModel10.fx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\sdx_icon_black.ico" />
-    <None Include="Resources\jupiter.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Readme Ressources.txt" />
+    <None Include="Resources\icons\sdx_icon_black.ico" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -166,6 +155,15 @@
     <None Include="Resources\DefaultCamera.fx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\skycube\hinten.jpg" />
+    <Content Include="Resources\skycube\links.jpg" />
+    <Content Include="Resources\skycube\oben.jpg" />
+    <Content Include="Resources\skycube\rechts.jpg" />
+    <Content Include="Resources\skycube\unten.jpg" />
+    <Content Include="Resources\skycube\vorne.jpg" />
+    <Content Include="Resources\texture\jupiter.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
