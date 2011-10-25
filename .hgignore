@@ -1,3 +1,17 @@
 syntax: glob
 Uncut/bin/
 Uncut/obj/
+MS VS 2010 Project/Gras/bin/
+MS VS 2010 Project/RawInput/
+MS VS 2010 Project/Direct2D/
+MS VS 2010 Project/Direct3D10/
+MS VS 2010 Project/Direct3D11/
+MS VS 2010 Project/Direct3D9/
+MS VS 2010 Project/DirectInput/
+MS VS 2010 Project/DirectWrite/
+MS VS 2010 Project/Gras/obj/
+MS VS 2010 Project/SampleFramework/obj/
+MS VS 2010 Project/SampleFramework/bin/
+MS VS 2010 Project/XAudio2/
+MS VS 2010 Project/Samples.sln
+MS VS 2010 Project/Samples.suo
