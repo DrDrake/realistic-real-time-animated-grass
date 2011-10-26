@@ -65,6 +65,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\Entities\SimpleRoot.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="src\Foundation\Asset.cs" />
     <Compile Include="src\Foundation\Components\IResource.cs" />
     <Compile Include="src\Foundation\Configuration.cs" />
@@ -119,10 +122,18 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\mesh\Cylinder.smd" />
-    <None Include="Resources\mesh\jupiter.SMD" />
-    <None Include="Resources\shader\ModelTextured.fx" />
-    <EmbeddedResource Include="Resources\UserInterface10.fx" />
+    <None Include="Resources\mesh\Cylinder.smd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\mesh\jupiter.SMD">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\shader\ModelTextured.fx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <EmbeddedResource Include="Resources\UserInterface10.fx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -157,13 +168,30 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\skycube\hinten.jpg" />
-    <Content Include="Resources\skycube\links.jpg" />
-    <Content Include="Resources\skycube\oben.jpg" />
-    <Content Include="Resources\skycube\rechts.jpg" />
-    <Content Include="Resources\skycube\unten.jpg" />
-    <Content Include="Resources\skycube\vorne.jpg" />
-    <Content Include="Resources\texture\jupiter.jpg" />
+    <Content Include="Resources\shader\GeometryShaderExperiment.fx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\skycube\hinten.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\skycube\links.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\skycube\oben.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\skycube\rechts.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\skycube\unten.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\skycube\vorne.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\texture\jupiter.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
