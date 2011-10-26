@@ -79,6 +79,7 @@ namespace Uncut.Utility
 
             Ortho *= m_MoveSpeedKeys;
             Direction *= m_MoveSpeedKeys;
+            VecUpDown *= m_MoveSpeedKeys;
 
             m_LookAt = m_LookAt + Direction + VecUpDown + Ortho;
             m_Position = m_Position + Direction + VecUpDown + Ortho;

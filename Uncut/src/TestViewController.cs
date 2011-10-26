@@ -155,6 +155,9 @@ namespace Uncut
                         case (Key.Space):
                             m_camera.AddToCamera(0f, FrameDelta * Move, 0f, out m_proj, out m_view);
                             break;
+                        case (Key.LeftControl):
+                            m_camera.AddToCamera(0f, -FrameDelta * Move, 0f, out m_proj, out m_view);
+                            break;
                         case (Key.Escape):
                             m_isFormClosed = true;
                             Quit();
