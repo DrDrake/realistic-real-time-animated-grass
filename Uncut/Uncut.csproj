@@ -100,7 +100,6 @@
     <Compile Include="src\Foundation\Rendering\UI\UserInterfaceRenderer9.cs" />
     <Compile Include="src\Entities\SimpleCube.cs" />
     <Compile Include="src\Entities\SimpleGrass.cs" />
-    <Compile Include="src\Entities\SimpleModel.cs" />
     <Compile Include="src\Foundation\SlimSceneController.cs" />
     <Compile Include="src\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -115,7 +114,7 @@
     <Compile Include="src\Foundation\Utility\Camera.cs" />
     <Compile Include="src\Foundation\Utility\InputController.cs" />
     <Compile Include="src\Foundation\Utility\Soundmanager.cs" />
-    <Compile Include="src\Foundation\Utility\SimpleModel.cs" />
+    <Compile Include="src\Entities\SimpleModel.cs" />
     <Compile Include="src\TestViewController.cs" />
   </ItemGroup>
   <ItemGroup>
