@@ -17,6 +17,7 @@ namespace Uncut.Utility
         //For Moving
         public float m_MoveSpeedMouse;
         public float m_MoveSpeedKeys;
+        public bool isSlowMoving;
 
         //For generating the Projection Matrix
         //near clip distance

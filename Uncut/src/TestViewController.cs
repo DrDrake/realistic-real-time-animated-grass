@@ -27,6 +27,7 @@ namespace Uncut
         private DepthStencilState depthStencilState;
         private DepthStencilView depthStencilView;
         private Camera m_camera;
+        private float m_movementSpeed = 64.0f;
         private InputController m_input;
         private Soundmanager m_soundManager;
         private Clock clock;
@@ -123,15 +124,26 @@ namespace Uncut
             depthStencilView.Dispose();
             depthStencilState.Dispose();
         }
-
+        
         protected void processInput()
         {
             KeyboardState keyState = m_input.ReadKeyboard();
             MouseState mouseState = m_input.ReadMouse();
-
             if (keyState != null)
             {
-                float Move = 64.0f;
+                foreach (Key key in keyState.ReleasedKeys)
+                {
+                    switch (key)
+                    {
+                        case (Key.LeftShift):
+                            if (m_camera.isSlowMoving == true)
+                            {
+                                m_movementSpeed += 50.0f;
+                            }
+                            m_camera.isSlowMoving = false;
+                            break;
+                    }
+                }
 
                 foreach (Key key in keyState.PressedKeys)
                 {
@@ -141,22 +153,30 @@ namespace Uncut
                             m_soundManager.playSingle("assets/music/10 ft. Ganja Plant - Set Me Free.wav");
                             break;
                         case (Key.W):
-                            m_camera.AddToCamera(0f, 0f, FrameDelta * Move, out m_proj, out m_view);
+                            m_camera.AddToCamera(0f, 0f, FrameDelta * m_movementSpeed, out m_proj, out m_view);
                             break;
                         case (Key.S):
-                            m_camera.AddToCamera(0f, 0f, -FrameDelta * Move, out m_proj, out m_view);
+                            m_camera.AddToCamera(0f, 0f, -FrameDelta * m_movementSpeed, out m_proj, out m_view);
                             break;
                         case (Key.A):
-                            m_camera.AddToCamera(FrameDelta * Move, 0f, 0f, out m_proj, out m_view);
+                            m_camera.AddToCamera(FrameDelta * m_movementSpeed, 0f, 0f, out m_proj, out m_view);
                             break;
                         case (Key.D):
-                            m_camera.AddToCamera(-FrameDelta * Move, 0f, 0f, out m_proj, out m_view);
+                            m_camera.AddToCamera(-FrameDelta * m_movementSpeed, 0f, 0f, out m_proj, out m_view);
                             break;
                         case (Key.Space):
-                            m_camera.AddToCamera(0f, FrameDelta * Move, 0f, out m_proj, out m_view);
+                            m_camera.AddToCamera(0f, FrameDelta * m_movementSpeed, 0f, out m_proj, out m_view);
                             break;
                         case (Key.LeftControl):
-                            m_camera.AddToCamera(0f, -FrameDelta * Move, 0f, out m_proj, out m_view);
+                        case (Key.C):
+                            m_camera.AddToCamera(0f, -FrameDelta * m_movementSpeed, 0f, out m_proj, out m_view);
+                            break;
+                        case (Key.LeftShift):
+                            if (m_camera.isSlowMoving == false)
+                            {
+                                m_movementSpeed -= 50.0f;
+                            }
+                            m_camera.isSlowMoving = true;
                             break;
                         case (Key.Escape):
                             m_isFormClosed = true;
