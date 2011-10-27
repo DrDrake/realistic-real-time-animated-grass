@@ -168,6 +168,7 @@ namespace Uncut
                             m_camera.AddToCamera(0f, FrameDelta * m_movementSpeed, 0f, out m_proj, out m_view);
                             break;
                         case (Key.LeftControl):
+                            break;
                         case (Key.C):
                             m_camera.AddToCamera(0f, -FrameDelta * m_movementSpeed, 0f, out m_proj, out m_view);
                             break;
@@ -238,6 +239,7 @@ namespace Uncut
 
         protected override void OnRender()
         {
+            //For anything with time use 'FrameDelta', don't use anything else
             double a = clock.Check();
             output.Value = 5*(float)System.Math.Sin(a);
             //m_camera.Location = new Vector3(5 * (float)System.Math.Sin(a), 3 * (float)System.Math.Sin(a) + 4, 5 * (float)System.Math.Cos(a)); //Orbit around the target.
