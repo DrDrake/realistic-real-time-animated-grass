@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 
 using SlimDX;
 using SlimDX.Direct3D10;
@@ -15,6 +14,8 @@ namespace Uncut
 {
     class SimpleModel : IDisposable
     {
+        #region Members
+
         public Effect Effect { get { return effect; } }
 
         private ShaderResourceView textureView;
@@ -32,17 +33,35 @@ namespace Uncut
 
         private Texture2D texture;
 
+        #endregion
+
+
+        #region Methods
+
         public SimpleModel(Device device, string effectName, string meshName, string textureName)
         {
             this.device = device;
+            string effectLoadError;
 
-            //Example
-            //Assembly assembly = Assembly.GetExecutingAssembly();
-            //Effect.FromStream(device, assembly.GetManifestResourceStream("Uncut.Resources.SimpleModel10.fx"), null);
-            
-            effect = Effect.FromFile(device, effectName, "fx_4_0");
+            effect = Effect.FromFile(
+                device, 
+                effectName, 
+                "fx_4_0", 
+                ShaderFlags.None, 
+                EffectFlags.None, 
+                null,
+                null, 
+                null,
+                out effectLoadError
+            );
+
+            if(effectLoadError != "")
+                System.Console.WriteLine("Effect.FromFile Error:" + effectLoadError + "!");
 
             texture = Texture2D.FromFile(device, textureName);
+
+            if (texture == null)
+                System.Console.WriteLine("Texture: " + textureName + " was not loaded correctly!");
 
             LoadMesh(meshName);
 
@@ -90,6 +109,7 @@ namespace Uncut
         {
             effect.GetVariableByName("model_texture").AsResource().SetResource(textureView);
             device.InputAssembler.SetInputLayout(layout);
+            //Choose Primitive to draw
             device.InputAssembler.SetPrimitiveTopology(PrimitiveTopology.TriangleList);
             device.InputAssembler.SetIndexBuffer(indices, Format.R32_UInt, 0);
             device.InputAssembler.SetVertexBuffers(0, binding);
@@ -112,5 +132,6 @@ namespace Uncut
             textureView.Dispose();
             layout.Dispose();
         }
+        #endregion
     }
 }
