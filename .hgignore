@@ -1,0 +1,6 @@
+syntax: glob
+Uncut/bin/
+Uncut/obj/
+Uncut.sln
+Uncut.suo
+Uncut/Uncut.csproj.user
