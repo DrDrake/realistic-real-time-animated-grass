@@ -15,7 +15,7 @@ using Uncut.Rendering.Mesh;
 
 namespace Uncut
 {
-    class SimpleGrass : IDisposable
+    class SimpleRoot : IDisposable
     {
         public Effect Effect { get { return effect; } }
 
@@ -35,7 +35,7 @@ namespace Uncut
 
         private Texture2D texture;
 
-        public SimpleGrass(Device device, string effectName, string textureName)
+        public SimpleRoot(Device device, string effectName, string textureName)
         {
             this.device = device;
 
@@ -45,7 +45,7 @@ namespace Uncut
 
             elements = new[] {
                 new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
-                new InputElement("COLOR", 0, SlimDX.DXGI.Format.R32G32B32A32_Float, 16, 0) //Offset = 4 x sizeof(float)
+                new InputElement("COLOR", 0, SlimDX.DXGI.Format.R32G32B32A32_Float, 16, 0) //Offset = 4 x sizeof(float).
                 //new InputElement("NORMAL", 0, Format.R32G32B32_Float, 0, 1), 
                 //new InputElement("TEXCOORD", 0, Format.R32G32_Float, 0, 2)
             };
@@ -56,7 +56,7 @@ namespace Uncut
 
             vertexBuffer = new Buffer(
                     device,
-                    24 * 32,
+                    3 * 32,
                     ResourceUsage.Dynamic,
                     BindFlags.VertexBuffer,
                     CpuAccessFlags.Write,
@@ -64,12 +64,7 @@ namespace Uncut
             );
 
             LoadVertices();
-            /*
-            binding = new[] {
-                new VertexBufferBinding(vertices, 12, 0),
-                new VertexBufferBinding(normals, 12, 0), 
-                new VertexBufferBinding(texCoords, 8, 0)
-            };*/
+
             binding = new[] { new VertexBufferBinding(vertexBuffer, 32, 0) };
         }
 
@@ -77,37 +72,9 @@ namespace Uncut
         {
             DataStream stream = vertexBuffer.Map(MapMode.WriteDiscard, MapFlags.None);
             stream.WriteRange(new[] {
-                new Vector4(-1.0f, 0.0f, 0.0f, 1.0f), new Vector4(0.45f, 1.0f, 0.45f, 1.0f),
+                new Vector4(-1.0f, 0.0f, 0.0f, 1.0f), new Vector4(0.45f, 1.0f, 0.45f, 1.0f), // POSITION(X,Y,Z,?), COLOR(R,G,B,A)
                 new Vector4(1.0f, 0.0f, 0.0f, 1.0f), new Vector4(0.45f, 1.0f, 0.45f, 1.0f),
 				new Vector4(1.0f, 3.0f, 0.1f, 1.0f), new Vector4(0.45f, 1.0f, 0.45f, 1.0f),
-
-                new Vector4(1.0f, 3.0f, 0.1f, 1.0f), new Vector4(0.4f, 1.0f, 0.4f, 1.0f),
-				new Vector4(-1.0f, 3.0f, 0.1f, 1.0f), new Vector4(0.4f, 1.0f, 0.4f, 1.0f),
-                new Vector4(-1.0f, 0.0f, 0.0f, 1.0f), new Vector4(0.4f, 1.0f, 0.4f, 1.0f),
-
-                new Vector4(-1.0f, 3.0f, 0.1f, 1.0f), new Vector4(0.4f, 0.9f, 0.4f, 1.0f),
-                new Vector4(1.0f, 3.0f, 0.1f, 1.0f), new Vector4(0.4f, 0.9f, 0.4f, 1.0f),
-				new Vector4(0.7f, 5.8f, 0.3f, 1.0f), new Vector4(0.4f, 0.9f, 0.4f, 1.0f),
-
-                new Vector4(0.7f, 5.8f, 0.3f, 1.0f), new Vector4(0.3f, 0.9f, 0.4f, 1.0f),
-				new Vector4(-1.3f, 5.8f, 0.3f, 1.0f), new Vector4(0.3f, 0.9f, 0.4f, 1.0f),
-                new Vector4(-1.0f, 3.0f, 0.1f, 1.0f), new Vector4(0.3f, 0.9f, 0.4f, 1.0f),
-
-                new Vector4(-1.3f, 5.8f, 0.3f, 1.0f), new Vector4(0.3f, 0.8f, 0.3f, 1.0f),
-                new Vector4(0.7f, 5.8f, 0.3f, 1.0f), new Vector4(0.3f, 0.8f, 0.3f, 1.0f),
-				new Vector4(0.4f, 8.0f, 0.5f, 1.0f), new Vector4(0.3f, 0.8f, 0.3f, 1.0f),
-
-                new Vector4(0.4f, 8.0f, 0.5f, 1.0f), new Vector4(0.2f, 0.08f, 0.2f, 1.0f),
-				new Vector4(-1.6f, 8.0f, 0.5f, 1.0f), new Vector4(0.2f, 0.8f, 0.2f, 1.0f),
-                new Vector4(-1.3f, 5.8f, 0.3f, 1.0f), new Vector4(0.2f, 0.8f, 0.2f, 1.0f),
-
-                new Vector4(-1.6f, 8.0f, 0.5f, 1.0f), new Vector4(0.2f, 0.7f, 0.2f, 1.0f),
-                new Vector4(0.4f, 8.0f, 0.5f, 1.0f), new Vector4(0.2f, 0.7f, 0.2f, 1.0f),
-				new Vector4(0.0f, 10.0f, 0.9f, 1.0f), new Vector4(0.2f, 0.7f, 0.2f, 1.0f),
-
-                new Vector4(0.0f, 10.0f, 0.9f, 1.0f), new Vector4(0.1f, 0.7f, 0.1f, 1.0f),
-				new Vector4(-2.0f, 10.0f, 0.9f, 1.0f), new Vector4(0.1f, 0.7f, 0.1f, 1.0f),
-                new Vector4(-1.6f, 8.0f, 0.5f, 1.0f), new Vector4(0.1f, 0.7f, 0.1f, 1.0f),
 			});
             vertexBuffer.Unmap();
         }
@@ -132,17 +99,13 @@ namespace Uncut
             //effect.GetVariableByName("model_texture").AsResource().SetResource(textureView);
             device.InputAssembler.SetInputLayout(layout);
             device.InputAssembler.SetPrimitiveTopology(PrimitiveTopology.TriangleList);
-            //device.InputAssembler.SetIndexBuffer(indices, Format.R32_UInt, 0);
             device.InputAssembler.SetVertexBuffers(0, binding);
 
             effect.GetTechniqueByIndex(0).GetPassByIndex(0).Apply();
-            device.Draw(24, 0);
+            device.Draw(3, 0);
 
-            //device.InputAssembler.SetIndexBuffer(null, Format.Unknown, 0);
             device.InputAssembler.SetVertexBuffers(0, nullBinding);
-
-            //Context10.Device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(vertexBuffer, 32, 0)); // Stride: Größe des Elemets (Quads) 2 x 4 x 4byte (2 Vector4 x 4 floats á 4 Byte)
-        }
+    }
 
         public void Dispose()
         {

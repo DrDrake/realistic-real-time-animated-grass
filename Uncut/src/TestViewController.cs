@@ -27,6 +27,7 @@ namespace Uncut
         private DepthStencilState depthStencilState;
         private DepthStencilView depthStencilView;
         private Camera m_camera;
+        private float m_movementSpeed = 64.0f;
         private InputController m_input;
         private Soundmanager m_soundManager;
         private Clock clock;
@@ -34,6 +35,7 @@ namespace Uncut
         private SimpleCube cube;
         private SimplePlane plane;
         private SimpleGrass straw;
+        private SimpleRoot root;
         private float[,] strawSize;
 
         private Matrix m_proj;
@@ -51,12 +53,12 @@ namespace Uncut
             UserInterface.Container.Add(hudText);
 
             m_camera = new Camera(
-                new Vector3(0, 0, 10), // position
+                new Vector3(0, 3, 10), // position
                 new Vector3(0, 0, 0), // lookat
                 Vector3.UnitZ, // direction
                 Vector3.UnitY, // up
                 0.3f, // moveSpeedMouse
-                1f, // moveSpeedKeys
+                0.3f, // moveSpeedKeys
                 1.0f, // near
                 1000.0f, // far
                 45.0f, // fov
@@ -110,6 +112,10 @@ namespace Uncut
             cube = new SimpleCube(Context10.Device, Asset.File("DefaultCamera.fx"), null);
             plane = new SimplePlane(Context10.Device, Asset.File("DefaultCamera.fx"), null);
             straw = new SimpleGrass(Context10.Device, Asset.File("DefaultCamera.fx"), null);
+            //Geometry Shader Test
+            {
+                root = new SimpleRoot(Context10.Device, Asset.Dir("shader").file("GeometryShaderExperiment.fx"), null);
+            }
         }
 
         protected override void OnResourceUnload()
@@ -118,15 +124,26 @@ namespace Uncut
             depthStencilView.Dispose();
             depthStencilState.Dispose();
         }
-
+        
         protected void processInput()
         {
             KeyboardState keyState = m_input.ReadKeyboard();
             MouseState mouseState = m_input.ReadMouse();
-
             if (keyState != null)
             {
-                float Move = 64.0f;
+                foreach (Key key in keyState.ReleasedKeys)
+                {
+                    switch (key)
+                    {
+                        case (Key.LeftShift):
+                            if (m_camera.isSlowMoving == true)
+                            {
+                                m_movementSpeed += 50.0f;
+                            }
+                            m_camera.isSlowMoving = false;
+                            break;
+                    }
+                }
 
                 foreach (Key key in keyState.PressedKeys)
                 {
@@ -136,19 +153,30 @@ namespace Uncut
                             m_soundManager.playSingle("assets/music/10 ft. Ganja Plant - Set Me Free.wav");
                             break;
                         case (Key.W):
-                            m_camera.AddToCamera(0f, 0f, FrameDelta * Move, out m_proj, out m_view);
+                            m_camera.AddToCamera(0f, 0f, FrameDelta * m_movementSpeed, out m_proj, out m_view);
                             break;
                         case (Key.S):
-                            m_camera.AddToCamera(0f, 0f, -FrameDelta * Move, out m_proj, out m_view);
+                            m_camera.AddToCamera(0f, 0f, -FrameDelta * m_movementSpeed, out m_proj, out m_view);
                             break;
                         case (Key.A):
-                            m_camera.AddToCamera(FrameDelta * Move, 0f, 0f, out m_proj, out m_view);
+                            m_camera.AddToCamera(FrameDelta * m_movementSpeed, 0f, 0f, out m_proj, out m_view);
                             break;
                         case (Key.D):
-                            m_camera.AddToCamera(-FrameDelta * Move, 0f, 0f, out m_proj, out m_view);
+                            m_camera.AddToCamera(-FrameDelta * m_movementSpeed, 0f, 0f, out m_proj, out m_view);
                             break;
                         case (Key.Space):
-                            m_camera.AddToCamera(0f, FrameDelta * Move, 0f, out m_proj, out m_view);
+                            m_camera.AddToCamera(0f, FrameDelta * m_movementSpeed, 0f, out m_proj, out m_view);
+                            break;
+                        case (Key.LeftControl):
+                        case (Key.C):
+                            m_camera.AddToCamera(0f, -FrameDelta * m_movementSpeed, 0f, out m_proj, out m_view);
+                            break;
+                        case (Key.LeftShift):
+                            if (m_camera.isSlowMoving == false)
+                            {
+                                m_movementSpeed -= 50.0f;
+                            }
+                            m_camera.isSlowMoving = true;
                             break;
                         case (Key.Escape):
                             m_isFormClosed = true;
@@ -213,8 +241,6 @@ namespace Uncut
             double a = clock.Check();
             output.Value = 5*(float)System.Math.Sin(a);
             //m_camera.Location = new Vector3(5 * (float)System.Math.Sin(a), 3 * (float)System.Math.Sin(a) + 4, 5 * (float)System.Math.Cos(a)); //Orbit around the target.
-            //camera.Location = new Vector3(0.0f, 3.0f, 4.0f);
-            //camera.MoveLeft(0.8f);
 
             Matrix world = Matrix.Identity;
             cube.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
@@ -236,21 +262,48 @@ namespace Uncut
             plane.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
             plane.Draw();
 
-            for (int col = -50; col < 50; ++col)
+            for (int col = -50; col < 0; ++col)
             {
-                for (int row = -50; row < 50; ++row)
+                for (int row = -50; row < 0; ++row)
                 {
                     world = Matrix.Identity;
-                    Matrix.Scaling(0.01f, 0.1f+(float)strawSize.GetValue(col+50, row+50), 0.01f, out world);
-                    Matrix.Translation(row*10, -5.0f, col*10, out tempMatrix);
-                    Matrix temp2;
-                    Matrix.RotationY(col+row, out temp2);
+                    float randomHight = (float)strawSize.GetValue(col+50, row+50);
+                    //Matrix.Scaling(0.01f, 0.1f+(float)strawSize.GetValue(col+50, row+50), 0.01f, out world);
+                    //Matrix.Translation(row*10, -4.0f, col*10, out tempMatrix);
+                    Matrix.Scaling(0.01f, 0.01f + randomHight, 0.01f, out tempMatrix);
+                    Matrix.Translation(row * 0.1f, -0.5f, col * 0.1f, out world);
+                    Matrix rotationTemp;
+                    Matrix.RotationY(col + row + randomHight, out rotationTemp);
+                    Matrix.Multiply(ref rotationTemp, ref world, out world);
                     Matrix.Multiply(ref tempMatrix, ref world, out world);
-                    Matrix.Multiply(ref temp2, ref world, out world);
                     straw.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
                     straw.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
                     straw.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
                     straw.Draw();
+                }
+            }
+
+            // Geometry Shader Test
+            for (int col = 0; col < 50; ++col)
+            {
+                for (int row = 0; row < 50; ++row)
+                {
+                    /*
+                     *  Alle Wurzeln werden mit einer zufälligen Höhe und Ausrichtung erstellt.
+                     */
+                    world = Matrix.Identity;
+                    float randomHight = (float)strawSize.GetValue(col, row) * 0.3f;
+                    Matrix.Scaling(0.01f, 0.01f + randomHight, 0.01f, out tempMatrix);
+                    Matrix.Translation(row * 0.1f, -0.5f, col * 0.1f, out world);
+                    Matrix rotationTemp;
+                    Matrix.RotationY(col + row + randomHight, out rotationTemp);
+                    Matrix.Multiply(ref rotationTemp, ref tempMatrix, out tempMatrix);
+                    Matrix.Multiply(ref tempMatrix, ref world, out world);
+
+                    root.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+                    root.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+                    root.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+                    root.Draw();
                 }
             }//*/
         }
