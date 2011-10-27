@@ -51,11 +51,11 @@ namespace Uncut
             UserInterface.Container.Add(hudText);
 
             m_camera = new Camera(
-                new Vector3(0, 0, 100), // position
+                new Vector3(0, 0, 10), // position
                 new Vector3(0, 0, 0), // lookat
                 Vector3.UnitZ, // direction
                 Vector3.UnitY, // up
-                0.03f, // moveSpeedMouse
+                0.3f, // moveSpeedMouse
                 1f, // moveSpeedKeys
                 1.0f, // near
                 1000.0f, // far
@@ -252,7 +252,7 @@ namespace Uncut
                     straw.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
                     straw.Draw();
                 }
-            }
+            }//*/
         }
 
         protected override void OnRenderEnd()

@@ -12,9 +12,9 @@
         /// </summary>
         public Configuration()
         {
-            WindowTitle = "I'm a little window, short and stout, here is my title, there's is my ...";
-            WindowWidth = 800;
-            WindowHeight = 600;
+            WindowTitle = "Countless Blades of Grass";
+            WindowWidth = 1000;
+            WindowHeight = 800;
 
             GrasRootsCount = 42; // <- Example
         }

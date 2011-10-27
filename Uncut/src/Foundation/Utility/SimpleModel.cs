@@ -25,7 +25,7 @@ namespace Uncut.Utility
         private VertexBufferBinding[] binding;
         private InputElement[] elements;
         private int indexCount;
-        private Device device;
+        private Device m_device;
         private Buffer indices;
         private Buffer normals;
         private Buffer vertices;
@@ -40,7 +40,7 @@ namespace Uncut.Utility
 
         public SimpleModel(Device device, string effectName, string meshName, string textureName)
         {
-            this.device = device;
+            m_device = device;
             string effectLoadError;
 
             effect = Effect.FromFile(
@@ -86,39 +86,39 @@ namespace Uncut.Utility
             var meshData = Smd.FromFile(meshName);
             using (var data = new DataStream(meshData.Indices.ToArray(), true, false))
             {
-                indices = new Buffer(device, data, new BufferDescription(meshData.Indices.Count * 4, ResourceUsage.Default, BindFlags.IndexBuffer, CpuAccessFlags.None, ResourceOptionFlags.None));
+                indices = new Buffer(m_device, data, new BufferDescription(meshData.Indices.Count * 4, ResourceUsage.Default, BindFlags.IndexBuffer, CpuAccessFlags.None, ResourceOptionFlags.None));
                 indexCount = meshData.Indices.Count;
             }
 
             using (var data = new DataStream(meshData.Positions.ToArray(), true, false))
             {
-                vertices = new Buffer(device, data, new BufferDescription(meshData.Positions.Count * 4 * 3, ResourceUsage.Default, BindFlags.VertexBuffer, CpuAccessFlags.None, ResourceOptionFlags.None));
+                vertices = new Buffer(m_device, data, new BufferDescription(meshData.Positions.Count * 4 * 3, ResourceUsage.Default, BindFlags.VertexBuffer, CpuAccessFlags.None, ResourceOptionFlags.None));
             }
             using (var data = new DataStream(meshData.Normals.ToArray(), true, false))
             {
-                normals = new Buffer(device, data, new BufferDescription(meshData.Normals.Count * 4 * 3, ResourceUsage.Default, BindFlags.VertexBuffer, CpuAccessFlags.None, ResourceOptionFlags.None));
+                normals = new Buffer(m_device, data, new BufferDescription(meshData.Normals.Count * 4 * 3, ResourceUsage.Default, BindFlags.VertexBuffer, CpuAccessFlags.None, ResourceOptionFlags.None));
             }
 
             using (var data = new DataStream(meshData.TextureCoordinates.ToArray(), true, false))
             {
-                texCoords = new Buffer(device, data, new BufferDescription(meshData.TextureCoordinates.Count * 4 * 2, ResourceUsage.Default, BindFlags.VertexBuffer, CpuAccessFlags.None, ResourceOptionFlags.None));
+                texCoords = new Buffer(m_device, data, new BufferDescription(meshData.TextureCoordinates.Count * 4 * 2, ResourceUsage.Default, BindFlags.VertexBuffer, CpuAccessFlags.None, ResourceOptionFlags.None));
             }
         }
 
         public void Draw()
         {
             effect.GetVariableByName("model_texture").AsResource().SetResource(textureView);
-            device.InputAssembler.SetInputLayout(layout);
+            m_device.InputAssembler.SetInputLayout(layout);
             //Choose Primitive to draw
-            device.InputAssembler.SetPrimitiveTopology(PrimitiveTopology.TriangleList);
-            device.InputAssembler.SetIndexBuffer(indices, Format.R32_UInt, 0);
-            device.InputAssembler.SetVertexBuffers(0, binding);
+            m_device.InputAssembler.SetPrimitiveTopology(PrimitiveTopology.TriangleList);
+            m_device.InputAssembler.SetIndexBuffer(indices, Format.R32_UInt, 0);
+            m_device.InputAssembler.SetVertexBuffers(0, binding);
 
             effect.GetTechniqueByIndex(0).GetPassByIndex(0).Apply();
-            device.DrawIndexed(indexCount, 0, 0);
+            m_device.DrawIndexed(indexCount, 0, 0);
 
-            device.InputAssembler.SetIndexBuffer(null, Format.Unknown, 0);
-            device.InputAssembler.SetVertexBuffers(0, nullBinding);
+            m_device.InputAssembler.SetIndexBuffer(null, Format.Unknown, 0);
+            m_device.InputAssembler.SetVertexBuffers(0, nullBinding);
         }
 
         public void Dispose()

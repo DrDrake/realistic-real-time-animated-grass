@@ -77,11 +77,8 @@ namespace Uncut.Utility
 
             Vector3 VecUpDown = new Vector3(0.0f, 1.0f * UpDown, 0.0f);
 
-            m_LookAt = m_LookAt + Direction + VecUpDown + Ortho;
-            m_Position = m_Position + Direction + VecUpDown + Ortho;
-
-            m_LookAt *= m_MoveSpeedKeys;
-            m_Position *= m_MoveSpeedKeys;
+            m_LookAt = m_MoveSpeedKeys * (m_LookAt + Direction + VecUpDown + Ortho);
+            m_Position = m_MoveSpeedKeys * (m_Position + Direction + VecUpDown + Ortho);
 
             Update(out m_proj, out m_view);
         }

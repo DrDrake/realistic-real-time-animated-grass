@@ -15,6 +15,23 @@ namespace Uncut
 {
     class SimpleModel : IDisposable
     {
+        public Effect Effect { get { return effect; } }
+
+        private ShaderResourceView textureView;
+        private Effect effect;
+        private InputLayout layout;
+        private readonly VertexBufferBinding[] nullBinding = new VertexBufferBinding[3];
+        private VertexBufferBinding[] binding;
+        private InputElement[] elements;
+        private int indexCount;
+        private Device device;
+        private Buffer indices;
+        private Buffer normals;
+        private Buffer vertices;
+        private Buffer texCoords;
+
+        private Texture2D texture;
+
         public SimpleModel(Device device, string effectName, string meshName, string textureName)
         {
             this.device = device;
@@ -95,22 +112,5 @@ namespace Uncut
             textureView.Dispose();
             layout.Dispose();
         }
-
-        public Effect Effect { get { return effect; } }
-
-        private ShaderResourceView textureView;
-        private Effect effect;
-        private InputLayout layout;
-        private readonly VertexBufferBinding[] nullBinding = new VertexBufferBinding[3];
-        private VertexBufferBinding[] binding;
-        private InputElement[] elements;
-        private int indexCount;
-        private Device device;
-        private Buffer indices;
-        private Buffer normals;
-        private Buffer vertices;
-        private Buffer texCoords;
-
-        private Texture2D texture;
     }
 }
