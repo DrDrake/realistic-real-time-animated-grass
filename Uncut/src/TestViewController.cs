@@ -36,6 +36,8 @@ namespace Uncut
         private SimplePlane plane;
         private SimpleGrass straw;
         private SimpleRoot root;
+        private Skybox m_skybox;
+        private Cube testCube;
         private float[,] strawSize;
 
         private Matrix m_proj;
@@ -112,6 +114,8 @@ namespace Uncut
             cube = new SimpleCube(Context10.Device, Asset.File("DefaultCamera.fx"), null);
             plane = new SimplePlane(Context10.Device, Asset.File("DefaultCamera.fx"), null);
             straw = new SimpleGrass(Context10.Device, Asset.File("DefaultCamera.fx"), null);
+            testCube = new Cube(Context10.Device, Asset.File("DefaultCamera.fx"), null);
+            m_skybox = new Skybox(Context10.Device, Asset.Dir("skycube").file("Skybox.fx"), null);
             //Geometry Shader Test
             {
                 root = new SimpleRoot(Context10.Device, Asset.Dir("shader").file("GeometryShaderExperiment.fx"), null);
@@ -167,8 +171,7 @@ namespace Uncut
                         case (Key.Space):
                             m_camera.AddToCamera(0f, FrameDelta * m_movementSpeed, 0f, out m_proj, out m_view);
                             break;
-                        case (Key.LeftControl):
-                            break;
+                        case (Key.LeftControl): // This syntax means that each 'C' as well as 'LeftControll' trigger the case. This is intentional. (There seems to be no boolean operators in C# switch-cases)
                         case (Key.C):
                             m_camera.AddToCamera(0f, -FrameDelta * m_movementSpeed, 0f, out m_proj, out m_view);
                             break;
@@ -244,20 +247,24 @@ namespace Uncut
             output.Value = 5*(float)System.Math.Sin(a);
             //m_camera.Location = new Vector3(5 * (float)System.Math.Sin(a), 3 * (float)System.Math.Sin(a) + 4, 5 * (float)System.Math.Cos(a)); //Orbit around the target.
 
-            Matrix world = Matrix.Identity;
-            cube.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-            cube.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
-            cube.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
-            cube.Draw();
+            SetDepthTest(false);
 
-            Matrix.Translation(2.0f, 0.0f, 0.0f, out world);
-            cube.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-            cube.Draw();
+            Matrix world = Matrix.Identity;
+            Matrix.Scaling(1.0f, 1.0f, 1.0f, out world);
+            Matrix temp;
+            Matrix.Translation(m_camera.m_Position.X, m_camera.m_Position.Y, m_camera.m_Position.Z, out temp);
+            Matrix.Multiply(ref temp, ref world, out world);
+            m_skybox.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+            m_skybox.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+            m_skybox.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+            m_skybox.Draw();
+
+            SetDepthTest(true);
 
             world = Matrix.Identity;
             Matrix.Translation(0.0f, -0.5f, 0.0f, out world);
             Matrix tempMatrix;
-            Matrix.Scaling(5.0f, 5.0f, 5.0f, out tempMatrix);
+            Matrix.Scaling(500.0f, 500.0f, 500.0f, out tempMatrix);
             Matrix.Multiply(ref tempMatrix, ref world, out world);
             plane.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
             plane.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
@@ -270,8 +277,6 @@ namespace Uncut
                 {
                     world = Matrix.Identity;
                     float randomHight = (float)strawSize.GetValue(col+50, row+50);
-                    //Matrix.Scaling(0.01f, 0.1f+(float)strawSize.GetValue(col+50, row+50), 0.01f, out world);
-                    //Matrix.Translation(row*10, -4.0f, col*10, out tempMatrix);
                     Matrix.Scaling(0.01f, 0.01f + randomHight, 0.01f, out tempMatrix);
                     Matrix.Translation(row * 0.1f, -0.5f, col * 0.1f, out world);
                     Matrix rotationTemp;
@@ -308,6 +313,19 @@ namespace Uncut
                     root.Draw();
                 }
             }//*/
+        }
+
+        protected void SetDepthTest(bool isUsingDepthTest)
+        {
+            DepthStencilStateDescription dsStateDesc = new DepthStencilStateDescription()
+            {
+                IsDepthEnabled = isUsingDepthTest,
+                IsStencilEnabled = false,
+                DepthWriteMask = DepthWriteMask.All,
+                DepthComparison = Comparison.Less,
+            };
+            DepthStencilState depthState = DepthStencilState.FromDescription(Context10.Device, dsStateDesc);
+            Context10.Device.OutputMerger.DepthStencilState = depthState;
         }
 
         protected override void OnRenderEnd()

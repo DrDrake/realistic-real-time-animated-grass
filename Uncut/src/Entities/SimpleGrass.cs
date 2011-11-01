@@ -114,6 +114,7 @@ namespace Uncut
 
         public void Draw()
         {
+            RasterizerState previousState = device.Rasterizer.State;
             RasterizerState state = SlimDX.Direct3D10.RasterizerState.FromDescription(device, new RasterizerStateDescription()
             {
                 CullMode = CullMode.None,
@@ -142,6 +143,7 @@ namespace Uncut
             device.InputAssembler.SetVertexBuffers(0, nullBinding);
 
             //Context10.Device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(vertexBuffer, 32, 0)); // Stride: Größe des Elemets (Quads) 2 x 4 x 4byte (2 Vector4 x 4 floats á 4 Byte)
+            device.Rasterizer.State = previousState;
         }
 
         public void Dispose()

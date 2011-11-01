@@ -65,9 +65,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\Entities\Cube.cs" />
+    <Compile Include="src\Entities\IRenderable.cs" />
     <Compile Include="src\Entities\SimpleRoot.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="src\Entities\Skybox.cs" />
     <Compile Include="src\Foundation\Asset.cs" />
     <Compile Include="src\Foundation\Components\IResource.cs" />
     <Compile Include="src\Foundation\Configuration.cs" />
@@ -170,6 +173,9 @@
     <Content Include="Resources\shader\GeometryShaderExperiment.fx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\skycube\Skybox.fx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="Resources\skycube\hinten.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
