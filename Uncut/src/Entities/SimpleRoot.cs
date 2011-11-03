@@ -43,13 +43,6 @@ namespace Uncut
 
             //texture = Texture2D.FromFile(device, textureName);
 
-            elements = new[] {
-                new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
-                new InputElement("COLOR", 0, SlimDX.DXGI.Format.R32G32B32A32_Float, 16, 0) //Offset = 4 x sizeof(float).
-                //new InputElement("NORMAL", 0, Format.R32G32B32_Float, 0, 1), 
-                //new InputElement("TEXCOORD", 0, Format.R32G32_Float, 0, 2)
-            };
-
             layout = new InputLayout(device, effect.GetTechniqueByIndex(0).GetPassByIndex(0).Description.Signature, elements);
 
             //textureView = new ShaderResourceView(device, texture);
@@ -62,6 +55,15 @@ namespace Uncut
                     CpuAccessFlags.Write,
                     ResourceOptionFlags.None
             );
+
+
+            elements = new[] {
+                new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+                new InputElement("COLOR", 0, SlimDX.DXGI.Format.R32G32B32A32_Float, 16, 0), //Offset = 4 x sizeof(float).
+          //      new InputElement("SPRITE_INPUT", 0, SlimDX.DataStream, 16, 0)
+                //new InputElement("NORMAL", 0, Format.R32G32B32_Float, 0, 1), 
+                //new InputElement("TEXCOORD", 0, Format.R32G32_Float, 0, 2)
+            };
 
             LoadVertices();
 
