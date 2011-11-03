@@ -170,7 +170,9 @@ namespace Uncut
                         case (Key.Space):
                             m_camera.AddToCamera(0f, FrameDelta, 0f, out m_proj, out m_view);
                             break;
-                        case (Key.LeftControl): // This syntax means that each 'C' as well as 'LeftControll' trigger the case. This is intentional. (There seems to be no boolean operators in C# switch-cases)
+                        /* This syntax means that each 'C' as well as 'LeftControll' trigger the case. 
+                         * This is intentional. (There seems to be no boolean operators in C# switch-cases)*/
+                        case (Key.LeftControl): 
                         case (Key.C):
                             m_camera.AddToCamera(0f, -FrameDelta, 0f, out m_proj, out m_view);
                             break;
@@ -185,7 +187,8 @@ namespace Uncut
                             m_isFormClosed = true;
                             Quit();
                             break;
-                        case (Key.LeftAlt | Key.Return):
+                        case(Key.LeftAlt):
+                        case (Key.Return):
                             OnResourceUnload();
                             isFullScreen = !isFullScreen;
 

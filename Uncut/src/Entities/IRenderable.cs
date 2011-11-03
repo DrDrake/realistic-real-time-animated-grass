@@ -155,6 +155,7 @@ namespace Uncut
                     IsScissorEnabled = false,
                     SlopeScaledDepthBias = 0.0f
                 });
+
                 device.Rasterizer.State = state;
             }
             
