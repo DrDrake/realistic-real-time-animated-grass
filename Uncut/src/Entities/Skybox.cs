@@ -44,8 +44,8 @@ namespace Uncut
                 new InputElement("TEXCOORD", 0, Format.R32G32_Float, 32, 0)
             };
 
-                //new InputElement("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0)//, 
-                //new InputElement("TEXCOORD", 0, Format.R32G32_Float, 16, 0) // Oder 32?
+            //new InputElement("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0)//, 
+            //new InputElement("TEXCOORD", 0, Format.R32G32_Float, 16, 0) // Oder 32?
             //Aufglieder auf 3 Buffer.
         }
 
