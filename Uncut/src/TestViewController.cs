@@ -27,7 +27,6 @@ namespace Uncut
         private DepthStencilState depthStencilState;
         private DepthStencilView depthStencilView;
         private Camera m_camera;
-        private float m_movementSpeed = 64.0f;
         private InputController m_input;
         private Soundmanager m_soundManager;
         private Clock clock;
@@ -57,8 +56,8 @@ namespace Uncut
                 new Vector3(0, 0, 0), // lookat
                 Vector3.UnitZ, // direction
                 Vector3.UnitY, // up
-                0.3f, // moveSpeedMouse
-                0.3f, // moveSpeedKeys
+                0.1f, // moveSpeedMouse
+                50.0f, // moveSpeedKeys
                 1.0f, // near
                 1000.0f, // far
                 45.0f, // fov
@@ -138,7 +137,7 @@ namespace Uncut
                         case (Key.LeftShift):
                             if (m_camera.isSlowMoving == true)
                             {
-                                m_movementSpeed += 50.0f;
+                                m_camera.m_MoveSpeedKeys += 30.0f;
                             }
                             m_camera.isSlowMoving = false;
                             break;
@@ -150,32 +149,32 @@ namespace Uncut
                     switch (key)
                     {
                         case (Key.P):
-                            m_soundManager.playSingle("assets/music/10 ft. Ganja Plant - Set Me Free.wav");
+                            m_soundManager.playSingle("resources/music/NeverEnding_Story_-_Fantasia_3.wav");
                             break;
                         case (Key.W):
-                            m_camera.AddToCamera(0f, 0f, FrameDelta * m_movementSpeed, out m_proj, out m_view);
+                            m_camera.AddToCamera(0f, 0f, FrameDelta, out m_proj, out m_view);
                             break;
                         case (Key.S):
-                            m_camera.AddToCamera(0f, 0f, -FrameDelta * m_movementSpeed, out m_proj, out m_view);
+                            m_camera.AddToCamera(0f, 0f, -FrameDelta, out m_proj, out m_view);
                             break;
                         case (Key.A):
-                            m_camera.AddToCamera(FrameDelta * m_movementSpeed, 0f, 0f, out m_proj, out m_view);
+                            m_camera.AddToCamera(FrameDelta, 0f, 0f, out m_proj, out m_view);
                             break;
                         case (Key.D):
-                            m_camera.AddToCamera(-FrameDelta * m_movementSpeed, 0f, 0f, out m_proj, out m_view);
+                            m_camera.AddToCamera(-FrameDelta, 0f, 0f, out m_proj, out m_view);
                             break;
                         case (Key.Space):
-                            m_camera.AddToCamera(0f, FrameDelta * m_movementSpeed, 0f, out m_proj, out m_view);
+                            m_camera.AddToCamera(0f, FrameDelta, 0f, out m_proj, out m_view);
                             break;
                         case (Key.LeftControl):
                             break;
                         case (Key.C):
-                            m_camera.AddToCamera(0f, -FrameDelta * m_movementSpeed, 0f, out m_proj, out m_view);
+                            m_camera.AddToCamera(0f, -FrameDelta, 0f, out m_proj, out m_view);
                             break;
                         case (Key.LeftShift):
                             if (m_camera.isSlowMoving == false)
                             {
-                                m_movementSpeed -= 50.0f;
+                                m_camera.m_MoveSpeedKeys -= 30.0f;
                             }
                             m_camera.isSlowMoving = true;
                             break;

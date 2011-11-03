@@ -70,6 +70,11 @@ namespace Uncut.Utility
 
         public void AddToCamera(float Strafe, float UpDown, float ForBack, out Matrix m_proj, out Matrix m_view)
         {
+            //For taking speed into account
+            Strafe *= m_MoveSpeedKeys;
+            UpDown *= m_MoveSpeedKeys;
+            ForBack *= m_MoveSpeedKeys;
+
             Vector3 Direction = m_Direction;
             Vector3 Ortho = new Vector3(-Direction.Z, 0.0f, Direction.X);
             Ortho = Ortho * Strafe;
@@ -77,10 +82,6 @@ namespace Uncut.Utility
             Direction = Direction * ForBack;
 
             Vector3 VecUpDown = new Vector3(0.0f, 1.0f * UpDown, 0.0f);
-
-            Ortho *= m_MoveSpeedKeys;
-            Direction *= m_MoveSpeedKeys;
-            VecUpDown *= m_MoveSpeedKeys;
 
             m_LookAt = m_LookAt + Direction + VecUpDown + Ortho;
             m_Position = m_Position + Direction + VecUpDown + Ortho;
@@ -92,6 +93,7 @@ namespace Uncut.Utility
         {
             Matrix matRotate;
 
+            //For taking speed into account
             x *= m_MoveSpeedMouse;
             y *= m_MoveSpeedMouse;
 
