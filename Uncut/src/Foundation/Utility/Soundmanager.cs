@@ -13,15 +13,17 @@ namespace Uncut.Utility
 {
     class Soundmanager
     {
-        XAudio2             m_device;
-        MasteringVoice      m_masteringVoice;
-        Thread              m_playThread;
+        private XAudio2         m_device;
+        private MasteringVoice  m_masteringVoice;
+        private Thread          m_playThread;
+        private bool            m_playing = false;
+        public string           m_fileName;
 
         public Soundmanager()
         {
             m_device = new XAudio2();
             m_masteringVoice = new MasteringVoice(m_device);
-            //m_playThread = new Thread(this.playSingle);
+            m_playThread = new Thread(this.playSingleThread);
         }
 
         ~Soundmanager()
@@ -32,8 +34,18 @@ namespace Uncut.Utility
 
         public void playSingle(string fileName)
         {
+            if (!m_playing)
+            {
+                m_playing = true;
+                m_fileName = fileName;
+                m_playThread.Start();
+            }
+        }
+
+        private void playSingleThread()
+        {
             //WaveStream stream = new WaveStream(fileName);
-            var s = System.IO.File.OpenRead(fileName);
+            var s = System.IO.File.OpenRead(m_fileName);
             WaveStream stream = new WaveStream(s);
            
             s.Close();
@@ -56,6 +68,7 @@ namespace Uncut.Utility
             buffer.Dispose();
             sourceVoice.Dispose();
             stream.Dispose();
+            m_playing = false;
         }
 
         public void playLoop(string filename)
