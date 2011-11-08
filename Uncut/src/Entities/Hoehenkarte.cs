@@ -87,7 +87,7 @@ namespace Uncut{
         public void Draw(){
 
             device.InputAssembler.SetInputLayout(layout);
-            device.InputAssembler.SetPrimitiveTopology(PrimitiveTopology.TriangleStrip);// Strip benötigt nur vier Punkte.Punkte der diagonale werden nur einmal gebraucht
+            device.InputAssembler.SetPrimitiveTopology(PrimitiveTopology.LineStrip);// Strip benötigt nur vier Punkte.Punkte der diagonale werden nur einmal gebraucht
             device.InputAssembler.SetVertexBuffers(0, binding);
             effect.GetTechniqueByIndex(0).GetPassByIndex(0).Apply();
             device.Draw(4000000, 0);

@@ -65,14 +65,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
     <Compile Include="src\Entities\Cube.cs" />
+    <Compile Include="src\Entities\Hoehenkarte.cs" />
     <Compile Include="src\Entities\IRenderable.cs" />
-    <Compile Include="src\Entities\Entity.cs" />
+    <Compile Include="src\Entities\kos.cs" />
     <Compile Include="src\Entities\SimpleRoot.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -80,7 +76,6 @@
     <Compile Include="src\Foundation\Asset.cs" />
     <Compile Include="src\Foundation\Components\IResource.cs" />
     <Compile Include="src\Foundation\Configuration.cs" />
-    <Compile Include="src\Entities\Roots.cs" />
     <Compile Include="src\Foundation\Utility\TextConsole.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -124,17 +119,12 @@
     <Compile Include="src\Foundation\Utility\Camera.cs" />
     <Compile Include="src\Foundation\Utility\InputController.cs" />
     <Compile Include="src\Foundation\Utility\Soundmanager.cs" />
-    <Compile Include="src\Entities\SimpleModel.cs" />
     <Compile Include="src\TestViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="Resources\mesh\Cylinder.smd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -181,6 +171,18 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\hoehenkarte\berg.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\hoehenkarte\huegel.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\hoehenkarte\huegel1000.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\hoehenkarte\huegel1000alt.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\music\NeverEnding_Story_-_Fantasia_3.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
