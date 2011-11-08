@@ -34,10 +34,12 @@ namespace Uncut
         private SimpleCube cube;
         private SimplePlane plane;
         private SimpleGrass straw;
-        private SimpleRoot root;
         private Skybox m_skybox;
         private Cube testCube;
         private float[,] strawSize;
+        private Bitmap hoehenkarte;
+        private Hoehenkarte bodenPixel;
+        private kos KoordinatenSystem;
 
         private Matrix m_proj;
         private Matrix m_view;
@@ -115,9 +117,11 @@ namespace Uncut
             straw = new SimpleGrass(Context10.Device, Asset.File("DefaultCamera.fx"), null);
             testCube = new Cube(Context10.Device, Asset.File("DefaultCamera.fx"), null);
             m_skybox = new Skybox(Context10.Device, Asset.Dir("skycube").file("Skybox.fx"), null);
+            KoordinatenSystem = new kos(Context10.Device, Asset.File("DefaultCamera.fx"));
+            bodenPixel = new Hoehenkarte(Context10.Device, Asset.File("DefaultCamera.fx"));
             //Geometry Shader Test
             {
-                root = new SimpleRoot(Context10.Device, Asset.Dir("shader").file("GeometryShaderExperiment.fx"), null);
+                //root = new SimpleRoot(Context10.Device, Asset.Dir("shader").file("GeometryShaderExperiment.fx"), null);
             }
         }
 
@@ -170,9 +174,7 @@ namespace Uncut
                         case (Key.Space):
                             m_camera.AddToCamera(0f, FrameDelta, 0f, out m_proj, out m_view);
                             break;
-                        /* This syntax means that each 'C' as well as 'LeftControll' trigger the case. 
-                         * This is intentional. (There seems to be no boolean operators in C# switch-cases)*/
-                        case (Key.LeftControl): 
+                        case (Key.LeftControl): // This syntax means that each 'C' as well as 'LeftControll' trigger the case. This is intentional. (There seems to be no boolean operators in C# switch-cases)
                         case (Key.C):
                             m_camera.AddToCamera(0f, -FrameDelta, 0f, out m_proj, out m_view);
                             break;
@@ -187,8 +189,7 @@ namespace Uncut
                             m_isFormClosed = true;
                             Quit();
                             break;
-                        case(Key.LeftAlt):
-                        case (Key.Return):
+                        case (Key.LeftAlt | Key.Return):
                             OnResourceUnload();
                             isFullScreen = !isFullScreen;
 
@@ -263,58 +264,72 @@ namespace Uncut
 
             SetDepthTest(true);
 
-            world = Matrix.Identity;
-            Matrix.Translation(0.0f, -0.5f, 0.0f, out world);
-            Matrix tempMatrix;
-            Matrix.Scaling(500.0f, 500.0f, 500.0f, out tempMatrix);
-            Matrix.Multiply(ref tempMatrix, ref world, out world);
-            plane.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-            plane.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
-            plane.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
-            plane.Draw();
+            //KOS
+            //world = Matrix.Identity;
+            //KoordinatenSystem.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+            //KoordinatenSystem.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+            //KoordinatenSystem.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+            //KoordinatenSystem.Draw();
 
-            for (int col = -50; col < 0; ++col)
-            {
-                for (int row = -50; row < 0; ++row)
-                {
-                    world = Matrix.Identity;
-                    float randomHight = (float)strawSize.GetValue(col+50, row+50);
-                    Matrix.Scaling(0.01f, 0.01f + randomHight, 0.01f, out tempMatrix);
-                    Matrix.Translation(row * 0.1f, -0.5f, col * 0.1f, out world);
-                    Matrix rotationTemp;
-                    Matrix.RotationY(col + row + randomHight, out rotationTemp);
-                    Matrix.Multiply(ref rotationTemp, ref world, out world);
-                    Matrix.Multiply(ref tempMatrix, ref world, out world);
-                    straw.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-                    straw.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
-                    straw.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
-                    straw.Draw();
-                }
-            }
+            world = Matrix.Identity;
+            bodenPixel.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+            bodenPixel.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+            bodenPixel.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+            bodenPixel.Draw();
+
+            
+
+            //Matrix.Translation(0.0f, -0.5f, 0.0f, out world);
+            //Matrix tempMatrix;
+            //Matrix.Scaling(500.0f, 500.0f, 500.0f, out tempMatrix);
+            //Matrix.Multiply(ref tempMatrix, ref world, out world);
+            //plane.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+            //plane.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+            //plane.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+            //plane.Draw();
+
+            //for (int col = -50; col < 0; ++col)
+            //{
+            //    for (int row = -50; row < 0; ++row)
+            //    {
+            //        world = Matrix.Identity;
+            //        float randomHight = (float)strawSize.GetValue(col+50, row+50);
+            //        Matrix.Scaling(0.01f, 0.01f + randomHight, 0.01f, out tempMatrix);
+            //        Matrix.Translation(row * 0.1f, -0.5f, col * 0.1f, out world);
+            //        Matrix rotationTemp;
+            //        Matrix.RotationY(col + row + randomHight, out rotationTemp);
+            //        Matrix.Multiply(ref rotationTemp, ref world, out world);
+            //        Matrix.Multiply(ref tempMatrix, ref world, out world);
+            //        straw.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+            //        straw.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+            //        straw.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+            //        straw.Draw();
+            //    }
+            //}
 
             // Geometry Shader Test
-            for (int col = 0; col < 50; ++col)
-            {
-                for (int row = 0; row < 50; ++row)
-                {
-                    /*
-                     *  Alle Wurzeln werden mit einer zufälligen Höhe und Ausrichtung erstellt.
-                     */
-                    world = Matrix.Identity;
-                    float randomHight = (float)strawSize.GetValue(col, row) * 0.3f;
-                    Matrix.Scaling(0.01f, 0.01f + randomHight, 0.01f, out tempMatrix);
-                    Matrix.Translation(row * 0.1f, -0.5f, col * 0.1f, out world);
-                    Matrix rotationTemp;
-                    Matrix.RotationY(col + row + randomHight, out rotationTemp);
-                    Matrix.Multiply(ref rotationTemp, ref tempMatrix, out tempMatrix);
-                    Matrix.Multiply(ref tempMatrix, ref world, out world);
+        //    for (int col = 0; col < 50; ++col)
+        //    {
+        //        for (int row = 0; row < 50; ++row)
+        //        {
+        //            /*
+        //             *  Alle Wurzeln werden mit einer zufälligen Höhe und Ausrichtung erstellt.
+        //             */
+        //            world = Matrix.Identity;
+        //            float randomHight = (float)strawSize.GetValue(col, row) * 0.3f;
+        //            Matrix.Scaling(0.01f, 0.01f + randomHight, 0.01f, out tempMatrix);
+        //            Matrix.Translation(row * 0.1f, -0.5f, col * 0.1f, out world);
+        //            Matrix rotationTemp;
+        //            Matrix.RotationY(col + row + randomHight, out rotationTemp);
+        //            Matrix.Multiply(ref rotationTemp, ref tempMatrix, out tempMatrix);
+        //            Matrix.Multiply(ref tempMatrix, ref world, out world);
 
-                    root.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-                    root.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
-                    root.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
-                    root.Draw();
-                }
-            }//*/
+        //            root.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+        //            root.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+        //            root.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+        //            root.Draw();
+        //        }
+        //    }//*/
         }
 
         protected void SetDepthTest(bool isUsingDepthTest)
