@@ -51,7 +51,7 @@ namespace Uncut.Rendering.UI
 
             try
             {
-                Stream stream = assembly.GetManifestResourceStream("Uncut.Ressources.UserInterface10.fx");
+                Stream stream = assembly.GetManifestResourceStream("Uncut.Ressources.shader.UserInterface10.fx");
                 if (stream == null)
                 {
                     string[] resourceNames = this.GetType().Assembly.GetManifestResourceNames();
@@ -64,7 +64,7 @@ namespace Uncut.Rendering.UI
                 String error = e.ToString();
             }
             */
-            using (Stream stream = assembly.GetManifestResourceStream("Uncut.Resources.UserInterface10.fx"))
+            using (Stream stream = assembly.GetManifestResourceStream("Uncut.Resources.shader.UserInterface10.fx"))
             using (StreamReader reader = new StreamReader(stream))
             {
                 effect = D3D.Effect.FromString(device, reader.ReadToEnd(), "fx_4_0");
