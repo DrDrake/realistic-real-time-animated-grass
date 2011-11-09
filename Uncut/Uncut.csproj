@@ -65,14 +65,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\Entities\Cube.cs" />
-    <Compile Include="src\Entities\Hoehenkarte.cs" />
-    <Compile Include="src\Entities\IRenderable.cs" />
-    <Compile Include="src\Entities\kos.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="src\Entities\CoordinateSystem.cs" />
+    <Compile Include="src\Entities\IEntity.cs" />
     <Compile Include="src\Entities\SimpleRoot.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\Entities\Skybox.cs" />
+    <Compile Include="src\Entities\Box.cs" />
     <Compile Include="src\Foundation\Asset.cs" />
     <Compile Include="src\Foundation\Components\IResource.cs" />
     <Compile Include="src\Foundation\Configuration.cs" />
@@ -103,9 +106,10 @@
     <Compile Include="src\Foundation\Rendering\UI\UserInterfaceRenderer.cs" />
     <Compile Include="src\Foundation\Rendering\UI\UserInterfaceRenderer10.cs" />
     <Compile Include="src\Foundation\Rendering\UI\UserInterfaceRenderer9.cs" />
-    <Compile Include="src\Entities\SimpleCube.cs" />
     <Compile Include="src\Entities\SimpleGrass.cs" />
-    <Compile Include="src\Foundation\SlimSceneController.cs" />
+    <Compile Include="src\Foundation\SlimScene.cs" />
+    <Compile Include="src\Foundation\Utility\TextureFormat.cs" />
+    <Compile Include="src\Foundation\Utility\VertexBufferFormat.cs" />
     <Compile Include="src\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Foundation\UI\Binding\Bindable.cs" />
@@ -115,26 +119,40 @@
     <Compile Include="src\Foundation\UI\ElementContainer.cs" />
     <Compile Include="src\Foundation\UI\UserInterface.cs" />
     <Compile Include="src\Foundation\Utility\Clock.cs" />
-    <Compile Include="src\Entities\SimplePlane.cs" />
+    <Compile Include="src\Entities\Plane.cs" />
     <Compile Include="src\Foundation\Utility\Camera.cs" />
     <Compile Include="src\Foundation\Utility\InputController.cs" />
     <Compile Include="src\Foundation\Utility\Soundmanager.cs" />
-    <Compile Include="src\TestViewController.cs" />
+    <Compile Include="src\Entities\SimpleModel.cs" />
+    <Compile Include="src\GrassScene.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Resources\texture\skycube\Sky1.dds">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\texture\skycube\Sky2.dds">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Resources\mesh\Cylinder.smd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\mesh\jupiter.SMD">
+    <None Include="Resources\mesh\Jupiter.smd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\shader\CoordinateSystem.fx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Resources\shader\ModelTextured.fx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <EmbeddedResource Include="Resources\UserInterface10.fx">
+    <EmbeddedResource Include="Resources\shader\UserInterface10.fx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
@@ -166,53 +184,54 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\DefaultCamera.fx">
+    <None Include="Resources\shader\DefaultCamera.fx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\hoehenkarte\berg.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\hoehenkarte\huegel.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\hoehenkarte\huegel1000.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\hoehenkarte\huegel1000alt.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="Resources\music\C_C_Red_Alert_2_music_Hell_March_2.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\music\NeverEnding_Story_-_Fantasia_3.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\Readme Resources.txt" />
     <Content Include="Resources\shader\GeometryShaderExperiment.fx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Resources\skycube\Skybox.fx">
+    <Content Include="Resources\sounds\flagreturn.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\texture\grass4096x4096.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\texture\interstellar4096x3072.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\texture\jupiter1024x512.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\texture\skycube\hinten.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\texture\skycube\links.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\texture\skycube\oben.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\texture\skycube\rechts.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\texture\skycube\unten.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\texture\skycube\vorne.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Resources\shader\Skybox.fx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Content Include="Resources\skycube\hinten.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\skycube\links.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\skycube\oben.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\skycube\rechts.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\skycube\unten.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\skycube\vorne.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\texture\jupiter.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

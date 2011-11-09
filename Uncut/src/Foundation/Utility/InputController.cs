@@ -45,24 +45,7 @@ namespace Uncut.Utility
             // acquire the device
             m_mouse.Acquire();
         }
-
-        ~InputController()
-        {
-            if (m_keyboard != null)
-            {
-                m_keyboard.Unacquire();
-                m_keyboard.Dispose();
-            }
-            m_keyboard = null;
-
-            if (m_mouse != null)
-            {
-                m_mouse.Unacquire();
-                m_mouse.Dispose();
-            }
-            m_mouse = null;
-        }
-
+        
         public KeyboardState ReadKeyboard()
         {
             if (m_keyboard.Acquire().IsFailure)
@@ -93,6 +76,25 @@ namespace Uncut.Utility
                 return null;
 
             return mouseState;
+        }
+
+        public virtual void Dispose()
+        {
+            if (m_keyboard != null)
+            {
+                m_keyboard.Unacquire();
+                m_keyboard.Dispose();
+            }
+            m_keyboard = null;
+
+            if (m_mouse != null)
+            {
+                m_mouse.Unacquire();
+                m_mouse.Dispose();
+            }
+            m_mouse = null;
+
+            m_dinput.Dispose();
         }
 
     }
