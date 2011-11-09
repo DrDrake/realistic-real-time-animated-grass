@@ -8,8 +8,9 @@ using Buffer = SlimDX.Direct3D10.Buffer;
 using Device = SlimDX.Direct3D10.Device;
 using PrimitiveTopology = SlimDX.Direct3D10.PrimitiveTopology;
 
-using Uncut.Entities;
+
 using Uncut.Rendering.Mesh;
+using Uncut.Utility;
 
 namespace Uncut
 {
@@ -22,30 +23,23 @@ namespace Uncut
 
         #region Methods
 
-        public SimpleModel(Device device, string effectName, string meshName, string textureName)
-            : base(device, effectName, textureName)
+        public SimpleModel(string meshName)
         {
             m_meshName = meshName;
         }
 
-        protected override void initPipelineInput()
+        public override InputElement[] InitElementsLayout()
         {
-            LoadMesh(m_meshName);
-
-            //Pipelineinput
-            m_elements = new[] {
-                new InputElement("POSITION", 0, Format.R32G32B32_Float, 0, 0), 
-                new InputElement("NORMAL", 0, Format.R32G32B32_Float, 0, 1), 
-                new InputElement("TEXCOORD", 0, Format.R32G32_Float, 0, 2)
+            return new[] {
+                new InputElement("POSITION", 0, Format.R32G32B32_Float, 0, 0),
+                new InputElement("COLOR", 0, SlimDX.DXGI.Format.R32G32B32A32_Float, 16, 0),
+                new InputElement("TEXCOORD", 0, Format.R32G32_Float, 32, 0)
             };
+        }
 
-            m_binding = new[] {
-                new VertexBufferBinding(m_vertices, 12, 0),
-                new VertexBufferBinding(m_normals, 12, 0), 
-                new VertexBufferBinding(m_texCoords, 8, 0)
-            };
-
-            m_layout = new InputLayout(m_device, m_effect.GetTechniqueByIndex(0).GetPassByIndex(0).Description.Signature, m_elements);
+        public Vector4[] InitVertices()
+        {
+            return null;
         }
 
         private void LoadMesh(string meshName)
@@ -53,50 +47,54 @@ namespace Uncut
             var meshData = Smd.FromFile(meshName);
             using (var data = new DataStream(meshData.Indices.ToArray(), true, false))
             {
-                m_indices = new Buffer(m_device, data, new BufferDescription(meshData.Indices.Count * 4, ResourceUsage.Default, BindFlags.IndexBuffer, CpuAccessFlags.None, ResourceOptionFlags.None));
+                m_indexBuffer = new Buffer(m_device, data, new BufferDescription(meshData.Indices.Count * 4, ResourceUsage.Default, BindFlags.IndexBuffer, CpuAccessFlags.None, ResourceOptionFlags.None));
                 m_indexCount = meshData.Indices.Count;
             }
 
             using (var data = new DataStream(meshData.Positions.ToArray(), true, false))
             {
-                m_vertices = new Buffer(m_device, data, new BufferDescription(meshData.Positions.Count * 4 * 3, ResourceUsage.Default, BindFlags.VertexBuffer, CpuAccessFlags.None, ResourceOptionFlags.None));
+                //m_vertices = new Buffer(m_device, data, new BufferDescription(meshData.Positions.Count * 4 * 3, ResourceUsage.Default, BindFlags.VertexBuffer, CpuAccessFlags.None, ResourceOptionFlags.None));
             }
             using (var data = new DataStream(meshData.Normals.ToArray(), true, false))
             {
-                m_normals = new Buffer(m_device, data, new BufferDescription(meshData.Normals.Count * 4 * 3, ResourceUsage.Default, BindFlags.VertexBuffer, CpuAccessFlags.None, ResourceOptionFlags.None));
+                //m_normals = new Buffer(m_device, data, new BufferDescription(meshData.Normals.Count * 4 * 3, ResourceUsage.Default, BindFlags.VertexBuffer, CpuAccessFlags.None, ResourceOptionFlags.None));
             }
 
             using (var data = new DataStream(meshData.TextureCoordinates.ToArray(), true, false))
             {
-                m_texCoords = new Buffer(m_device, data, new BufferDescription(meshData.TextureCoordinates.Count * 4 * 2, ResourceUsage.Default, BindFlags.VertexBuffer, CpuAccessFlags.None, ResourceOptionFlags.None));
+                //m_texCoords = new Buffer(m_device, data, new BufferDescription(meshData.TextureCoordinates.Count * 4 * 2, ResourceUsage.Default, BindFlags.VertexBuffer, CpuAccessFlags.None, ResourceOptionFlags.None));
             }
         }
 
         public override void Draw()
         {
-            m_effect.GetVariableByName("model_texture").AsResource().SetResource(m_textureView);
+            //Texturing
+            foreach (TextureFormat textureFormat in m_textureFormats)
+            {
+                m_effect.GetVariableByName(textureFormat.ShaderName).AsResource().SetResource(textureFormat.ShaderResource);
+            }
+            //Set Layout
             m_device.InputAssembler.SetInputLayout(m_layout);
-            //Choose Primitive to draw
+            //Draw a List of Triangles, 3 Vertices make up 1 Triangle
             m_device.InputAssembler.SetPrimitiveTopology(PrimitiveTopology.TriangleList);
-            m_device.InputAssembler.SetIndexBuffer(m_indices, Format.R32_UInt, 0);
+            //Set Buffers
+            m_device.InputAssembler.SetIndexBuffer(m_indexBuffer, Format.R32_UInt, 0);
             m_device.InputAssembler.SetVertexBuffers(0, m_binding);
-
+            //Apply Shader
             m_effect.GetTechniqueByIndex(0).GetPassByIndex(0).Apply();
+
+            //Draw Indices
             m_device.DrawIndexed(m_indexCount, 0, 0);
 
+            //Unset Buffers
             m_device.InputAssembler.SetIndexBuffer(null, Format.Unknown, 0);
             m_device.InputAssembler.SetVertexBuffers(0, m_nullBinding);
         }
 
         public override void Dispose()
         {
-            m_indices.Dispose();
-            m_normals.Dispose();
-            m_vertices.Dispose();
-            m_texCoords.Dispose();
-            m_texture.Dispose();
+            m_indexBuffer.Dispose();
             m_effect.Dispose();
-            m_textureView.Dispose();
             m_layout.Dispose();
         }
         #endregion

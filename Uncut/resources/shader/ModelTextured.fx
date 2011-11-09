@@ -9,6 +9,7 @@ Texture2D model_texture;
 //Misc
 float4 csunWS = float4(0, 100, 0, 1);
 float4 camPosWS;
+float cTexScal = 10;
 
 
 
@@ -21,7 +22,7 @@ SamplerState ModelTextureSampler {
 
 //Vertexshader Input from Pipeline
 struct VS_IN {
-	float4 pos				: POSITION;
+	float3 pos				: POSITION;
 	float3 normal			: NORMAL;
 	float2 texCoord			: TEXCOORD;
 };
@@ -41,10 +42,10 @@ PS_IN VS( VS_IN input ) {
 	PS_IN output = (PS_IN)0;
 	
 	float4x4 worldViewProj = mul(mul(world, view), proj);
-	output.pos = mul(input.pos, worldViewProj);
+	output.pos = mul(float4(input.pos, 1.0), worldViewProj);
 
 	//For Lighting
-	output.positionWS = mul(input.pos, world);
+	output.positionWS = mul(float4(input.pos, 1.0), world);
 
 	// Calculate light to object vector
 	output.lightDirWS = output.positionWS - csunWS;
@@ -62,8 +63,8 @@ PS_IN VS( VS_IN input ) {
 float4 PS( PS_IN input ) : SV_Target {
 	float lightAmount = dot(normalize(float4(input.normalWS, 1.0)),normalize(csunWS));
 
-
-	return model_texture.Sample(ModelTextureSampler, input.texCoord);// * lightAmount;
+	float3 tex = model_texture.Sample(ModelTextureSampler, input.texCoord * cTexScal) * lightAmount;
+	return float4(tex, 1.0f);
 }
 
 technique10 RenderSolid {
