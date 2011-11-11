@@ -72,11 +72,7 @@
     </Compile>
     <Compile Include="src\Entities\CoordinateSystem.cs" />
     <Compile Include="src\Entities\IEntity.cs" />
-    <Compile Include="src\Entities\SimpleRoot.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="src\Entities\Skybox.cs" />
-    <Compile Include="src\Foundation\Asset.cs" />
     <Compile Include="src\Foundation\Components\IResource.cs" />
     <Compile Include="src\Foundation\Configuration.cs" />
     <Compile Include="src\Foundation\Utility\TextConsole.cs" />
@@ -123,7 +119,7 @@
     <Compile Include="src\Foundation\Utility\Camera.cs" />
     <Compile Include="src\Foundation\Utility\InputController.cs" />
     <Compile Include="src\Foundation\Utility\Soundmanager.cs" />
-    <Compile Include="src\Entities\SimpleModel.cs" />
+    <Compile Include="src\Entities\Model.cs" />
     <Compile Include="src\GrassScene.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -211,6 +207,8 @@
     <Content Include="Resources\texture\jupiter1024x512.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\texture\LeeRealtimeGrassThesis-alpha1095x71.bmp" />
+    <Content Include="Resources\texture\LeeRealtimeGrassThesis1095x71.bmp" />
     <Content Include="Resources\texture\skycube\hinten.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -7,7 +7,7 @@ float4x4 world;
 Texture2D model_texture;
 
 //Misc
-float4 csunWS = float4(0, 100, 0, 1);
+float4 csunWS = float4(0,500, 0, 1);
 float4 camPosWS;
 float cTexScal = 10;
 
@@ -63,7 +63,7 @@ PS_IN VS( VS_IN input ) {
 float4 PS( PS_IN input ) : SV_Target {
 	float lightAmount = dot(normalize(float4(input.normalWS, 1.0)),normalize(csunWS));
 
-	float3 tex = model_texture.Sample(ModelTextureSampler, input.texCoord * cTexScal) * lightAmount;
+	float3 tex = model_texture.Sample(ModelTextureSampler, input.texCoord * cTexScal);// * lightAmount;
 	return float4(tex, 1.0f);
 }
 

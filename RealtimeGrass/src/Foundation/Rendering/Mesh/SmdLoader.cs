@@ -5,6 +5,8 @@ using System;
 
 using SlimDX;
 
+using RealtimeGrass.Utility;
+
 namespace RealtimeGrass.Rendering.Mesh
 {
     public static class Smd
@@ -43,29 +45,25 @@ namespace RealtimeGrass.Rendering.Mesh
                         var triangle = triangles.Dequeue();
                         var fields = triangle.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-                        result.Positions.Add(
+                        SVertex3P3N2T vertex = new SVertex3P3N2T
+                        (
                             new Vector3(
                                 ReadFloat(fields[1]),
                                 ReadFloat(fields[2]),
                                 ReadFloat(fields[3])
-                            )
-                        );
-
-                        result.Normals.Add(
+                            ),
                             new Vector3(
                                 ReadFloat(fields[4]),
                                 ReadFloat(fields[5]),
                                 ReadFloat(fields[6])
-                            )
-                        );
-
-                        result.TextureCoordinates.Add(
+                            ),
                             new Vector2(
                                 ReadFloat(fields[7]),
                                 ReadFloat(fields[8])
                             )
                         );
 
+                        result.Vertices.Add(vertex);
                         result.Indices.Add(result.Indices.Count);
                     }
 
