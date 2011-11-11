@@ -12,20 +12,9 @@
         /// </summary>
         public Configuration()
         {
-            WindowTitle = "Countless Blades of Grass";
+            WindowTitle = "Realtime Grass";
             WindowWidth = 1000;
             WindowHeight = 800;
-
-            GrasRootsCount = 42; // <- Example
-        }
-
-        /// <summary>
-        /// Just an Example.
-        /// </summary>
-        public int GrasRootsCount
-        {
-            get;
-            set;
         }
 
         /// <summary>

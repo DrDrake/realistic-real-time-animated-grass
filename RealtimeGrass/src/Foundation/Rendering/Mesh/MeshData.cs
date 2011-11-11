@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+
 using SlimDX;
+
+using RealtimeGrass.Utility;
 
 namespace RealtimeGrass.Rendering.Mesh
 {
@@ -8,36 +11,17 @@ namespace RealtimeGrass.Rendering.Mesh
     /// </summary>
     public class MeshData
     {
+        List<int>               m_indices = new List<int>();
+        List<SVertex3P3N2T>     m_vertices = new List<SVertex3P3N2T>();
+
         /// <summary>
         /// Gets position data.
         /// </summary>
-        public List<Vector3> Positions
+        public List<SVertex3P3N2T> Vertices
         {
             get
             {
-                return positions;
-            }
-        }
-
-        /// <summary>
-        /// Gets normal data.
-        /// </summary>
-        public List<Vector3> Normals
-        {
-            get
-            {
-                return normals;
-            }
-        }
-
-        /// <summary>
-        /// Gets texture coordinate data.
-        /// </summary>
-        public List<Vector2> TextureCoordinates
-        {
-            get
-            {
-                return textureCoordinates;
+                return m_vertices;
             }
         }
 
@@ -48,13 +32,8 @@ namespace RealtimeGrass.Rendering.Mesh
         {
             get
             {
-                return indices;
+                return m_indices;
             }
         }
-
-        List<Vector3> positions = new List<Vector3>();
-        List<Vector3> normals = new List<Vector3>();
-        List<Vector2> textureCoordinates = new List<Vector2>();
-        List<int> indices = new List<int>();
     }
 }

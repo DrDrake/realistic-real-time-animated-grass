@@ -53,8 +53,11 @@ namespace RealtimeGrass
         protected int                               m_numberOfElements;
         protected int                               m_bytesPerElement;
 
+        public Vector3                              m_SelfRotation;
+        public Vector3                              m_Rotation;
+        public Vector3                              m_Translation;
 
-        public virtual Effect Effect { get { return m_effect; } }
+        public virtual Effect                       Effect { get { return m_effect; } }
 
 
         public Entity()
@@ -63,6 +66,10 @@ namespace RealtimeGrass
 
         public void Init(Device device, string effectName, List<TextureFormat> textureFormats)
         {
+            m_SelfRotation = new Vector3(0.0f, 0.0f, 0.0f);
+            m_Rotation = new Vector3(0.0f, 0.0f, 0.0f);
+            m_Translation = new Vector3(0.0f, 0.0f, 0.0f);
+
             m_device = device;
             //Shader
             m_effect = Effect.FromFile(device, effectName, "fx_4_0");
@@ -229,8 +236,7 @@ namespace RealtimeGrass
             {
                 foreach (TextureFormat textureFormat in m_textureFormats)
                 {
-                    textureFormat.Texture.Dispose();
-                    textureFormat.ShaderResource.Dispose();
+                    textureFormat.Dispose();
                 }
             }
 

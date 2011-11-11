@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
@@ -37,8 +38,9 @@ namespace RealtimeGrass
         private CoordinateSystem                m_coordSys;
         private Plane                           m_plane;
         private SimpleGrass                     m_straw;
-        private Skybox                             m_skybox;
+        private Skybox                          m_skybox;
         private float[,]                        m_strawSize;
+        private Model                           m_Jupiter;
 
         private Matrix                          m_proj;
         private Matrix                          m_view;
@@ -98,79 +100,100 @@ namespace RealtimeGrass
 
         protected override void OnResourceLoad()
         {
-            Texture2D texture = Texture2D.FromSwapChain<Texture2D>(Context10.SwapChain, 0);
-            m_mainRTView = new RenderTargetView(Context10.Device, texture);
-            
-            //Setting up a float Rendertarget
-            Texture2DDescription texturePostDesc = new Texture2DDescription();
-            texturePostDesc.Format = Format.R16G16B16A16_Float;
-            texturePostDesc.Width = texture.Description.Width;
-            texturePostDesc.Height = texture.Description.Height;
-            texturePostDesc.ArraySize = 1;
-            texturePostDesc.BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource;
-            texturePostDesc.Usage = ResourceUsage.Default;
-            texturePostDesc.MipLevels = 1;
-            texturePostDesc.SampleDescription = new SampleDescription(1, 0);
-            texture.Dispose();
-
-            Texture2D texturePost = new Texture2D(Context10.Device, texturePostDesc);
-            m_postProcessRTView = new RenderTargetView(Context10.Device, texturePost);
-            texturePost.Dispose();            
-
-            CreateDepthBuffer();
-            var dssd = new DepthStencilStateDescription
+            try
             {
-                IsDepthEnabled = true,
-                IsStencilEnabled = false,
-                DepthWriteMask = DepthWriteMask.All,
-                DepthComparison = Comparison.Less
-            };
-            m_depthStencilState = DepthStencilState.FromDescription(Context10.Device, dssd);
+                Texture2D texture = Texture2D.FromSwapChain<Texture2D>(Context10.SwapChain, 0);
+                m_mainRTView = new RenderTargetView(Context10.Device, texture);
             
-            //a symplistic Coordsystem
-            m_coordSys = new CoordinateSystem();
-            m_coordSys.Init(Context10.Device, "Resources/shader/CoordinateSystem.fx", null);
+                //Setting up a float Rendertarget
+                Texture2DDescription texturePostDesc = new Texture2DDescription();
+                texturePostDesc.Format = Format.R16G16B16A16_Float;
+                texturePostDesc.Width = texture.Description.Width;
+                texturePostDesc.Height = texture.Description.Height;
+                texturePostDesc.ArraySize = 1;
+                texturePostDesc.BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource;
+                texturePostDesc.Usage = ResourceUsage.Default;
+                texturePostDesc.MipLevels = 1;
+                texturePostDesc.SampleDescription = new SampleDescription(1, 0);
+                texture.Dispose();
 
-            //the grass plane
-            //Use FromDefaults() for correct init of ImageLoadInformation
-            ImageLoadInformation loadInfo1 = ImageLoadInformation.FromDefaults();
+                Texture2D texturePost = new Texture2D(Context10.Device, texturePostDesc);
+                m_postProcessRTView = new RenderTargetView(Context10.Device, texturePost);
+                texturePost.Dispose();            
 
-            TextureFormat format = new TextureFormat(
-                "Resources/texture/grass4096x4096.jpg",
-                loadInfo1,
-                TextureType.TextureTypeDiffuse
-            );
-            format.ShaderName = "model_texture";
-            //For storing Info about used Textures
-            List<TextureFormat> textureFormats1 = new List<TextureFormat>();
-            textureFormats1.Add(format);
-
-            //ScaleX, ScaleY
-            m_plane = new Plane(100.0f, 100.0f);
-            m_plane.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats1);
-
-            //a single grass straw
-            m_straw = new SimpleGrass(Context10.Device, "Resources/shader/DefaultCamera.fx", null);
+                CreateDepthBuffer();
+                var dssd = new DepthStencilStateDescription
+                {
+                    IsDepthEnabled = true,
+                    IsStencilEnabled = false,
+                    DepthWriteMask = DepthWriteMask.All,
+                    DepthComparison = Comparison.Less
+                };
+                m_depthStencilState = DepthStencilState.FromDescription(Context10.Device, dssd);
             
-            //a fancy skybox
-            ImageLoadInformation loadInfo2 = ImageLoadInformation.FromDefaults();
-            loadInfo2.OptionFlags = ResourceOptionFlags.TextureCube;
+                //a symplistic Coordsystem---------------------------------------------------
+                m_coordSys = new CoordinateSystem();
+                m_coordSys.Init(Context10.Device, "Resources/shader/CoordinateSystem.fx", null);
 
-            format = new TextureFormat(
-                "Resources/texture/skycube/Sky2.dds",
-                loadInfo2,
-                TextureType.TextureTypeCube
-            );
-            format.ShaderName = "model_texture";
-            List<TextureFormat> textureFormats2 = new List<TextureFormat>();
-            textureFormats2.Add(format);
+                //the grass plane------------------------------------------------------------
+                //Use FromDefaults() for correct init of ImageLoadInformation
+                ImageLoadInformation loadInfo1 = ImageLoadInformation.FromDefaults();
+
+                TextureFormat texFormat1 = new TextureFormat(
+                    "Resources/texture/grass4096x4096.jpg",
+                    loadInfo1,
+                    TextureType.TextureTypeDiffuse
+                );
+                texFormat1.ShaderName = "model_texture";
+                //For storing Info about used Textures
+                List<TextureFormat> textureFormats1 = new List<TextureFormat>();
+                textureFormats1.Add(texFormat1);
+
+                //ScaleX, ScaleY
+                m_plane = new Plane(100.0f, 100.0f);
+                m_plane.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats1);
+                //a single grass straw----------------------------------------------------
+                m_straw = new SimpleGrass(Context10.Device, "Resources/shader/DefaultCamera.fx", null);
             
-            m_skybox = new Skybox();
-            m_skybox.Init(Context10.Device, "Resources/shader/Skybox.fx", textureFormats2);
-            format.Dispose();
+                //a fancy skybox--------------------------------------------------------
+                ImageLoadInformation loadInfo2 = ImageLoadInformation.FromDefaults();
+                loadInfo2.OptionFlags = ResourceOptionFlags.TextureCube;
 
-            //Geometry Shader Test
-            //root = new SimpleRoot(Context10.Device, Asset.Dir("shader").file("GeometryShaderExperiment.fx"), null);
+                TextureFormat texFormat2 = new TextureFormat(
+                    "Resources/texture/skycube/Sky2.dds",
+                    loadInfo2,
+                    TextureType.TextureTypeCube
+                );
+                texFormat2.ShaderName = "model_texture";
+                List<TextureFormat> textureFormats2 = new List<TextureFormat>();
+                textureFormats2.Add(texFormat2);
+            
+                m_skybox = new Skybox();
+                m_skybox.Init(Context10.Device, "Resources/shader/Skybox.fx", textureFormats2);
+
+                //Jupiter----------------------------------------------------------
+                ImageLoadInformation loadInfo3 = ImageLoadInformation.FromDefaults();
+
+                TextureFormat texFormat3 = new TextureFormat(
+                    "Resources/texture/jupiter1024x512.jpg",
+                    loadInfo3,
+                    TextureType.TextureTypeDiffuse
+                );
+                texFormat3.ShaderName = "model_texture";
+                List<TextureFormat> textureFormats3 = new List<TextureFormat>();
+                textureFormats3.Add(texFormat3);
+
+                m_Jupiter = new Model("Resources/mesh/Jupiter.smd");
+                m_Jupiter.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats3);
+                //*/
+                //Geometry Shader Test
+                //root = new SimpleRoot(Context10.Device, Asset.Dir("shader").file("GeometryShaderExperiment.fx"), null);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Catched Exception in Class GrassScene in Method OnResourceLoad: " + e.Message);
+                OnResourceUnload();
+            }
         }
         
         protected void processInput()
@@ -353,11 +376,32 @@ namespace RealtimeGrass
                 }
             }*/
             world = Matrix.Identity;
-            Matrix.Translation(0, 0, 10, out world);
+            Matrix.Translation(0, 10, 10, out world);
             m_straw.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
             m_straw.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
             m_straw.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
             m_straw.Draw();
+
+            m_Jupiter.m_Rotation.Y = m_Jupiter.m_Rotation.Y + (FrameDelta * 0.3f) % 360;
+            m_Jupiter.m_SelfRotation.Y = m_Jupiter.m_SelfRotation.Y + (FrameDelta * 0.5f) % 360;
+
+            world = Matrix.Identity;
+            Matrix rotationTemp;
+            
+            Matrix.RotationY(m_Jupiter.m_Rotation.Y, out rotationTemp);
+            Matrix.Multiply(ref rotationTemp, ref world, out world);
+
+            Matrix.Translation(0, 0, 500, out world);
+            Matrix.RotationZ(90, out rotationTemp);
+            Matrix.Multiply(ref rotationTemp, ref world, out world);
+            Matrix rotationTemp2;
+            Matrix.RotationY(m_Jupiter.m_SelfRotation.Y, out rotationTemp2);
+            Matrix.Multiply(ref rotationTemp2, ref world, out world);
+
+            m_Jupiter.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+            m_Jupiter.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+            m_Jupiter.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+            m_Jupiter.Draw();//*/
 
             // Geometry Shader Test
             for (int col = 0; col < 50; ++col)
@@ -371,7 +415,6 @@ namespace RealtimeGrass
                     float randomHight = (float)m_strawSize.GetValue(col, row) * 0.3f;
                     Matrix.Scaling(0.01f, 0.01f + randomHight, 0.01f, out tempMatrix);
                     Matrix.Translation(row * 0.1f, -0.5f, col * 0.1f, out world);
-                    Matrix rotationTemp;
                     Matrix.RotationY(col + row + randomHight, out rotationTemp);
                     Matrix.Multiply(ref rotationTemp, ref tempMatrix, out tempMatrix);
                     Matrix.Multiply(ref tempMatrix, ref world, out world);
@@ -401,8 +444,8 @@ namespace RealtimeGrass
             svQuad[2].tex = D3DXVECTOR2(0.0f, 1.0f);
             svQuad[3].pos = D3DXVECTOR4(1.0f, -1.0f, 0.5f, 1.0f);
             svQuad[3].tex = D3DXVECTOR2(1.0f, 1.0f);//*/
-            world = Matrix.Identity;
 
+            //world = Matrix.Identity;
         }
 
         protected void SetDepthTest(bool isUsingDepthTest)

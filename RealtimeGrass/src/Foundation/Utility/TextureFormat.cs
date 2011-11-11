@@ -46,10 +46,12 @@ namespace RealtimeGrass.Utility
 
         public void LoadFromFile(Device device)
         {
+            //Loading texture from Disc
             if (m_loadInfo != null)
                 m_texture = Texture2D.FromFile(device, m_filePath, m_loadInfo);
             else
                 m_texture = Texture2D.FromFile(device, m_filePath);
+            //Making Texture available for shaders
             //For Cubemaps
             if (m_type == TextureType.TextureTypeCube)
             {
@@ -67,13 +69,14 @@ namespace RealtimeGrass.Utility
             {
                 m_shaderResource = new ShaderResourceView(device, m_texture);
             }
-            m_texture.Dispose();
         }
 
         public void Dispose()
         {
             if (! m_texture.Disposed)
                 m_texture.Dispose();
+            if (!m_shaderResource.Disposed)
+                m_shaderResource.Dispose();
         }
     }
 }
