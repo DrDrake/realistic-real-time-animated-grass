@@ -13,39 +13,26 @@ namespace Uncut.Utility
 {
     class Soundmanager
     {
-        private XAudio2         m_device;
-        private MasteringVoice  m_masteringVoice;
-        private Thread          m_playThread;
-        private bool            m_playing = false;
-        public string           m_fileName;
-
+        private XAudio2                     m_device;
+        private MasteringVoice              m_masteringVoice;
+        private bool                        m_active;
+        
         public Soundmanager()
         {
             m_device = new XAudio2();
             m_masteringVoice = new MasteringVoice(m_device);
-            m_playThread = new Thread(this.playSingleThread);
-        }
-
-        ~Soundmanager()
-        {
-            m_masteringVoice.Dispose();
-            m_device.Dispose();
         }
 
         public void playSingle(string fileName)
         {
-            if (!m_playing)
-            {
-                m_playing = true;
-                m_fileName = fileName;
-                m_playThread.Start();
-            }
+            ThreadPool.QueueUserWorkItem(new WaitCallback(playSingleThread), (object) fileName);            
         }
 
-        private void playSingleThread()
+        private void playSingleThread(object o)
         {
-            //WaveStream stream = new WaveStream(fileName);
-            var s = System.IO.File.OpenRead(m_fileName);
+            m_active = true;
+            string fileName = o as string;
+            var s = System.IO.File.OpenRead(fileName);
             WaveStream stream = new WaveStream(s);
            
             s.Close();
@@ -59,22 +46,29 @@ namespace Uncut.Utility
             sourceVoice.SubmitSourceBuffer(buffer);
             sourceVoice.Start();
 
-            while (sourceVoice.State.BuffersQueued > 0)
+            while (m_active && sourceVoice.State.BuffersQueued > 0)
             {
                 Thread.Sleep(10);
             }
 
             // cleanup the voice
             buffer.Dispose();
+            sourceVoice.ExitLoop();
             sourceVoice.Dispose();
             stream.Dispose();
-            m_playing = false;
+            m_active = false;
         }
 
-        public void playLoop(string filename)
+        public void playLoop(object o)
         {
 
         }
 
+        public virtual void Dispose()
+        {
+            m_active = false;
+            m_masteringVoice.Dispose();
+            m_device.Dispose();
+        }
     }
 }

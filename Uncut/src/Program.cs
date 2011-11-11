@@ -1,5 +1,7 @@
 ﻿using System;
 
+using SlimDX.Direct3D10;
+
 namespace Uncut
 {
     static class Program
@@ -7,9 +9,20 @@ namespace Uncut
         [STAThread]
         static void Main(string[] args)
         {
-            using (SlimSceneController sceneController = new TestViewController()) //SampleTriangleController, SampleJupiterController
+            using (SlimScene scene = new GrassScene())
             {
-                sceneController.Run();
+                try
+                {
+                    scene.Run();
+                }
+                catch (Direct3D10Exception e)
+                {
+                    Console.WriteLine("Catched Exception in main: " + e.Message);
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine("Catched Exception in main: " + e.Message);
+                }
             }
         }
     }

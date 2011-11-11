@@ -144,18 +144,14 @@ namespace Uncut
 
             //Context10.Device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(vertexBuffer, 32, 0)); // Stride: Größe des Elemets (Quads) 2 x 4 x 4byte (2 Vector4 x 4 floats á 4 Byte)
             device.Rasterizer.State = previousState;
+            state.Dispose();
         }
 
         public void Dispose()
         {
-            indices.Dispose();
-            normals.Dispose();
-            vertices.Dispose();
-            texCoords.Dispose();
-            texture.Dispose();
             effect.Dispose();
-            textureView.Dispose();
             layout.Dispose();
+            vertexBuffer.Dispose();
         }
     }
 }
