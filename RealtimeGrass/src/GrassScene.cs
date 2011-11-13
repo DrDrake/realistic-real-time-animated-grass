@@ -346,7 +346,7 @@ namespace RealtimeGrass
             Matrix tempMatrix;
 
             world = Matrix.Identity;
-            Matrix.Translation(0.0f, -0.5f, 0.0f, out world);
+            Matrix.Translation(0.0f, -0.001f, 0.0f, out world);
             Matrix.Scaling(1.0f, 1.0f, 1.0f, out tempMatrix);
             Matrix.Multiply(ref tempMatrix, ref world, out world);
             //+X
@@ -376,27 +376,31 @@ namespace RealtimeGrass
                 }
             }*/
             world = Matrix.Identity;
-            Matrix.Translation(0, 10, 10, out world);
+            Matrix.Translation(0, 0, 100, out world);
             m_straw.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
             m_straw.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
             m_straw.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
             m_straw.Draw();
 
-            m_Jupiter.m_Rotation.Y = m_Jupiter.m_Rotation.Y + (FrameDelta * 0.3f) % 360;
+            m_Jupiter.m_Rotation.Y = m_Jupiter.m_Rotation.Y + (FrameDelta * 0.1f) % 360;
             m_Jupiter.m_SelfRotation.Y = m_Jupiter.m_SelfRotation.Y + (FrameDelta * 0.5f) % 360;
 
             world = Matrix.Identity;
             Matrix rotationTemp;
+            Matrix translationTemp;
             
             Matrix.RotationY(m_Jupiter.m_Rotation.Y, out rotationTemp);
             Matrix.Multiply(ref rotationTemp, ref world, out world);
 
-            Matrix.Translation(0, 0, 500, out world);
-            Matrix.RotationZ(90, out rotationTemp);
+            Matrix.Translation(0, 300, 800, out translationTemp);
+            Matrix.Multiply(ref translationTemp, ref world, out world);
+
+            Matrix.RotationY(m_Jupiter.m_SelfRotation.Y, out rotationTemp);
             Matrix.Multiply(ref rotationTemp, ref world, out world);
-            Matrix rotationTemp2;
-            Matrix.RotationY(m_Jupiter.m_SelfRotation.Y, out rotationTemp2);
-            Matrix.Multiply(ref rotationTemp2, ref world, out world);
+
+            //To compensate blender coord system y==z
+            Matrix.RotationX((float) Math.PI / 2, out rotationTemp);
+            Matrix.Multiply(ref rotationTemp, ref world, out world);
 
             m_Jupiter.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
             m_Jupiter.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);

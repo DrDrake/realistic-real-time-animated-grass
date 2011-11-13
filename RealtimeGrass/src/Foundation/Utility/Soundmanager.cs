@@ -52,11 +52,11 @@ namespace RealtimeGrass.Utility
             }
 
             // cleanup the voice
-            
+            sourceVoice.Stop();
             sourceVoice.ExitLoop();
             sourceVoice.Dispose();
-            buffer.Dispose();
             stream.Dispose();
+            buffer.Dispose();
             m_active = false;
         }
 
