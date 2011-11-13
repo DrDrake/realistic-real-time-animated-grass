@@ -38,6 +38,7 @@ namespace Uncut
         private Plane                           m_plane;
         private SimpleGrass                     m_straw;
         private Box                             m_skybox;
+        private Hoehenkarte                     m_heigthmap;
         private float[,]                        m_strawSize;
 
         private Matrix                          m_proj;
@@ -146,8 +147,10 @@ namespace Uncut
             textureFormats1.Add(format);
 
             //ScaleX, ScaleY
-            m_plane = new Plane(100.0f, 100.0f);
-            m_plane.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats1);
+            //m_plane = new Plane(100.0f, 100.0f);
+            //m_plane.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats1);
+            m_heigthmap = new Hoehenkarte();
+            m_heigthmap.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats1);
 
             //a single grass straw
             m_straw = new SimpleGrass(Context10.Device, "Resources/shader/DefaultCamera.fx", null);
@@ -323,16 +326,20 @@ namespace Uncut
             Matrix tempMatrix;
 
             world = Matrix.Identity;
-            Matrix.Translation(0.0f, -0.5f, 0.0f, out world);
-            Matrix.Scaling(1.0f, 1.0f, 1.0f, out tempMatrix);
-            Matrix.Multiply(ref tempMatrix, ref world, out world);
-            //+X
-            m_plane.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-            m_plane.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
-            m_plane.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
-            m_plane.Draw();//*/
+            //Matrix.Translation(0.0f, -0.5f, 0.0f, out world);
+            //Matrix.Scaling(1.0f, 1.0f, 1.0f, out tempMatrix);
+            //Matrix.Multiply(ref tempMatrix, ref world, out world);
+            ////+X
+            //m_plane.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+            //m_plane.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+            //m_plane.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+            //m_plane.Draw();//*/
 
-            
+
+            m_heigthmap.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+            m_heigthmap.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+            m_heigthmap.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+            m_heigthmap.Draw();
 
             /*for (int col = -50; col < 0; ++col)
             {
