@@ -160,7 +160,7 @@ namespace RealtimeGrass
                 loadInfo2.OptionFlags = ResourceOptionFlags.TextureCube;
 
                 TextureFormat texFormat2 = new TextureFormat(
-                    "Resources/texture/skycube/Sky2.dds",
+                    "Resources/texture/Sky_Violentdays.dds",
                     loadInfo2,
                     TextureType.TextureTypeCube
                 );
