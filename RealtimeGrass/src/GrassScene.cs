@@ -44,6 +44,7 @@ namespace RealtimeGrass
         private float[,]                        m_strawSize;
         private Model                           m_Jupiter;
         private Heightmap                       m_heightmap;
+        private Grass                           m_grass;
 
         private Matrix                          m_proj;
         private Matrix                          m_view;
@@ -204,6 +205,20 @@ namespace RealtimeGrass
                 m_heightmap = new Heightmap("Resources/texture/huegel1000x1000.jpg");
                 m_heightmap.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats4);
 
+                //Grass---------------------------------------------------------------------------------
+                ImageLoadInformation loadInfo5 = ImageLoadInformation.FromDefaults();
+
+                TextureFormat texFormat5 = new TextureFormat(
+                    "Resources/texture/GrassDiffuse.bmp",
+                    loadInfo5,
+                    TextureType.TextureTypeDiffuse,
+                    "grass_texture"
+                );
+                List<TextureFormat> textureFormats5 = new List<TextureFormat>();
+                textureFormats5.Add(texFormat5);
+
+                m_grass = new Grass(m_heightmap.Roots, m_heightmap.NumberOfElements);
+                m_grass.Init(Context10.Device, "Resources/shader/GrassTextured.fx", textureFormats5);
             }
             catch(Exception e)
             {
@@ -370,6 +385,11 @@ namespace RealtimeGrass
             m_heightmap.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
             m_heightmap.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
             m_heightmap.Draw();//*/
+
+            m_grass.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+            m_grass.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+            m_grass.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+            m_grass.Draw();//*/
             
 
             /*for (int col = -50; col < 0; ++col)

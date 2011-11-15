@@ -27,6 +27,4 @@ namespace RealtimeGrass.Utility
         public Vector3 Normal { get { return m_normal; } private set { } }
         public Vector2 TexCoord { get { return m_texCoord; } private set { } }
     }
-
-
 }
