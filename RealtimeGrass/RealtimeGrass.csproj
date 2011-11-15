@@ -71,6 +71,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="src\Entities\CoordinateSystem.cs" />
+    <Compile Include="src\Entities\Heightmap.cs" />
     <Compile Include="src\Entities\IEntity.cs" />
     <Compile Include="src\Entities\Skybox.cs" />
     <Compile Include="src\Foundation\Components\IResource.cs" />
@@ -207,9 +208,16 @@
     <Content Include="Resources\sounds\flagreturn.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\texture\boden2048x2048.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\texture\grass4096x4096.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\texture\huegel1000x1000.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\texture\huegel256x256.jpg" />
     <Content Include="Resources\texture\jupiter1024x512.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

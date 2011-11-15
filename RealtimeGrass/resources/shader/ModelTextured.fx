@@ -9,7 +9,7 @@ Texture2D model_texture;
 //Misc
 float4 csunWS = float4(0,500, 0, 1);
 float4 camPosWS;
-float cTexScal = 10;
+float cTexScal = 1;
 
 
 

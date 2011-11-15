@@ -29,9 +29,9 @@ using SlimDX.DirectInput;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-using RealtimeGrass.Foundation.Components;
+using RealtimeGrass.Components;
 
-namespace RealtimeGrass.Foundation.Utility
+namespace RealtimeGrass.Utility
 {
     /// <summary>
     /// Represents a specific on-screen region where text will be rendered.
