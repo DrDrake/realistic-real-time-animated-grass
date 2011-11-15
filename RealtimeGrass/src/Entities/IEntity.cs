@@ -36,6 +36,7 @@ namespace RealtimeGrass.Entities
         protected List<TextureFormat>               m_textureFormats;
 
         protected Effect                            m_effect;
+        public virtual Effect                       Effect { get { return m_effect; } }
         protected InputLayout                       m_layout;
         protected readonly VertexBufferBinding[]    m_nullBinding = new VertexBufferBinding[3];
         protected VertexBufferBinding[]             m_binding;
@@ -49,15 +50,14 @@ namespace RealtimeGrass.Entities
 
         //One Buffer for positions, normals, texCoords
         protected Buffer                            m_vertexBuffer;
-
         protected int                               m_numberOfElements;
+        public virtual int                          NumberOfElements { get { return m_numberOfElements; } }
+
         protected int                               m_bytesPerElement;
 
         public Vector3                              m_SelfRotation;
         public Vector3                              m_Rotation;
         public Vector3                              m_Translation;
-
-        public virtual Effect                       Effect { get { return m_effect; } }
 
 
         public Entity()

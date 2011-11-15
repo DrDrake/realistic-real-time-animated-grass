@@ -17,7 +17,9 @@ namespace RealtimeGrass.Entities
 {
     class Heightmap : Entity
     {
-        Bitmap m_heightmap;
+        private Bitmap m_heightmap;
+        private Vector3[] m_roots;
+        public Vector3[] Roots { get { return m_roots; } set { m_roots = value; } }
 
         public Heightmap(string heightMapName)
         {
@@ -34,6 +36,7 @@ namespace RealtimeGrass.Entities
             m_numberOfElements = 1000000;
             m_vertexBuffer = InitVertexBuffer();
             SVertex3P3N2T[] vertices = new SVertex3P3N2T[m_numberOfElements];
+            m_roots = new Vector3[m_numberOfElements];
 
             for (int y = 0; y < 1000; y++)
             {
@@ -43,11 +46,16 @@ namespace RealtimeGrass.Entities
                     xf = x * 0.5f;
                     i = m_heightmap.GetPixel(x, y);
 
-                    vertices[(y * 1000) + x] = new SVertex3P3N2T(
-                        new Vector3(start + xf, 0.0f + ((i.GetBrightness() * 30) - 30), start + zf), 
+                    int index = (y * 1000) + x;
+                    Vector3 pos = new Vector3(start + xf, 0.0f + ((i.GetBrightness() * 30) - 30), start + zf);
+
+                    vertices[index] = new SVertex3P3N2T(
+                        pos, 
                         new Vector3(0.0f, 1.0f, 0.0f), 
                         new Vector2(x / 1000.0f, y / 1000.0f)
                     );
+
+                    m_roots[index] = pos;
                 }
             }
 
