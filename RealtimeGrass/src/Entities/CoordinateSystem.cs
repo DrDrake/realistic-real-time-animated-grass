@@ -11,7 +11,7 @@ using MapFlags = SlimDX.Direct3D10.MapFlags;
 
 using RealtimeGrass.Utility;
 
-namespace RealtimeGrass
+namespace RealtimeGrass.Entities
 {
     class CoordinateSystem : Entity
     {

@@ -11,7 +11,8 @@ namespace RealtimeGrass.Utility
         TextureTypeDiffuse,
         TextureTypeAlpha,
         TextureTypeCube,
-        TextureTypeNormal
+        TextureTypeNormal,
+        TextureTypeHeight
     }
 
     public class TextureFormat : IDisposable
@@ -19,19 +20,22 @@ namespace RealtimeGrass.Utility
         private readonly string m_filePath;
         private readonly ImageLoadInformation m_loadInfo;
         private readonly TextureType m_type;
+        private readonly string m_shaderName;
         private Texture2D m_texture;
         private ShaderResourceView m_shaderResource;
-        private string m_shaderName;
+        
 
         public TextureFormat(
             string filePath,
             ImageLoadInformation loadInfo,
-            TextureType type
+            TextureType type,
+            string shaderName
         )
         {
             m_filePath = filePath;
             m_loadInfo = loadInfo;
             m_type = type;
+            m_shaderName = shaderName;
             m_texture = null;
             m_shaderResource = null;
         }
@@ -42,7 +46,7 @@ namespace RealtimeGrass.Utility
 
         public Texture2D Texture { get { return m_texture; } set { m_texture = value; } }
         public ShaderResourceView ShaderResource { get { return m_shaderResource; } set { m_shaderResource = value; } }
-        public string ShaderName { get { return m_shaderName; } set { m_shaderName = value; } }
+        public string ShaderName { get { return m_shaderName; } }
 
         public void LoadFromFile(Device device)
         {
@@ -51,6 +55,7 @@ namespace RealtimeGrass.Utility
                 m_texture = Texture2D.FromFile(device, m_filePath, m_loadInfo);
             else
                 m_texture = Texture2D.FromFile(device, m_filePath);
+
             //Making Texture available for shaders
             //For Cubemaps
             if (m_type == TextureType.TextureTypeCube)

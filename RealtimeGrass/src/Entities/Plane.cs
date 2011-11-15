@@ -13,7 +13,7 @@ using MapFlags = SlimDX.Direct3D10.MapFlags;
 using RealtimeGrass.Rendering.Mesh;
 using RealtimeGrass.Utility;
 
-namespace RealtimeGrass
+namespace RealtimeGrass.Entities
 {
     class Plane : Entity
     {

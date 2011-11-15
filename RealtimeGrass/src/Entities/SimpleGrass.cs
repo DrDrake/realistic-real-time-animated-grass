@@ -13,7 +13,7 @@ using MapFlags = SlimDX.Direct3D10.MapFlags;
 using RealtimeGrass.Rendering.Mesh;
 
 
-namespace RealtimeGrass
+namespace RealtimeGrass.Entities
 {
     class SimpleGrass : IDisposable
     {

@@ -21,7 +21,7 @@
 */
 using System;
 
-namespace RealtimeGrass.Foundation.Components
+namespace RealtimeGrass.Components
 {
     /// <summary>
     /// Defines an interface for graphical resources.
