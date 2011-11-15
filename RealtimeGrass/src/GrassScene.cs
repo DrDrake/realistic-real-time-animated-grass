@@ -164,7 +164,7 @@ namespace RealtimeGrass
                 loadInfo2.OptionFlags = ResourceOptionFlags.TextureCube;
 
                 TextureFormat texFormat2 = new TextureFormat(
-                    "Resources/texture/Sky_Interstellar.dds",
+                    "Resources/texture/Sky_Miramar.dds",
                     loadInfo2,
                     TextureType.TextureTypeCube,
                     "model_texture"
