@@ -78,7 +78,7 @@ float4 PS( PS_IN input ) : SV_Target {
 //--------------------------------------------------------------------------------------
 // GEOMETRY SHADER
 //--------------------------------------------------------------------------------------
-[maxvertexcount(4)]
+[maxvertexcount(4*5)]
 void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 {
     GS_WORKING bl;
@@ -87,7 +87,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	GS_WORKING tr;
 
 	int dimension_x = 2;
-	int dimension_y = 18;
+	int dimension_y = 6;
 
 	float2 texCoord = float2(s[0].pos.x, s[0].pos.y);
 
@@ -100,20 +100,20 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	//--------------------------------------------
 
 	//bottom left
-	bl.pos = float3(s[0].pos.x - dimension_x/2 + random.r, s[0].pos.y - random.g, s[0].pos.z);	
+	bl.pos = float3(s[0].pos.x - dimension_x/2, s[0].pos.y, s[0].pos.z);	
 	bl.texCoord = float2(0, 0);
 	
 	//top left
-	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX, s[0].pos.y+dimension_y, s[0].pos.z + offsetZ);	
-	tl.texCoord = float2(1, 0);
+	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX*0.2, s[0].pos.y+dimension_y -random.g, s[0].pos.z + offsetZ*0.2);	
+	tl.texCoord = float2(0.2, 0);
 
 	//bottom right
-	br.pos = float3(s[0].pos.x + dimension_x/2 + random.r, s[0].pos.y - random.g, s[0].pos.z);	
+	br.pos = float3(s[0].pos.x + dimension_x/2, s[0].pos.y, s[0].pos.z);	
 	br.texCoord = float2(0, 1);
 
 	//top right
-	tr.pos = float3(s[0].pos.x + dimension_x/2 + offsetX, s[0].pos.y + dimension_y, s[0].pos.z + offsetZ);	
-	tr.texCoord = float2(1, 1);
+	tr.pos = float3(s[0].pos.x + dimension_x/2 + offsetX*0.2, s[0].pos.y + dimension_y-random.g, s[0].pos.z + offsetZ*0.2);	
+	tr.texCoord = float2(0.2, 1);
 
 	//Normals bl2tl = bottomleft to topleft (Distance)
 	float3 a = br.pos - bl.pos;
@@ -129,6 +129,143 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	triStream.Append(VSreal(tl));
 	triStream.Append(VSreal(br));
 	triStream.Append(VSreal(tr));
+
+	//create gras // LOD = 1
+	//--------------------------------------------
+
+	//bottom left
+	bl.pos = tl.pos;	
+	bl.texCoord = tl.texCoord;
+	
+	//top left
+	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX*0.4, s[0].pos.y+2*dimension_y-random.g, s[0].pos.z + offsetZ*0.4);	
+	tl.texCoord = float2(0.4, 0);
+
+	//bottom right
+	br.pos = tr.pos;	
+	br.texCoord = tr.texCoord;
+
+	//top right
+	tr.pos = float3(s[0].pos.x + dimension_x/2 + offsetX*0.4, s[0].pos.y + 2*dimension_y-random.g, s[0].pos.z + offsetZ*0.4);	
+	tr.texCoord = float2(0.4, 1);
+
+	//Normals bl2tl = bottomleft to topleft (Distance)
+	a = br.pos - bl.pos;
+	b = tl.pos - bl.pos;
+
+	bl.normal = cross( a, b);
+	tl.normal = cross( a,-b);
+	br.normal = cross(-a, b);
+	tr.normal = cross(-a,-b);
+	
+	//Append
+	triStream.Append(VSreal(bl));
+	triStream.Append(VSreal(tl));
+	triStream.Append(VSreal(br));
+	triStream.Append(VSreal(tr));
+
+	//create gras // LOD = 2
+	//--------------------------------------------
+
+	//bottom left
+	bl.pos = tl.pos;	
+	bl.texCoord = tl.texCoord;
+	
+	//top left
+	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX*0.6, s[0].pos.y+3*dimension_y-random.g, s[0].pos.z + offsetZ*0.6);	
+	tl.texCoord = float2(0.6, 0);
+
+	//bottom right
+	br.pos = tr.pos;	
+	br.texCoord = tr.texCoord;
+
+	//top right
+	tr.pos = float3(s[0].pos.x + dimension_x/2 + offsetX*0.6, s[0].pos.y + 3*dimension_y-random.g, s[0].pos.z + offsetZ*0.6);	
+	tr.texCoord = float2(0.6, 1);
+
+	//Normals bl2tl = bottomleft to topleft (Distance)
+	a = br.pos - bl.pos;
+	b = tl.pos - bl.pos;
+
+	bl.normal = cross( a, b);
+	tl.normal = cross( a,-b);
+	br.normal = cross(-a, b);
+	tr.normal = cross(-a,-b);
+	
+	//Append
+	triStream.Append(VSreal(bl));
+	triStream.Append(VSreal(tl));
+	triStream.Append(VSreal(br));
+	triStream.Append(VSreal(tr));
+
+	//create gras // LOD = 3
+	//--------------------------------------------
+
+	//bottom left
+	bl.pos = tl.pos;	
+	bl.texCoord = tl.texCoord;
+	
+	//top left
+	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX*0.8, s[0].pos.y+4*dimension_y-random.g, s[0].pos.z + offsetZ*0.8);	
+	tl.texCoord = float2(0.8, 0);
+
+	//bottom right
+	br.pos = tr.pos;	
+	br.texCoord = tr.texCoord;
+
+	//top right
+	tr.pos = float3(s[0].pos.x + dimension_x/2 + offsetX*0.8, s[0].pos.y + 4*dimension_y-random.g, s[0].pos.z + offsetZ*0.8);	
+	tr.texCoord = float2(0.8, 1);
+
+	//Normals bl2tl = bottomleft to topleft (Distance)
+	a = br.pos - bl.pos;
+	b = tl.pos - bl.pos;
+
+	bl.normal = cross( a, b);
+	tl.normal = cross( a,-b);
+	br.normal = cross(-a, b);
+	tr.normal = cross(-a,-b);
+	
+	//Append
+	triStream.Append(VSreal(bl));
+	triStream.Append(VSreal(tl));
+	triStream.Append(VSreal(br));
+	triStream.Append(VSreal(tr));
+
+	//create gras // LOD = 4
+	//--------------------------------------------
+
+	//bottom left
+	bl.pos = tl.pos;	
+	bl.texCoord = tl.texCoord;
+	
+	//top left
+	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX*1, s[0].pos.y+5*dimension_y-random.g, s[0].pos.z + offsetZ*1);	
+	tl.texCoord = float2(1, 0);
+
+	//bottom right
+	br.pos = tr.pos;	
+	br.texCoord = tr.texCoord;
+
+	//top right
+	tr.pos = float3(s[0].pos.x + dimension_x/2 + offsetX*1, s[0].pos.y + 5*dimension_y-random.g, s[0].pos.z + offsetZ*1);	
+	tr.texCoord = float2(1, 1);
+
+	//Normals bl2tl = bottomleft to topleft (Distance)
+	a = br.pos - bl.pos;
+	b = tl.pos - bl.pos;
+
+	bl.normal = cross( a, b);
+	tl.normal = cross( a,-b);
+	br.normal = cross(-a, b);
+	tr.normal = cross(-a,-b);
+	
+	//Append
+	triStream.Append(VSreal(bl));
+	triStream.Append(VSreal(tl));
+	triStream.Append(VSreal(br));
+	triStream.Append(VSreal(tr));
+
 }
 
 technique10 Render {
