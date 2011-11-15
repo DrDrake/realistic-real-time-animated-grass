@@ -163,7 +163,7 @@ namespace RealtimeGrass
                 loadInfo2.OptionFlags = ResourceOptionFlags.TextureCube;
 
                 TextureFormat texFormat2 = new TextureFormat(
-                    "Resources/texture/Sky_Violentdays.dds",
+                    "Resources/texture/Sky_Interstellar.dds",
                     loadInfo2,
                     TextureType.TextureTypeCube,
                     "model_texture"
@@ -188,6 +188,7 @@ namespace RealtimeGrass
 
                 m_Jupiter = new Model("Resources/mesh/Jupiter.smd");
                 m_Jupiter.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats3);
+
                 //Heightmap--------------------------------------------------------------
                 ImageLoadInformation loadInfo4 = ImageLoadInformation.FromDefaults();
 
@@ -202,6 +203,7 @@ namespace RealtimeGrass
 
                 m_heightmap = new Heightmap("Resources/texture/huegel1000x1000.jpg");
                 m_heightmap.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats4);
+
             }
             catch(Exception e)
             {
@@ -518,5 +520,7 @@ namespace RealtimeGrass
             m_input.Dispose();
             m_straw.Dispose();
         }
+
+        public Heightmap m_gras { get; set; }
     }
 }
