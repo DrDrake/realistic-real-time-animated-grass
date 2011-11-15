@@ -1,0 +1,15 @@
+syntax: glob
+Uncut/bin/
+Uncut/obj/
+Uncut.sln
+Uncut.suo
+Uncut/Uncut.csproj.user
+
+RealtimeGrass/bin
+RealtimeGrass/obj
+RealtimeGrass/RealtimeGrass.sln
+RealtimeGrass/RealtimeGrass.suo
+RealtimeGrass/RealtimeGrass.csproj.user
+
+Edu - Sandra Kai/*.swf
+
