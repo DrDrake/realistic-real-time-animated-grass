@@ -38,6 +38,10 @@ struct PS_IN {
 	float4 vert2CamWS		: TEXCOORD3;
 };
 
+//------------------------------------------------------------
+//Vertexshader
+//------------------------------------------------------------
+
 PS_IN VS( VS_IN input ) {
 	PS_IN output = (PS_IN)0;
 	
