@@ -209,16 +209,36 @@ namespace RealtimeGrass
                 ImageLoadInformation loadInfo5 = ImageLoadInformation.FromDefaults();
 
                 TextureFormat texFormat5 = new TextureFormat(
-                    "Resources/texture/GrassDiffuse.bmp",
+                    "Resources/texture/GrassDiffuse.jpg",
                     loadInfo5,
                     TextureType.TextureTypeDiffuse,
-                    "grass_texture"
+                    "grass_diffuse"
                 );
+
+                TextureFormat texFormat6 = new TextureFormat(
+                    "Resources/texture/GrassAlpha.jpg",
+                    loadInfo5,
+                    TextureType.TextureTypeDiffuse,
+                    "grass_alpha"
+                );
+
+                TextureFormat texFormat7 = new TextureFormat(
+                    "Resources/texture/noise1024x773.jpg",
+                    loadInfo5,
+                    TextureType.TextureTypeDiffuse,
+                    "grass_noise"
+                );
+
                 List<TextureFormat> textureFormats5 = new List<TextureFormat>();
                 textureFormats5.Add(texFormat5);
+                textureFormats5.Add(texFormat6);
+                textureFormats5.Add(texFormat7);
 
                 m_grass = new Grass(m_heightmap.Roots, m_heightmap.NumberOfElements);
                 m_grass.Init(Context10.Device, "Resources/shader/GrassTextured.fx", textureFormats5);
+                //-----------------------------------------
+                //Sounds
+                m_soundManager.playSingle("Resources/sounds/rustleWindwithBirds.wav");
             }
             catch(Exception e)
             {
@@ -389,6 +409,7 @@ namespace RealtimeGrass
             m_grass.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
             m_grass.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
             m_grass.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+            m_grass.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
             m_grass.Draw();//*/
             
 

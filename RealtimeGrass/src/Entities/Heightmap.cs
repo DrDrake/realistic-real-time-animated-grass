@@ -40,14 +40,20 @@ namespace RealtimeGrass.Entities
 
             for (int y = 0; y < 1000; y++)
             {
-                zf = y * 0.5f;
+                zf = y * 2f;
                 for (int x = 0; x < 1000; x++)
                 {
-                    xf = x * 0.5f;
+                    xf = x * 2f;
                     i = m_heightmap.GetPixel(x, y);
 
+                    float b = i.GetBrightness();
+
                     int index = (y * 1000) + x;
-                    Vector3 pos = new Vector3(start + xf, 0.0f + ((i.GetBrightness() * 30) - 30), start + zf);
+                    Vector3 pos = new Vector3(
+                        start + xf,
+                        b * 255 - 255, 
+                        start + zf
+                    );
 
                     vertices[index] = new SVertex3P3N2T(
                         pos, 

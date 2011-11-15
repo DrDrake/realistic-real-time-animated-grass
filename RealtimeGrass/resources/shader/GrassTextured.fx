@@ -4,17 +4,19 @@ float4x4 proj;
 float4x4 world;
 
 //Old Sampler2
-Texture2D grass_texture;
+Texture2D grass_diffuse;
 Texture2D grass_alpha;
+Texture2D grass_noise;
 
 //Misc
 float cTexScal = 1;
+float time;
 
 //Texture Filtering
 SamplerState ModelTextureSampler {
     Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = Wrap;
-    AddressV = Wrap;
+    AddressU = Mirror;
+    AddressV = Mirror;
 };
 
 //Vertexshader Input from Pipeline
@@ -66,8 +68,11 @@ PS_IN VSreal( GS_WORKING input ) {
 
 float4 PS( PS_IN input ) : SV_Target {
 
-	float3 tex = grass_texture.Sample(ModelTextureSampler, input.texCoord).xyz;
-	return float4(tex, 1.0f);
+	float alphar = grass_alpha.Sample(ModelTextureSampler, input.texCoord).r;
+
+	float3 tex = grass_diffuse.Sample(ModelTextureSampler, input.texCoord).rgb;
+
+	return float4(tex, alphar);
 }
 
 //--------------------------------------------------------------------------------------
@@ -82,26 +87,33 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	GS_WORKING tr;
 
 	int dimension_x = 2;
-	int dimension_y = 3;
+	int dimension_y = 18;
+
+	float2 texCoord = float2(s[0].pos.x, s[0].pos.y);
+
+	float4 random = (grass_noise.SampleLevel(ModelTextureSampler, texCoord, 0) - 0.5) * 2 * 5;
+
+	float offsetX = sin(time) * random.r;
+	float offsetZ = sin(time) * random.g;
 
 	//create gras // LOD = 0
 	//--------------------------------------------
 
 	//bottom left
-	bl.pos = float3(s[0].pos.x, s[0].pos.y, s[0].pos.z);	
-	bl.texCoord = float2(0,1);
+	bl.pos = float3(s[0].pos.x - dimension_x/2 + random.r, s[0].pos.y - random.g, s[0].pos.z);	
+	bl.texCoord = float2(0, 0);
 	
 	//top left
-	tl.pos = float3(s[0].pos.x, s[0].pos.y+dimension_y, s[0].pos.z);	
-	tl.texCoord = float2(0,0);
+	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX, s[0].pos.y+dimension_y, s[0].pos.z + offsetZ);	
+	tl.texCoord = float2(1, 0);
 
 	//bottom right
-	br.pos = float3(s[0].pos.x + dimension_x, s[0].pos.y, s[0].pos.z);	
-	br.texCoord = float2(1,1);
+	br.pos = float3(s[0].pos.x + dimension_x/2 + random.r, s[0].pos.y - random.g, s[0].pos.z);	
+	br.texCoord = float2(0, 1);
 
 	//top right
-	tr.pos = float3(s[0].pos.x + dimension_x, s[0].pos.y + dimension_y, s[0].pos.z);	
-	tr.texCoord = float2(1,0);
+	tr.pos = float3(s[0].pos.x + dimension_x/2 + offsetX, s[0].pos.y + dimension_y, s[0].pos.z + offsetZ);	
+	tr.texCoord = float2(1, 1);
 
 	//Normals bl2tl = bottomleft to topleft (Distance)
 	float3 a = br.pos - bl.pos;
