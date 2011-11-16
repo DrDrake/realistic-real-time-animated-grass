@@ -11,7 +11,6 @@ Texture2D grass_noise;
 //Misc
 float cTexScal = 1;
 float time;
-int kernelSize = 13;
 
 //Texture Filtering
 SamplerState ModelTextureSampler {
@@ -81,19 +80,25 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 
 	float2 texCoord = float2(s[0].pos.x, s[0].pos.y);
 
-	float4 random = (grass_noise.SampleLevel(ModelTextureSampler, texCoord, 0) - 0.5) * 2 * 5;
+	float4 random = (grass_noise.SampleLevel(ModelTextureSampler, texCoord, 0));
+	random.r=random.r-0.5;
+	if (random.r < 0) {
+	random.r = random.r*(-1);
+	}
+
 
 	// Motion added with x^2 influence (between 0-1)
 	float windpower = 15;
 
-    float offsetX = windpower/20*sin(time);
+	float turn = (random-0.5);
+    float offsetX = windpower/20*sin(time+random.r);
 
-	float offsetY = -windpower/2*sin(time);
+	float offsetY = -windpower/2*sin(time+random.r);
 	if (offsetY > 0) {
 	offsetY = offsetY*(-1);
 	}
 
-	float offsetZ = windpower*sin(time);
+	float offsetZ = windpower*sin(time+random.r);
 
 	if (LOD == 0) {
 	//create gras // LOD = 0
@@ -108,11 +113,11 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	tl.texCoord = float2(1, 0);
 
 	//bottom right
-	br.pos = float3(s[0].pos.x + dimension_x/2, s[0].pos.y, s[0].pos.z);	
+	br.pos = float3(s[0].pos.x + dimension_x/2+turn, s[0].pos.y, s[0].pos.z+turn);	
 	br.texCoord = float2(0, 1);
 
 	//top right
-	tr.pos = float3(s[0].pos.x + dimension_x/2 + offsetX, s[0].pos.y + dimension_y-random.g+ offsetY, s[0].pos.z + offsetZ);	
+	tr.pos = float3(s[0].pos.x + dimension_x/2+turn + offsetX, s[0].pos.y + dimension_y-random.g+ offsetY, s[0].pos.z + offsetZ+turn);	
 	tr.texCoord = float2(1, 1);
 
 	//Normals bl2tl = bottomleft to topleft (Distance)
@@ -147,11 +152,11 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	tl.texCoord = float2(0.33, 0);
 
 	//bottom right
-	br.pos = float3(s[0].pos.x + dimension_x/2, s[0].pos.y, s[0].pos.z);	
+	br.pos = float3(s[0].pos.x + dimension_x/2+turn, s[0].pos.y, s[0].pos.z+turn);	
 	br.texCoord = float2(0, 1);
 
 	//top right
-	tr.pos = float3(s[0].pos.x + dimension_x/2 + offsetX*0.11, s[0].pos.y + dimension_y-random.g+ offsetY*0.11, s[0].pos.z + offsetZ*0.11);	
+	tr.pos = float3(s[0].pos.x + dimension_x/2+turn + offsetX*0.11, s[0].pos.y + dimension_y-random.g+ offsetY*0.11, s[0].pos.z + offsetZ*0.11+turn);	
 	tr.texCoord = float2(0.33, 1);
 
 	//Normals bl2tl = bottomleft to topleft (Distance)
@@ -185,7 +190,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	br.texCoord = tr.texCoord;
 
 	//top right
-	tr.pos = float3(s[0].pos.x + dimension_x/2 + offsetX*0.44, s[0].pos.y + 2*dimension_y-random.g+ offsetY*0.44, s[0].pos.z + offsetZ*0.44);	
+	tr.pos = float3(s[0].pos.x + dimension_x/2+turn + offsetX*0.44, s[0].pos.y + 2*dimension_y-random.g+ offsetY*0.44, s[0].pos.z + offsetZ*0.44+turn);	
 	tr.texCoord = float2(0.66, 1);
 
 	//Normals bl2tl = bottomleft to topleft (Distance)
@@ -219,7 +224,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	br.texCoord = tr.texCoord;
 
 	//top right
-	tr.pos = float3(s[0].pos.x + dimension_x/2 + offsetX*1, s[0].pos.y + 3*dimension_y-random.g+ offsetY*1, s[0].pos.z + offsetZ*1);	
+	tr.pos = float3(s[0].pos.x + dimension_x/2 +turn+ offsetX*1, s[0].pos.y + 3*dimension_y-random.g+ offsetY*1, s[0].pos.z + offsetZ*1+turn);	
 	tr.texCoord = float2(1, 1);
 
 	//Normals bl2tl = bottomleft to topleft (Distance)
@@ -253,11 +258,11 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	tl.texCoord = float2(0.2, 0);
 
 	//bottom right
-	br.pos = float3(s[0].pos.x + dimension_x/2, s[0].pos.y, s[0].pos.z);	
+	br.pos = float3(s[0].pos.x + dimension_x/2, s[0].pos.y, s[0].pos.z+turn);	
 	br.texCoord = float2(0, 1);
 
 	//top right
-	tr.pos = float3(s[0].pos.x + dimension_x/2 + offsetX*0.04, s[0].pos.y + dimension_y-random.g+ offsetY*0.04, s[0].pos.z + offsetZ*0.04);	
+	tr.pos = float3(s[0].pos.x + dimension_x/2 + offsetX*0.04, s[0].pos.y + dimension_y-random.g+ offsetY*0.04, s[0].pos.z + offsetZ*0.04+turn);	
 	tr.texCoord = float2(0.2, 1);
 
 	//Normals bl2tl = bottomleft to topleft (Distance)
@@ -291,7 +296,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	br.texCoord = tr.texCoord;
 
 	//top right
-	tr.pos = float3(s[0].pos.x + dimension_x/2 + offsetX*0.16, s[0].pos.y + 2*dimension_y-random.g+ offsetY*0.16, s[0].pos.z + offsetZ*0.16);	
+	tr.pos = float3(s[0].pos.x + dimension_x/2+turn + offsetX*0.16, s[0].pos.y + 2*dimension_y-random.g+ offsetY*0.16, s[0].pos.z + offsetZ*0.16+turn);	
 	tr.texCoord = float2(0.4, 1);
 
 	//Normals bl2tl = bottomleft to topleft (Distance)
@@ -325,7 +330,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	br.texCoord = tr.texCoord;
 
 	//top right
-	tr.pos = float3(s[0].pos.x + dimension_x/2 + offsetX*0.36, s[0].pos.y + 3*dimension_y-random.g+ offsetY*0.36, s[0].pos.z + offsetZ*0.36);	
+	tr.pos = float3(s[0].pos.x + dimension_x/2 +turn+ offsetX*0.36, s[0].pos.y + 3*dimension_y-random.g+ offsetY*0.36, s[0].pos.z + offsetZ*0.36+turn);	
 	tr.texCoord = float2(0.6, 1);
 
 	//Normals bl2tl = bottomleft to topleft (Distance)
@@ -359,7 +364,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	br.texCoord = tr.texCoord;
 
 	//top right
-	tr.pos = float3(s[0].pos.x + dimension_x/2 + offsetX*0.64, s[0].pos.y + 4*dimension_y-random.g+ offsetY*0.64, s[0].pos.z + offsetZ*0.64);	
+	tr.pos = float3(s[0].pos.x + dimension_x/2+turn + offsetX*0.64, s[0].pos.y + 4*dimension_y-random.g+ offsetY*0.64, s[0].pos.z + offsetZ*0.64+turn);	
 	tr.texCoord = float2(0.8, 1);
 
 	//Normals bl2tl = bottomleft to topleft (Distance)
@@ -393,7 +398,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	br.texCoord = tr.texCoord;
 
 	//top right
-	tr.pos = float3(s[0].pos.x + dimension_x/2 + offsetX*1, s[0].pos.y + 5*dimension_y-random.g+ offsetY*1, s[0].pos.z + offsetZ*1);	
+	tr.pos = float3(s[0].pos.x + dimension_x/2+turn + offsetX*1, s[0].pos.y + 5*dimension_y-random.g+ offsetY*1, s[0].pos.z + offsetZ*1+turn);	
 	tr.texCoord = float2(1, 1);
 
 	//Normals bl2tl = bottomleft to topleft (Distance)
@@ -425,10 +430,8 @@ float4 PS( PS_IN input ) : SV_Target {
 	float alphar = grass_alpha.Sample(ModelTextureSampler, input.texCoord).r;
 
 	float3 tex = grass_diffuse.Sample(ModelTextureSampler, input.texCoord).rgb;
-
 	return float4(tex, alphar);
 }
-
 
 //--------------------------------------------------------------------------------------
 // TECHNIQUE
