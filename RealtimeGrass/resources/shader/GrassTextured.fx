@@ -1,3 +1,7 @@
+//--------------------------------------------------------------------------------------
+// GLOBAL VARS 
+//--------------------------------------------------------------------------------------
+
 //don't forget to set the Matrizes
 float4x4 view;
 float4x4 proj;
@@ -13,12 +17,20 @@ Texture2D grass_noise;
 float cTexScal = 1;
 float time;
 
+//--------------------------------------------------------------------------------------
+// FUNCTIONS
+//--------------------------------------------------------------------------------------
+
 //Texture Filtering
 SamplerState ModelTextureSampler {
     Filter = MIN_MAG_MIP_LINEAR;
     AddressU = Mirror;
     AddressV = Mirror;
 };
+
+//--------------------------------------------------------------------------------------
+// STRCUCTS
+//--------------------------------------------------------------------------------------
 
 //Vertexshader Input from Pipeline
 struct VS_IN {
@@ -35,7 +47,7 @@ struct GS_WORKING {
 
 //Vertexshader Output & Pixelshader Input
 struct PS_IN {
-	float4 pos				: SV_POSITION;
+	float4 pos				: SV_POSITION;		
 	float3 normalWS			: NORMAL;
 	float2 texCoord			: TEXCOORD;
 	float random			: RANDOM;
@@ -44,6 +56,7 @@ struct PS_IN {
 //--------------------------------------------------------------------------------------
 // VERTEX SHADER 
 //--------------------------------------------------------------------------------------
+
 VS_IN VS(VS_IN input) {
 	return input;
 }
@@ -57,9 +70,7 @@ PS_IN VSreal( GS_WORKING input ) {
 	
 	float4x4 worldViewProj = mul(mul(world, view), proj);
 	output.pos = mul(float4(input.pos, 1.0), worldViewProj);
-
 	output.normalWS = mul(float4(input.normal, 1.0), world).xyz;
-
 	output.texCoord = input.texCoord;
 	output.random = input.random;	
 	return output;
@@ -140,8 +151,8 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	
 	//Append
 	triStream.Append(VSreal(bl));
-	triStream.Append(VSreal(tl));
 	triStream.Append(VSreal(br));
+	triStream.Append(VSreal(tl));
 	triStream.Append(VSreal(tr));
 
 	} else {
@@ -179,8 +190,8 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	
 	//Append
 	triStream.Append(VSreal(bl));
-	triStream.Append(VSreal(tl));
 	triStream.Append(VSreal(br));
+	triStream.Append(VSreal(tl));
 	triStream.Append(VSreal(tr));
 
 	//create gras // LOD = 1 Seg = 1
@@ -199,22 +210,18 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	br.texCoord = tr.texCoord;
 
 	//top right
-	tr.pos = float3(s[0].pos.x + dimension_x/2+turn + offsetX*0.44, s[0].pos.y + 2*dimension_y-random.g+ offsetY*0.44, s[0].pos.z + offsetZ*0.44+turn);	
+	tr.pos = float3(s[0].pos.x + dimension_x/2+turn + offsetX*0.44, s[0].pos.y +2*dimension_y-random.g+ offsetY*0.44, s[0].pos.z + offsetZ*0.44+turn);	
 	tr.texCoord = float2(0.66, 1);
 
 	//Normals bl2tl = bottomleft to topleft (Distance)
 	a = br.pos - bl.pos;
 	b = tl.pos - bl.pos;
 
-	bl.normal = cross( a, b);
 	tl.normal = cross( a,-b);
-	br.normal = cross(-a, b);
 	tr.normal = cross(-a,-b);
 	
 	//Append
-	triStream.Append(VSreal(bl));
 	triStream.Append(VSreal(tl));
-	triStream.Append(VSreal(br));
 	triStream.Append(VSreal(tr));
 
 	//create gras // LOD = 1 Seg = 2
@@ -240,15 +247,12 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	a = br.pos - bl.pos;
 	b = tl.pos - bl.pos;
 
-	bl.normal = cross( a, b);
+
 	tl.normal = cross( a,-b);
-	br.normal = cross(-a, b);
 	tr.normal = cross(-a,-b);
 	
 	//Append
-	triStream.Append(VSreal(bl));
 	triStream.Append(VSreal(tl));
-	triStream.Append(VSreal(br));
 	triStream.Append(VSreal(tr));
 
 	} else {
@@ -285,8 +289,8 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	
 	//Append
 	triStream.Append(VSreal(bl));
-	triStream.Append(VSreal(tl));
 	triStream.Append(VSreal(br));
+	triStream.Append(VSreal(tl));
 	triStream.Append(VSreal(tr));
 
 	//create gras // LOD = 2 Seg = 1
@@ -312,15 +316,11 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	a = br.pos - bl.pos;
 	b = tl.pos - bl.pos;
 
-	bl.normal = cross( a, b);
 	tl.normal = cross( a,-b);
-	br.normal = cross(-a, b);
 	tr.normal = cross(-a,-b);
 	
 	//Append
-	triStream.Append(VSreal(bl));
 	triStream.Append(VSreal(tl));
-	triStream.Append(VSreal(br));
 	triStream.Append(VSreal(tr));
 
 	//create gras // LOD = 2 Seg = 2
@@ -346,15 +346,12 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	a = br.pos - bl.pos;
 	b = tl.pos - bl.pos;
 
-	bl.normal = cross( a, b);
+
 	tl.normal = cross( a,-b);
-	br.normal = cross(-a, b);
 	tr.normal = cross(-a,-b);
 	
 	//Append
-	triStream.Append(VSreal(bl));
 	triStream.Append(VSreal(tl));
-	triStream.Append(VSreal(br));
 	triStream.Append(VSreal(tr));
 
 	//create gras // LOD = 2 Seg = 3
@@ -380,15 +377,11 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	a = br.pos - bl.pos;
 	b = tl.pos - bl.pos;
 
-	bl.normal = cross( a, b);
 	tl.normal = cross( a,-b);
-	br.normal = cross(-a, b);
 	tr.normal = cross(-a,-b);
 	
 	//Append
-	triStream.Append(VSreal(bl));
 	triStream.Append(VSreal(tl));
-	triStream.Append(VSreal(br));
 	triStream.Append(VSreal(tr));
 
 	//create gras // LOD = 2 Seg = 4
@@ -414,19 +407,14 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	a = br.pos - bl.pos;
 	b = tl.pos - bl.pos;
 
-	bl.normal = cross( a, b);
 	tl.normal = cross( a,-b);
-	br.normal = cross(-a, b);
 	tr.normal = cross(-a,-b);
 	
 	//Append
-	triStream.Append(VSreal(bl));
 	triStream.Append(VSreal(tl));
-	triStream.Append(VSreal(br));
 	triStream.Append(VSreal(tr));
 	}
 	}
-
 
 }
 
@@ -434,11 +422,12 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 // PIXEL SHADER
 //--------------------------------------------------------------------------------------
 
-float4 PS( PS_IN input ) : SV_Target {
-
+float4 PS( PS_IN input ) : SV_Target { 
+	
 	float alphar = grass_alpha.Sample(ModelTextureSampler, input.texCoord).r;
 
 	float3 tex = grass_diffuse01.Sample(ModelTextureSampler, input.texCoord).rgb*input.random+grass_diffuse02.Sample(ModelTextureSampler, input.texCoord).rgb*(1-input.random);
+	
 	return float4(tex, alphar);
 }
 

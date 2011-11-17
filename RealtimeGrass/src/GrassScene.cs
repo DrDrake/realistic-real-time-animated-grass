@@ -246,7 +246,7 @@ namespace RealtimeGrass
                 m_grass.Init(Context10.Device, "Resources/shader/GrassTextured.fx", textureFormats5);
                 //-----------------------------------------
                 //Sounds
-                m_soundManager.playSingle("Resources/sounds/rustleWindwithBirds.wav");
+               // m_soundManager.playSingle("Resources/sounds/rustleWindwithBirds.wav");
             }
             catch(Exception e)
             {
