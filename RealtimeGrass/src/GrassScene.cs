@@ -235,12 +235,20 @@ namespace RealtimeGrass
                     TextureType.TextureTypeDiffuse,
                     "grass_noise"
                 );
+                ImageLoadInformation loadInfo9 = ImageLoadInformation.FromDefaults();
+                TextureFormat texFormat9 = new TextureFormat(
+                    "Resources/texture/phasenverschiebung.jpg",
+                    loadInfo9,
+                    TextureType.TextureTypeDiffuse,
+                    "grass_shift"
+                );
 
                 List<TextureFormat> textureFormats5 = new List<TextureFormat>();
                 textureFormats5.Add(texFormat5);
                 textureFormats5.Add(texFormat6);
                 textureFormats5.Add(texFormat7);
                 textureFormats5.Add(texFormat8);
+                textureFormats5.Add(texFormat9);
 
                 m_grass = new Grass(m_heightmap.Roots, m_heightmap.NumberOfElements);
                 m_grass.Init(Context10.Device, "Resources/shader/GrassTextured.fx", textureFormats5);

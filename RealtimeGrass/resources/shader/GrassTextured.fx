@@ -12,6 +12,7 @@ Texture2D grass_diffuse01;
 Texture2D grass_diffuse02;
 Texture2D grass_alpha;
 Texture2D grass_noise;
+Texture2D grass_shift;
 
 //Misc
 float cTexScal = 1;
@@ -89,9 +90,6 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	GS_WORKING br;
 	GS_WORKING tr;
 
-	int dimension_x = 2;
-	int dimension_y = 30;
-
 	float2 texCoord = float2(s[0].pos.x, s[0].pos.y);
 
 	float4 random = (grass_noise.SampleLevel(ModelTextureSampler, texCoord, 0));
@@ -99,25 +97,29 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	if (random.r < 0) {
 	random.r = random.r*(-1);
 	}
+	random.r=random.r*2;
 
 	bl.random = random.b;
 	tl.random = random.b;
 	br.random = random.b;
 	tr.random = random.b;
 
+	float dimension_x = 2;
+	float dimension_y = 20+20*(1-(0.5*random.g));
 
+	texCoord = float2((s[0].pos.x%100)/100, (s[0].pos.y%100)/100);
+	float4 shift = (grass_shift.SampleLevel(ModelTextureSampler, texCoord, 0));
 	// Motion added with x^2 influence (between 0-1)
-	float windpower = 15;
-
+	float windpower = 10*(((sin((time+random.r)+shift.rgb*3)+1)/2)+1);
 	float turn = (random.b-0.5);
-    float offsetX = windpower/20*sin(time+random.r);
+    float offsetX = windpower/20*sin((time+random.r)+shift.rgb*3);
 
-	float offsetY = -windpower/2*sin(time+random.r);
+	float offsetY = -windpower/2*sin((time+random.r)+shift.rgb*3);
 	if (offsetY > 0) {
 	offsetY = offsetY*(-1);
 	}
 
-	float offsetZ = windpower*sin(time+random.r);
+	float offsetZ = windpower*sin((time+random.r)+shift.rgb*3);
 
 	if (LOD == 0) {
 
@@ -129,7 +131,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	bl.texCoord = float2(0, 0);
 	
 	//top left
-	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX, s[0].pos.y+dimension_y -random.g+ offsetY, s[0].pos.z + offsetZ);	
+	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX, s[0].pos.y+dimension_y+ offsetY, s[0].pos.z + offsetZ);	
 	tl.texCoord = float2(1, 0);
 
 	//bottom right
@@ -137,7 +139,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	br.texCoord = float2(0, 1);
 
 	//top right
-	tr.pos = float3(s[0].pos.x + dimension_x/2+turn + offsetX, s[0].pos.y + dimension_y-random.g+ offsetY, s[0].pos.z + offsetZ+turn);	
+	tr.pos = float3(s[0].pos.x + dimension_x/2+turn + offsetX, s[0].pos.y + dimension_y+ offsetY, s[0].pos.z + offsetZ+turn);	
 	tr.texCoord = float2(1, 1);
 
 	//Normals bl2tl = bottomleft to topleft (Distance)
@@ -168,7 +170,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	bl.texCoord = float2(0, 0);
 	
 	//top left
-	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX*0.11, s[0].pos.y+dimension_y -random.g+ offsetY*0.11, s[0].pos.z + offsetZ*0.11);	
+	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX*0.11, s[0].pos.y+dimension_y+ offsetY*0.11, s[0].pos.z + offsetZ*0.11);	
 	tl.texCoord = float2(0.33, 0);
 
 	//bottom right
@@ -176,7 +178,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	br.texCoord = float2(0, 1);
 
 	//top right
-	tr.pos = float3(s[0].pos.x + dimension_x/2+turn + offsetX*0.11, s[0].pos.y + dimension_y-random.g+ offsetY*0.11, s[0].pos.z + offsetZ*0.11+turn);	
+	tr.pos = float3(s[0].pos.x + dimension_x/2+turn + offsetX*0.11, s[0].pos.y + dimension_y+ offsetY*0.11, s[0].pos.z + offsetZ*0.11+turn);	
 	tr.texCoord = float2(0.33, 1);
 
 	//Normals bl2tl = bottomleft to topleft (Distance)
@@ -202,7 +204,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	bl.texCoord = tl.texCoord;
 	
 	//top left
-	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX*0.44, s[0].pos.y+2*dimension_y-random.g+ offsetY*0.44, s[0].pos.z + offsetZ*0.44);	
+	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX*0.44, s[0].pos.y+2*dimension_y+ offsetY*0.44, s[0].pos.z + offsetZ*0.44);	
 	tl.texCoord = float2(0.66, 0);
 
 	//bottom right
@@ -210,7 +212,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	br.texCoord = tr.texCoord;
 
 	//top right
-	tr.pos = float3(s[0].pos.x + dimension_x/2+turn + offsetX*0.44, s[0].pos.y +2*dimension_y-random.g+ offsetY*0.44, s[0].pos.z + offsetZ*0.44+turn);	
+	tr.pos = float3(s[0].pos.x + dimension_x/2+turn + offsetX*0.44, s[0].pos.y +2*dimension_y+ offsetY*0.44, s[0].pos.z + offsetZ*0.44+turn);	
 	tr.texCoord = float2(0.66, 1);
 
 	//Normals bl2tl = bottomleft to topleft (Distance)
@@ -232,7 +234,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	bl.texCoord = tl.texCoord;
 	
 	//top left
-	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX*1, s[0].pos.y+3*dimension_y-random.g+ offsetY*1, s[0].pos.z + offsetZ*1);	
+	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX*1, s[0].pos.y+3*dimension_y+ offsetY*1, s[0].pos.z + offsetZ*1);	
 	tl.texCoord = float2(1, 0);
 
 	//bottom right
@@ -240,7 +242,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	br.texCoord = tr.texCoord;
 
 	//top right
-	tr.pos = float3(s[0].pos.x + dimension_x/2 +turn+ offsetX*1, s[0].pos.y + 3*dimension_y-random.g+ offsetY*1, s[0].pos.z + offsetZ*1+turn);	
+	tr.pos = float3(s[0].pos.x + dimension_x/2 +turn+ offsetX*1, s[0].pos.y + 3*dimension_y+ offsetY*1, s[0].pos.z + offsetZ*1+turn);	
 	tr.texCoord = float2(1, 1);
 
 	//Normals bl2tl = bottomleft to topleft (Distance)
@@ -267,7 +269,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	bl.texCoord = float2(0, 0);
 	
 	//top left
-	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX*0.04, s[0].pos.y+dimension_y -random.g+ offsetY*0.04, s[0].pos.z + offsetZ*0.04);	
+	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX*0.04, s[0].pos.y+dimension_y+ offsetY*0.04, s[0].pos.z + offsetZ*0.04);	
 	tl.texCoord = float2(0.2, 0);
 
 	//bottom right
@@ -275,7 +277,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	br.texCoord = float2(0, 1);
 
 	//top right
-	tr.pos = float3(s[0].pos.x + dimension_x/2 + offsetX*0.04, s[0].pos.y + dimension_y-random.g+ offsetY*0.04, s[0].pos.z + offsetZ*0.04+turn);	
+	tr.pos = float3(s[0].pos.x + dimension_x/2 + offsetX*0.04, s[0].pos.y + dimension_y+ offsetY*0.04, s[0].pos.z + offsetZ*0.04+turn);	
 	tr.texCoord = float2(0.2, 1);
 
 	//Normals bl2tl = bottomleft to topleft (Distance)
@@ -301,7 +303,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	bl.texCoord = tl.texCoord;
 	
 	//top left
-	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX*0.16, s[0].pos.y+2*dimension_y-random.g+ offsetY*0.16, s[0].pos.z + offsetZ*0.16);	
+	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX*0.16, s[0].pos.y+2*dimension_y+ offsetY*0.16, s[0].pos.z + offsetZ*0.16);	
 	tl.texCoord = float2(0.4, 0);
 
 	//bottom right
@@ -309,7 +311,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	br.texCoord = tr.texCoord;
 
 	//top right
-	tr.pos = float3(s[0].pos.x + dimension_x/2+turn + offsetX*0.16, s[0].pos.y + 2*dimension_y-random.g+ offsetY*0.16, s[0].pos.z + offsetZ*0.16+turn);	
+	tr.pos = float3(s[0].pos.x + dimension_x/2+turn + offsetX*0.16, s[0].pos.y + 2*dimension_y+ offsetY*0.16, s[0].pos.z + offsetZ*0.16+turn);	
 	tr.texCoord = float2(0.4, 1);
 
 	//Normals bl2tl = bottomleft to topleft (Distance)
@@ -331,7 +333,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	bl.texCoord = tl.texCoord;
 	
 	//top left
-	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX*0.36, s[0].pos.y+3*dimension_y-random.g+ offsetY*0.36, s[0].pos.z + offsetZ*0.36);	
+	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX*0.36, s[0].pos.y+3*dimension_y+ offsetY*0.36, s[0].pos.z + offsetZ*0.36);	
 	tl.texCoord = float2(0.6, 0);
 
 	//bottom right
@@ -339,7 +341,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	br.texCoord = tr.texCoord;
 
 	//top right
-	tr.pos = float3(s[0].pos.x + dimension_x/2 +turn+ offsetX*0.36, s[0].pos.y + 3*dimension_y-random.g+ offsetY*0.36, s[0].pos.z + offsetZ*0.36+turn);	
+	tr.pos = float3(s[0].pos.x + dimension_x/2 +turn+ offsetX*0.36, s[0].pos.y + 3*dimension_y+ offsetY*0.36, s[0].pos.z + offsetZ*0.36+turn);	
 	tr.texCoord = float2(0.6, 1);
 
 	//Normals bl2tl = bottomleft to topleft (Distance)
@@ -362,7 +364,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	bl.texCoord = tl.texCoord;
 	
 	//top left
-	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX*0.64, s[0].pos.y+4*dimension_y-random.g+ offsetY*0.64, s[0].pos.z + offsetZ*0.64);	
+	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX*0.64, s[0].pos.y+4*dimension_y+ offsetY*0.64, s[0].pos.z + offsetZ*0.64);	
 	tl.texCoord = float2(0.8, 0);
 
 	//bottom right
@@ -370,7 +372,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	br.texCoord = tr.texCoord;
 
 	//top right
-	tr.pos = float3(s[0].pos.x + dimension_x/2+turn + offsetX*0.64, s[0].pos.y + 4*dimension_y-random.g+ offsetY*0.64, s[0].pos.z + offsetZ*0.64+turn);	
+	tr.pos = float3(s[0].pos.x + dimension_x/2+turn + offsetX*0.64, s[0].pos.y + 4*dimension_y+ offsetY*0.64, s[0].pos.z + offsetZ*0.64+turn);	
 	tr.texCoord = float2(0.8, 1);
 
 	//Normals bl2tl = bottomleft to topleft (Distance)
@@ -392,7 +394,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	bl.texCoord = tl.texCoord;
 	
 	//top left
-	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX*1, s[0].pos.y+5*dimension_y-random.g+ offsetY*1, s[0].pos.z + offsetZ*1);	
+	tl.pos = float3(s[0].pos.x - dimension_x/2 + offsetX*1, s[0].pos.y+5*dimension_y+ offsetY*1, s[0].pos.z + offsetZ*1);	
 	tl.texCoord = float2(1, 0);
 
 	//bottom right
@@ -400,7 +402,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	br.texCoord = tr.texCoord;
 
 	//top right
-	tr.pos = float3(s[0].pos.x + dimension_x/2+turn + offsetX*1, s[0].pos.y + 5*dimension_y-random.g+ offsetY*1, s[0].pos.z + offsetZ*1+turn);	
+	tr.pos = float3(s[0].pos.x + dimension_x/2+turn + offsetX*1, s[0].pos.y + 5*dimension_y+ offsetY*1, s[0].pos.z + offsetZ*1+turn);	
 	tr.texCoord = float2(1, 1);
 
 	//Normals bl2tl = bottomleft to topleft (Distance)
