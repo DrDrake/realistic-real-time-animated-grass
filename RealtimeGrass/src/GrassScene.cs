@@ -167,11 +167,20 @@ namespace RealtimeGrass
                     "Resources/texture/Sky_Miramar.dds",
                     loadInfo2,
                     TextureType.TextureTypeCube,
-                    "model_texture"
+                    "model_texture01"
+                );
+                ImageLoadInformation loadInfo22 = ImageLoadInformation.FromDefaults();
+                loadInfo22.OptionFlags = ResourceOptionFlags.TextureCube;
+                TextureFormat texFormat22 = new TextureFormat(
+                    "Resources/texture/Sky_Grimmnight.dds",
+                    loadInfo22,
+                    TextureType.TextureTypeCube,
+                    "model_texture02"
                 );
                 List<TextureFormat> textureFormats2 = new List<TextureFormat>();
                 textureFormats2.Add(texFormat2);
-            
+                textureFormats2.Add(texFormat22);
+
                 m_skybox = new Skybox();
                 m_skybox.Init(Context10.Device, "Resources/shader/Skybox.fx", textureFormats2);
 
@@ -400,6 +409,7 @@ namespace RealtimeGrass
             m_skybox.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
             m_skybox.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
             m_skybox.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+            m_skybox.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
             m_skybox.Draw();
             
             //SetDepthTest(true);

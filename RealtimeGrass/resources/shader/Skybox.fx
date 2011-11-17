@@ -2,7 +2,10 @@ float4x4 view;
 float4x4 proj;
 float4x4 world;
 
-TextureCube model_texture;
+float time;
+
+TextureCube model_texture01;
+TextureCube model_texture02;
 
 struct VS_IN {
 	float3 pos		: POSITION;
@@ -35,7 +38,9 @@ PS_IN VS( VS_IN input ) {
 }
 
 float4 PS( PS_IN input ) : SV_Target {
-	return model_texture.Sample(ModelTextureSampler, input.texCoord);
+	float tag = (sin((time%100)/10)+1)/2;
+    float4 tex = model_texture01.Sample(ModelTextureSampler, input.texCoord)*tag+model_texture02.Sample(ModelTextureSampler, input.texCoord)*(1-tag);
+	return tex;
 }
 
 RasterizerState NoCulling
