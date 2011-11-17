@@ -209,22 +209,29 @@ namespace RealtimeGrass
                 ImageLoadInformation loadInfo5 = ImageLoadInformation.FromDefaults();
 
                 TextureFormat texFormat5 = new TextureFormat(
-                    "Resources/texture/GrassDiffuse.jpg",
+                    "Resources/texture/GrassDiffuse01.jpg",
                     loadInfo5,
                     TextureType.TextureTypeDiffuse,
-                    "grass_diffuse"
+                    "grass_diffuse01"
                 );
-
+                ImageLoadInformation loadInfo6 = ImageLoadInformation.FromDefaults();
                 TextureFormat texFormat6 = new TextureFormat(
+                    "Resources/texture/GrassDiffuse02.jpg",
+                    loadInfo6,
+                    TextureType.TextureTypeDiffuse,
+                    "grass_diffuse02"
+                );
+                ImageLoadInformation loadInfo7 = ImageLoadInformation.FromDefaults();
+                TextureFormat texFormat7 = new TextureFormat(
                     "Resources/texture/GrassAlpha.jpg",
-                    loadInfo5,
+                    loadInfo7,
                     TextureType.TextureTypeDiffuse,
                     "grass_alpha"
                 );
-
-                TextureFormat texFormat7 = new TextureFormat(
+                ImageLoadInformation loadInfo8 = ImageLoadInformation.FromDefaults();
+                TextureFormat texFormat8 = new TextureFormat(
                     "Resources/texture/noise1024x773.jpg",
-                    loadInfo5,
+                    loadInfo8,
                     TextureType.TextureTypeDiffuse,
                     "grass_noise"
                 );
@@ -233,6 +240,7 @@ namespace RealtimeGrass
                 textureFormats5.Add(texFormat5);
                 textureFormats5.Add(texFormat6);
                 textureFormats5.Add(texFormat7);
+                textureFormats5.Add(texFormat8);
 
                 m_grass = new Grass(m_heightmap.Roots, m_heightmap.NumberOfElements);
                 m_grass.Init(Context10.Device, "Resources/shader/GrassTextured.fx", textureFormats5);

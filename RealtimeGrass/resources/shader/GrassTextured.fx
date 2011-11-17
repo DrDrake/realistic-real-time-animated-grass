@@ -4,7 +4,8 @@ float4x4 proj;
 float4x4 world;
 
 //Old Sampler2
-Texture2D grass_diffuse;
+Texture2D grass_diffuse01;
+Texture2D grass_diffuse02;
 Texture2D grass_alpha;
 Texture2D grass_noise;
 
@@ -29,6 +30,7 @@ struct GS_WORKING {
 	float3 pos;	
 	float3 normal;	
 	float2 texCoord;
+	float random;
 };
 
 //Vertexshader Output & Pixelshader Input
@@ -36,6 +38,7 @@ struct PS_IN {
 	float4 pos				: SV_POSITION;
 	float3 normalWS			: NORMAL;
 	float2 texCoord			: TEXCOORD;
+	float random			: RANDOM;
 };
 
 //--------------------------------------------------------------------------------------
@@ -58,7 +61,7 @@ PS_IN VSreal( GS_WORKING input ) {
 	output.normalWS = mul(float4(input.normal, 1.0), world).xyz;
 
 	output.texCoord = input.texCoord;
-	
+	output.random = input.random;	
 	return output;
 }
 
@@ -66,7 +69,7 @@ PS_IN VSreal( GS_WORKING input ) {
 // GEOMETRY SHADER
 //--------------------------------------------------------------------------------------
 
-[maxvertexcount(4*5)]
+[maxvertexcount(40)]
 void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 {
     int LOD = 2;
@@ -86,11 +89,16 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	random.r = random.r*(-1);
 	}
 
+	bl.random = random.b;
+	tl.random = random.b;
+	br.random = random.b;
+	tr.random = random.b;
+
 
 	// Motion added with x^2 influence (between 0-1)
 	float windpower = 15;
 
-	float turn = (random-0.5);
+	float turn = (random.b-0.5);
     float offsetX = windpower/20*sin(time+random.r);
 
 	float offsetY = -windpower/2*sin(time+random.r);
@@ -101,6 +109,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	float offsetZ = windpower*sin(time+random.r);
 
 	if (LOD == 0) {
+
 	//create gras // LOD = 0
 	//--------------------------------------------
 
@@ -429,7 +438,7 @@ float4 PS( PS_IN input ) : SV_Target {
 
 	float alphar = grass_alpha.Sample(ModelTextureSampler, input.texCoord).r;
 
-	float3 tex = grass_diffuse.Sample(ModelTextureSampler, input.texCoord).rgb;
+	float3 tex = grass_diffuse01.Sample(ModelTextureSampler, input.texCoord).rgb*input.random+grass_diffuse02.Sample(ModelTextureSampler, input.texCoord).rgb*(1-input.random);
 	return float4(tex, alphar);
 }
 
