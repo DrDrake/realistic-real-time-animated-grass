@@ -202,7 +202,7 @@ namespace RealtimeGrass
                 List<TextureFormat> textureFormats4 = new List<TextureFormat>();
                 textureFormats4.Add(texFormat4);
 
-                m_heightmap = new Heightmap("Resources/texture/huegel1000x1000.jpg");
+                m_heightmap = new Heightmap("Resources/texture/huegel1000x1000.jpg",500);
                 m_heightmap.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats4);
 
                 //Grass---------------------------------------------------------------------------------
