@@ -203,16 +203,24 @@ namespace RealtimeGrass
                 ImageLoadInformation loadInfo4 = ImageLoadInformation.FromDefaults();
 
                 TextureFormat texFormat4 = new TextureFormat(
-                    "Resources/texture/boden2048x2048.jpg",
+                    "Resources/texture/boden01.jpg",
                     loadInfo4,
                     TextureType.TextureTypeDiffuse,
-                    "model_texture"
+                    "model_texture01"
+                );
+                ImageLoadInformation loadInfo42 = ImageLoadInformation.FromDefaults();
+
+                TextureFormat texFormat42 = new TextureFormat(
+                    "Resources/texture/boden02.jpg",
+                    loadInfo42,
+                    TextureType.TextureTypeDiffuse,
+                    "model_texture02"
                 );
                 List<TextureFormat> textureFormats4 = new List<TextureFormat>();
                 textureFormats4.Add(texFormat4);
 
                 m_heightmap = new Heightmap("Resources/texture/huegel1000x1000.jpg",500);
-                m_heightmap.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats4);
+                m_heightmap.Init(Context10.Device, "Resources/shader/ModelTextured02.fx", textureFormats4);
 
                 //Grass---------------------------------------------------------------------------------
                 ImageLoadInformation loadInfo5 = ImageLoadInformation.FromDefaults();
@@ -229,6 +237,13 @@ namespace RealtimeGrass
                     loadInfo6,
                     TextureType.TextureTypeDiffuse,
                     "grass_diffuse02"
+                );
+                ImageLoadInformation loadInfo62 = ImageLoadInformation.FromDefaults();
+                TextureFormat texFormat62 = new TextureFormat(
+                    "Resources/texture/GrassDiffuse03.jpg",
+                    loadInfo62,
+                    TextureType.TextureTypeDiffuse,
+                    "grass_diffuse03"
                 );
                 ImageLoadInformation loadInfo7 = ImageLoadInformation.FromDefaults();
                 TextureFormat texFormat7 = new TextureFormat(
@@ -255,6 +270,7 @@ namespace RealtimeGrass
                 List<TextureFormat> textureFormats5 = new List<TextureFormat>();
                 textureFormats5.Add(texFormat5);
                 textureFormats5.Add(texFormat6);
+                textureFormats5.Add(texFormat62);
                 textureFormats5.Add(texFormat7);
                 textureFormats5.Add(texFormat8);
                 textureFormats5.Add(texFormat9);
@@ -430,6 +446,7 @@ namespace RealtimeGrass
             m_heightmap.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
             m_heightmap.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
             m_heightmap.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+            m_heightmap.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
             m_heightmap.Draw();//*/
 
             m_grass.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);

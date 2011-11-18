@@ -10,6 +10,7 @@ float4x4 world;
 //Old Sampler2
 Texture2D grass_diffuse01;
 Texture2D grass_diffuse02;
+Texture2D grass_diffuse03;
 Texture2D grass_alpha;
 Texture2D grass_noise;
 Texture2D grass_shift;
@@ -43,7 +44,7 @@ struct GS_WORKING {
 	float3 pos;	
 	float3 normal;	
 	float2 texCoord;
-	float random;
+	float4 random;
 };
 
 //Vertexshader Output & Pixelshader Input
@@ -51,7 +52,7 @@ struct PS_IN {
 	float4 pos				: SV_POSITION;		
 	float3 normalWS			: NORMAL;
 	float2 texCoord			: TEXCOORD;
-	float random			: RANDOM;
+	float4 random			: RANDOM;
 };
 
 //--------------------------------------------------------------------------------------
@@ -99,19 +100,21 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	}
 	random.r=random.r*2;
 
-	bl.random = random.b;
-	tl.random = random.b;
-	br.random = random.b;
-	tr.random = random.b;
-
-	float dimension_x = 2;
-	float dimension_y = 20+20*(1-(0.5*random.g));
+	bl.random = random;
+	tl.random = random;
+	br.random = random;
+	tr.random = random;
+	s[0].pos.x = s[0].pos.x+2*random.g;
+	s[0].pos.z = s[0].pos.z+2*random.g;
+	float dimension_x = (2+1*(random.g-0.5))/2;
+	float dimension_y = 15+35*(1-(0.5*random.g));
 
 	texCoord = float2((s[0].pos.x%100)/100, (s[0].pos.y%100)/100);
 	float4 shift = (grass_shift.SampleLevel(ModelTextureSampler, texCoord, 0));
 	// Motion added with x^2 influence (between 0-1)
 	float windpower = 10*(((sin((time+random.r)+shift.rgb*3)+1)/2)+1);
-	float turn = (random.b-0.5);
+
+	float turn = 4*(random.b-0.5);
     float offsetX = windpower/20*sin((time+random.r)+shift.rgb*3);
 
 	float offsetY = -windpower/2*sin((time+random.r)+shift.rgb*3);
@@ -273,11 +276,11 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	tl.texCoord = float2(0.2, 0);
 
 	//bottom right
-	br.pos = float3(s[0].pos.x + dimension_x/2, s[0].pos.y, s[0].pos.z+turn);	
+	br.pos = float3(s[0].pos.x + dimension_x/2+turn , s[0].pos.y, s[0].pos.z+turn);	
 	br.texCoord = float2(0, 1);
 
 	//top right
-	tr.pos = float3(s[0].pos.x + dimension_x/2 + offsetX*0.04, s[0].pos.y + dimension_y+ offsetY*0.04, s[0].pos.z + offsetZ*0.04+turn);	
+	tr.pos = float3(s[0].pos.x + dimension_x/2 + offsetX*0.04+turn, s[0].pos.y + dimension_y+ offsetY*0.04, s[0].pos.z + offsetZ*0.04+turn);	
 	tr.texCoord = float2(0.2, 1);
 
 	//Normals bl2tl = bottomleft to topleft (Distance)
@@ -428,8 +431,12 @@ float4 PS( PS_IN input ) : SV_Target {
 	
 	float alphar = grass_alpha.Sample(ModelTextureSampler, input.texCoord).r;
 
-	float3 tex = grass_diffuse01.Sample(ModelTextureSampler, input.texCoord).rgb*input.random+grass_diffuse02.Sample(ModelTextureSampler, input.texCoord).rgb*(1-input.random);
-	
+	float3 tex = grass_diffuse01.Sample(ModelTextureSampler, input.texCoord).rgb*input.random.b+grass_diffuse02.Sample(ModelTextureSampler, input.texCoord).rgb*(1-input.random.b);
+
+	float tag = (sin((time%100)/10)+1)/2;
+    tex = tex*(tag+0.3)+grass_diffuse03.Sample(ModelTextureSampler, input.texCoord)*(1-tag-0.3);
+
+
 	return float4(tex, alphar);
 }
 
