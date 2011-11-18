@@ -70,6 +70,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="src\Entities\Light.cs" />
+    <Compile Include="src\Entities\LMaterial.cs" />
     <Compile Include="src\Entities\CoordinateSystem.cs" />
     <Compile Include="src\Entities\Grass.cs" />
     <Compile Include="src\Entities\Heightmap.cs" />

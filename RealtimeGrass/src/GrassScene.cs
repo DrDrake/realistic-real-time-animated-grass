@@ -9,6 +9,9 @@ using SlimDX.D3DCompiler;
 using SlimDX.DXGI;
 using SlimDX.DirectInput;
 
+using RealtimeGrass.Rendering.Mesh;
+using RealtimeGrass.Utility;
+
 using RealtimeGrass.Rendering;
 using RealtimeGrass.Rendering.UI;
 using RealtimeGrass.Utility;
@@ -62,7 +65,7 @@ namespace RealtimeGrass
             hudText.SetBinding("Label", m_output);
             UserInterface.Container.Add(hudText);
 
-            m_camera = new Camera(
+            m_camera = new RealtimeGrass.Utility.Camera(
                 new Vector3(0, 3, -10), // position
                 new Vector3(0, 0, 0), // lookat
                 Vector3.UnitZ, // direction
@@ -134,7 +137,14 @@ namespace RealtimeGrass
                     DepthComparison = Comparison.Less
                 };
                 m_depthStencilState = DepthStencilState.FromDescription(Context10.Device, dssd);
-            
+                
+                // grass material
+                mat_grass = new LMaterial();
+                mat_grass.Init(0.1f, 0.9f, 0.8f, 100);
+
+                // light
+               // l_light = new Light();
+
                 //a symplistic Coordsystem---------------------------------------------------
                 m_coordSys = new CoordinateSystem();
                 m_coordSys.Init(Context10.Device, "Resources/shader/CoordinateSystem.fx", null);
@@ -156,8 +166,6 @@ namespace RealtimeGrass
                 //ScaleX, ScaleY
                 m_plane = new Plane(100.0f, 100.0f);
                 m_plane.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats1);
-                //a single grass straw----------------------------------------------------
-                m_straw = new SimpleGrass(Context10.Device, "Resources/shader/DefaultCamera.fx", null);
             
                 //a fancy skybox--------------------------------------------------------
                 ImageLoadInformation loadInfo2 = ImageLoadInformation.FromDefaults();
@@ -287,7 +295,7 @@ namespace RealtimeGrass
                 OnResourceUnload();
             }
         }
-        
+
         protected void processInput()
         {
             KeyboardState keyState = m_input.ReadKeyboard();
@@ -453,6 +461,14 @@ namespace RealtimeGrass
             m_grass.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
             m_grass.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
             m_grass.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
+            m_grass.Effect.GetVariableByName("mat_Ka").AsScalar().Set(mat_grass.Ka());
+            m_grass.Effect.GetVariableByName("mat_Kd").AsScalar().Set(mat_grass.Kd());
+            m_grass.Effect.GetVariableByName("mat_Ks").AsScalar().Set(mat_grass.Ks());
+            m_grass.Effect.GetVariableByName("mat_A").AsScalar().Set(mat_grass.A());
+          //  AHHH : m_grass.Effect.GetVariableByName("ambientLight").AsVector().Set(Vector4(1.0f,1.0f,1.0f,1.0f));
+        //    m_grass.Effect.GetVariableByName("eye").AsScalar().Set(mat_grass.Kd());
+         //   m_grass.Effect.GetVariableByName("l_color").AsScalar().Set(l_light.Color());
+          //  m_grass.Effect.GetVariableByName("l_dir").AsScalar().Set(l_light.Dir());
             m_grass.Draw();//*/
             
 
@@ -476,10 +492,6 @@ namespace RealtimeGrass
             }*/
             world = Matrix.Identity;
             Matrix.Translation(0, 0, 100, out world);
-            m_straw.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-            m_straw.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
-            m_straw.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
-            m_straw.Draw();
 
             m_Jupiter.m_Rotation.Y = m_Jupiter.m_Rotation.Y + (FrameDelta * 0.1f) % 360;
             m_Jupiter.m_SelfRotation.Y = m_Jupiter.m_SelfRotation.Y + (FrameDelta * 0.5f) % 360;
@@ -551,6 +563,11 @@ namespace RealtimeGrass
             //world = Matrix.Identity;
         }
 
+        private bool Vector4(float p, float p_2, float p_3, float p_4)
+        {
+            throw new NotImplementedException();
+        }
+
         protected void SetDepthTest(bool isUsingDepthTest)
         {
             DepthStencilStateDescription dsStateDesc = new DepthStencilStateDescription()
@@ -606,5 +623,7 @@ namespace RealtimeGrass
         }
 
         public Heightmap m_gras { get; set; }
+
+        public LMaterial mat_grass { get; set; }
     }
 }
