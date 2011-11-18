@@ -11,7 +11,7 @@ Texture2D model_texture01;
 Texture2D model_texture02;
 
 //Misc
-float4 csunWS = float4(0,500, 0, 1);
+float4 csunWS = float4(10, 20, 10, 1);
 float4 camPosWS;
 float cTexScal = 3;
 float time;
@@ -71,7 +71,7 @@ PS_IN VS( VS_IN input ) {
 float4 PS( PS_IN input ) : SV_Target {
 	float lightAmount = dot(normalize(float4(input.normalWS, 1.0)),normalize(csunWS));
 
-	float3 tex = model_texture01.Sample(ModelTextureSampler, input.texCoord * cTexScal);// * lightAmount;
+	float3 tex = model_texture01.Sample(ModelTextureSampler, input.texCoord * cTexScal)* lightAmount;// * lightAmount;
 
 	float tag = (sin((time%100)/10)+1)/2;
     tex = tex*(tag+0.3)+model_texture02.Sample(ModelTextureSampler, input.texCoord * cTexScal)*(1-tag-0.3);
