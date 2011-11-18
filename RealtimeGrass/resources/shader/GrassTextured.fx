@@ -20,23 +20,17 @@ float cTexScal = 1;
 float time;
 
 //--------------------------------------------------------------------------------------
-//LIGHTING STRUCTURES AND VARIABLES
+//LIGHTING VARIABLES
 //--------------------------------------------------------------------------------------
-struct DirectionalLight
-{
-	float4 color;
-	float3 dir;
-};
+//DirectionalLight
+float4 l_color = float4 (1.0f,1.0f,1.0f,1.0f);
+float3 l_dir = float3 (-1,-1,1);
 
-struct Material
-{
-	float Ka, Kd, Ks, A;
-};
+//Material
+	float mat_Ka, mat_Kd, mat_Ks, mat_A;
 
 //lighting vars
-DirectionalLight light;
-Material material;
-float4 ambientLight;
+float4 ambientLight= float4(1.0f,1.0f,1.0f,1.0f);
 float3 eye;
 
 //--------------------------------------------------------------------------------------
@@ -64,11 +58,11 @@ SamplerState ModelTextureSampler {
 //--------------------------------------------------------------------------------------
 // Blinn-Phong Lighting Reflection Model
 //--------------------------------------------------------------------------------------
-float4 calcBlinnPhongLighting( Material M, float4 LColor, float3 N, float3 L, float3 H )
+float4 calcBlinnPhongLighting(float M_Ka, float M_Kd, float M_Ks, float M_A, float4 LColor, float3 N, float3 L, float3 H )
 {	
-	float4 Ia = M.Ka * ambientLight;
-	float4 Id = M.Kd * saturate( dot(N,L) );
-	float4 Is = M.Ks * pow( saturate(dot(N,H)), M.A );
+	float4 Ia = M_Ka * ambientLight;
+	float4 Id = M_Kd * saturate( dot(N,L) );
+	float4 Is = M_Ks * pow( saturate(dot(N,H)), M_A );
 	
 	return Ia + (Id + Is) * LColor;
 }
@@ -120,7 +114,7 @@ PS_IN VSreal( GS_WORKING input ) {
 	output.texCoord = input.texCoord;
 	output.random = input.random;	
 	float3 V = normalize( eye - (float3) input.pos );
-	output.h = normalize( -light.dir + V );	
+	output.h = normalize( -l_dir + V );	
 	return output;
 }
 
@@ -480,7 +474,7 @@ float4 PS_PIXEL_LIGHTING_BLINNPHONG( PS_IN input ) : SV_Target
 	input.h = normalize( input.h );
 	
 	//calculate lighting	
-	float4 I = calcBlinnPhongLighting( material, light.color, input.normalWS, -light.dir, input.h );
+	float4 I = calcBlinnPhongLighting( mat_Ka, mat_Kd, mat_Ks, mat_A, l_color, input.normalWS, -l_dir, input.h );
 	
 	//with texturing
 	float alphar = grass_alpha.Sample(ModelTextureSampler, input.texCoord).r;
