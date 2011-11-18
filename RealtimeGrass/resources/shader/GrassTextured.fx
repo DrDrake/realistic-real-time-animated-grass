@@ -16,10 +16,39 @@ Texture2D grass_noise;
 Texture2D grass_shift;
 
 //Misc
-float4 csunWS = float4(10, 80, 10, 1);
-float4 camPosWS;
 float cTexScal = 1;
 float time;
+
+//--------------------------------------------------------------------------------------
+//LIGHTING STRUCTURES AND VARIABLES
+//--------------------------------------------------------------------------------------
+struct DirectionalLight
+{
+	float4 color;
+	float3 dir;
+};
+
+struct Material
+{
+	float Ka, Kd, Ks, A;
+};
+
+//lighting vars
+DirectionalLight light;
+Material material;
+float4 ambientLight;
+float3 eye;
+
+//--------------------------------------------------------------------------------------
+//RASTERIZER STATES
+//--------------------------------------------------------------------------------------
+RasterizerState rsSolid
+{
+	  FillMode = Solid;
+	  CullMode = NONE;
+	  FrontCounterClockwise = false;
+};
+
 
 //--------------------------------------------------------------------------------------
 // FUNCTIONS
@@ -31,6 +60,18 @@ SamplerState ModelTextureSampler {
     AddressU = Mirror;
     AddressV = Mirror;
 };
+
+//--------------------------------------------------------------------------------------
+// Blinn-Phong Lighting Reflection Model
+//--------------------------------------------------------------------------------------
+float4 calcBlinnPhongLighting( Material M, float4 LColor, float3 N, float3 L, float3 H )
+{	
+	float4 Ia = M.Ka * ambientLight;
+	float4 Id = M.Kd * saturate( dot(N,L) );
+	float4 Is = M.Ks * pow( saturate(dot(N,H)), M.A );
+	
+	return Ia + (Id + Is) * LColor;
+}
 
 //--------------------------------------------------------------------------------------
 // STRCUCTS
@@ -55,6 +96,7 @@ struct PS_IN {
 	float3 normalWS			: NORMAL;
 	float2 texCoord			: TEXCOORD;
 	float4 random			: RANDOM;
+	float3 h 				: HVECTOR;
 };
 
 //--------------------------------------------------------------------------------------
@@ -77,6 +119,8 @@ PS_IN VSreal( GS_WORKING input ) {
 	output.normalWS = mul(float4(input.normal, 1.0), world).xyz;
 	output.texCoord = input.texCoord;
 	output.random = input.random;	
+	float3 V = normalize( eye - (float3) input.pos );
+	output.h = normalize( -light.dir + V );	
 	return output;
 }
 
@@ -426,12 +470,37 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 }
 
 //--------------------------------------------------------------------------------------
+// PER PIXEL LIGHTING 
+//--------------------------------------------------------------------------------------
+
+float4 PS_PIXEL_LIGHTING_BLINNPHONG( PS_IN input ) : SV_Target
+{     	
+	//renormalize interpolated vectors
+	input.normalWS = normalize( input.normalWS );		
+	input.h = normalize( input.h );
+	
+	//calculate lighting	
+	float4 I = calcBlinnPhongLighting( material, light.color, input.normalWS, -light.dir, input.h );
+	
+	//with texturing
+	float alphar = grass_alpha.Sample(ModelTextureSampler, input.texCoord).r;
+
+	float3 tex = grass_diffuse01.Sample(ModelTextureSampler, input.texCoord).rgb*input.random.b+grass_diffuse02.Sample(ModelTextureSampler, input.texCoord).rgb*(1-input.random.b);
+
+	float tag = (sin((time%100)/10)+1)/2;
+    tex = tex*(tag+0.3)+grass_diffuse03.Sample(ModelTextureSampler, input.texCoord)*(1-tag-0.3);
+	
+	tex = tex*I;
+
+	return float4(tex, alphar);
+	
+}
+
+//--------------------------------------------------------------------------------------
 // PIXEL SHADER
 //--------------------------------------------------------------------------------------
 
 float4 PS( PS_IN input ) : SV_Target { 
-
-	float lightAmount = dot(normalize(float4(input.normalWS, 1.0)),normalize(csunWS));
 
 	float alphar = grass_alpha.Sample(ModelTextureSampler, input.texCoord).r;
 
@@ -439,8 +508,6 @@ float4 PS( PS_IN input ) : SV_Target {
 
 	float tag = (sin((time%100)/10)+1)/2;
     tex = tex*(tag+0.3)+grass_diffuse03.Sample(ModelTextureSampler, input.texCoord)*(1-tag-0.3);
-
-	tex = tex* lightAmount;
 
 	return float4(tex, alphar);
 }
@@ -454,6 +521,8 @@ technique10 RenderSolid
 	pass p0 {
 		SetVertexShader( CompileShader( vs_4_0, VS() ) );
 		SetGeometryShader( CompileShader( gs_4_0, GS() ) );
-		SetPixelShader( CompileShader( ps_4_0, PS() ) );
+		//SetPixelShader( CompileShader( ps_4_0, PS() ) );
+        SetPixelShader( CompileShader( ps_4_0, PS_PIXEL_LIGHTING_BLINNPHONG() ) );
+        SetRasterizerState( rsSolid );
 	}
 }
