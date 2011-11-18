@@ -16,6 +16,8 @@ Texture2D grass_noise;
 Texture2D grass_shift;
 
 //Misc
+float4 csunWS = float4(10, 80, 10, 1);
+float4 camPosWS;
 float cTexScal = 1;
 float time;
 
@@ -287,10 +289,10 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	float3 a = br.pos - bl.pos;
 	float3 b = tl.pos - bl.pos;
 
-	bl.normal = cross( a, b);
+	bl.normal = -cross( a, b);
 	tl.normal = cross( a,-b);
 	br.normal = cross(-a, b);
-	tr.normal = cross(-a,-b);
+	tr.normal = -cross(-a,-b);
 	
 	//Append
 	triStream.Append(VSreal(bl));
@@ -322,7 +324,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	b = tl.pos - bl.pos;
 
 	tl.normal = cross( a,-b);
-	tr.normal = cross(-a,-b);
+	tr.normal = -cross(-a,-b);
 	
 	//Append
 	triStream.Append(VSreal(tl));
@@ -353,7 +355,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 
 
 	tl.normal = cross( a,-b);
-	tr.normal = cross(-a,-b);
+	tr.normal = -cross(-a,-b);
 	
 	//Append
 	triStream.Append(VSreal(tl));
@@ -383,7 +385,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	b = tl.pos - bl.pos;
 
 	tl.normal = cross( a,-b);
-	tr.normal = cross(-a,-b);
+	tr.normal = -cross(-a,-b);
 	
 	//Append
 	triStream.Append(VSreal(tl));
@@ -413,7 +415,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	b = tl.pos - bl.pos;
 
 	tl.normal = cross( a,-b);
-	tr.normal = cross(-a,-b);
+	tr.normal = -cross(-a,-b);
 	
 	//Append
 	triStream.Append(VSreal(tl));
@@ -428,7 +430,9 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 //--------------------------------------------------------------------------------------
 
 float4 PS( PS_IN input ) : SV_Target { 
-	
+
+	float lightAmount = dot(normalize(float4(input.normalWS, 1.0)),normalize(csunWS));
+
 	float alphar = grass_alpha.Sample(ModelTextureSampler, input.texCoord).r;
 
 	float3 tex = grass_diffuse01.Sample(ModelTextureSampler, input.texCoord).rgb*input.random.b+grass_diffuse02.Sample(ModelTextureSampler, input.texCoord).rgb*(1-input.random.b);
@@ -436,6 +440,7 @@ float4 PS( PS_IN input ) : SV_Target {
 	float tag = (sin((time%100)/10)+1)/2;
     tex = tex*(tag+0.3)+grass_diffuse03.Sample(ModelTextureSampler, input.texCoord)*(1-tag-0.3);
 
+	tex = tex* lightAmount;
 
 	return float4(tex, alphar);
 }
