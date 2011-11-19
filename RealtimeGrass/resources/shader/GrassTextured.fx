@@ -18,6 +18,8 @@ Texture2D grass_shift;
 //Misc
 float cTexScal = 1;
 float time;
+float windPW=8;  // Value between 0-20
+float3 winddir= float3 (0.5,1,0.5); // y always 1
 
 //--------------------------------------------------------------------------------------
 //LIGHTING VARIABLES
@@ -144,25 +146,28 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	tl.random = random;
 	br.random = random;
 	tr.random = random;
-	s[0].pos.x = s[0].pos.x+2*random.g;
-	s[0].pos.z = s[0].pos.z+2*random.g;
+
 	float dimension_x = (2+1*(random.g-0.5))/2;
 	float dimension_y = 15+35*(1-(0.5*random.g));
 
 	texCoord = float2((s[0].pos.x%100)/100, (s[0].pos.y%100)/100);
+	float4 random2 = (grass_noise.SampleLevel(ModelTextureSampler, texCoord, 0));
 	float4 shift = (grass_shift.SampleLevel(ModelTextureSampler, texCoord, 0));
 	// Motion added with x^2 influence (between 0-1)
-	float windpower = 10*(((sin((time+random.r)+shift.rgb*3)+1)/2)+1);
+	float windpower = windPW*(((sin((time+random.r)+shift.rgb*3)+1)/2)+1);
 
-	float turn = 4*(random.b-0.5);
-    float offsetX = windpower/20*sin((time+random.r)+shift.rgb*3);
+	float turn = 2*(random2.b*random2.r*random2.g);
+	s[0].pos.x = s[0].pos.x+4*random2.r;
+	s[0].pos.z = s[0].pos.z-4*random2.r;
 
-	float offsetY = -windpower/2*sin((time+random.r)+shift.rgb*3);
+    float offsetX = winddir.x*windpower*(0.5+random2.r)*sin((time+random.r)+shift.rgb*3);
+
+	float offsetY = -windpower*(0.5+random2.g)*sin((time+random.r)+shift.rgb*3);
 	if (offsetY > 0) {
 	offsetY = offsetY*(-1);
 	}
 
-	float offsetZ = windpower*sin((time+random.r)+shift.rgb*3);
+	float offsetZ = winddir.y*windpower*(0.5+random2.b)*sin((time+random.r)+shift.rgb*3);
 
 	if (LOD == 0) {
 
