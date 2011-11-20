@@ -285,6 +285,8 @@ namespace RealtimeGrass
 
                 m_grass = new Grass(m_heightmap.Roots, m_heightmap.NumberOfElements);
                 m_grass.Init(Context10.Device, "Resources/shader/GrassTextured.fx", textureFormats5);
+   
+
                 //-----------------------------------------
                 //Sounds
                // m_soundManager.playSingle("Resources/sounds/rustleWindwithBirds.wav");
