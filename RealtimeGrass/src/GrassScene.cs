@@ -149,12 +149,12 @@ namespace RealtimeGrass
                 m_coordSys = new CoordinateSystem();
                 m_coordSys.Init(Context10.Device, "Resources/shader/CoordinateSystem.fx", null);
 
-                //the grass plane------------------------------------------------------------
+                //the water plane------------------------------------------------------------
                 //Use FromDefaults() for correct init of ImageLoadInformation
                 ImageLoadInformation loadInfo1 = ImageLoadInformation.FromDefaults();
 
                 TextureFormat texFormat1 = new TextureFormat(
-                    "Resources/texture/grass4096x4096.jpg",
+                    "Resources/texture/wasser.jpg",
                     loadInfo1,
                     TextureType.TextureTypeDiffuse,
                     "model_texture"
@@ -164,8 +164,8 @@ namespace RealtimeGrass
                 textureFormats1.Add(texFormat1);
 
                 //ScaleX, ScaleY
-                m_plane = new Plane(100.0f, 100.0f);
-                m_plane.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats1);
+                m_plane = new Plane(1000.0f, 1000.0f);
+                m_plane.Init(Context10.Device, "Resources/shader/Water.fx", textureFormats1);
             
                 //a fancy skybox--------------------------------------------------------
                 ImageLoadInformation loadInfo2 = ImageLoadInformation.FromDefaults();
@@ -455,7 +455,13 @@ namespace RealtimeGrass
             m_heightmap.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
             m_heightmap.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
             m_heightmap.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
-            m_heightmap.Draw();//*/
+            m_heightmap.Draw();//*
+
+
+            m_plane.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+            m_plane.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+            m_plane.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+            m_plane.Draw();
 
             m_grass.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
             m_grass.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
@@ -465,13 +471,11 @@ namespace RealtimeGrass
             m_grass.Effect.GetVariableByName("mat_Kd").AsScalar().Set(mat_grass.Kd());
             m_grass.Effect.GetVariableByName("mat_Ks").AsScalar().Set(mat_grass.Ks());
             m_grass.Effect.GetVariableByName("mat_A").AsScalar().Set(mat_grass.A());
-          //  AHHH : m_grass.Effect.GetVariableByName("ambientLight").AsVector().Set(Vector4(1.0f,1.0f,1.0f,1.0f));
-        //    m_grass.Effect.GetVariableByName("eye").AsScalar().Set(mat_grass.Kd());
-         //   m_grass.Effect.GetVariableByName("l_color").AsScalar().Set(l_light.Color());
-          //  m_grass.Effect.GetVariableByName("l_dir").AsScalar().Set(l_light.Dir());
+            //  AHHH : m_grass.Effect.GetVariableByName("ambientLight").AsVector().Set(Vector4(1.0f,1.0f,1.0f,1.0f));
+            //    m_grass.Effect.GetVariableByName("eye").AsScalar().Set(mat_grass.Kd());
+            //   m_grass.Effect.GetVariableByName("l_color").AsScalar().Set(l_light.Color());
+            //  m_grass.Effect.GetVariableByName("l_dir").AsScalar().Set(l_light.Dir());
             m_grass.Draw();//*/
-            
-
             /*for (int col = -50; col < 0; ++col)
             {
                 for (int row = -100; row < 0; ++row)

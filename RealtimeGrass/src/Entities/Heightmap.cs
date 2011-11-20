@@ -35,6 +35,7 @@ namespace RealtimeGrass.Entities
             float zf = 0;
             float interspace = 2f;
             float start = 0;
+            float y_shift = 127;
 
             m_numberOfElements = m_dimension * m_dimension;
             m_vertexBuffer = InitVertexBuffer();
@@ -54,7 +55,7 @@ namespace RealtimeGrass.Entities
                     int index = (y * m_dimension) + x;
                     Vector3 pos = new Vector3(
                         start + xf,
-                        b * 255 - 255, 
+                        b * 255 - 255 + y_shift, 
                         start + zf
                     );
 
