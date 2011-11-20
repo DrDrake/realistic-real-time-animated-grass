@@ -41,8 +41,9 @@ float3 eye;
 RasterizerState rsSolid
 {
 	  FillMode = Solid;
-	  CullMode = NONE;
+	  CullMode = None;
 	  FrontCounterClockwise = false;
+
 };
 
 
@@ -493,13 +494,19 @@ float4 PS_PIXEL_LIGHTING_BLINNPHONG( PS_IN input ) : SV_Target
 	
 	tex = tex*I;
 
-	return float4(tex, alphar);
+	if (alphar < 0.5) 
+	discard; 
+	
+	return float4(tex, alphar);	
+	
+
 	
 }
 
 //--------------------------------------------------------------------------------------
 // PIXEL SHADER
 //--------------------------------------------------------------------------------------
+
 
 float4 PS( PS_IN input ) : SV_Target { 
 
@@ -510,8 +517,11 @@ float4 PS( PS_IN input ) : SV_Target {
 	float tag = (sin((time%100)/10)+1)/2;
     tex = tex*(tag+0.3)+grass_diffuse03.Sample(ModelTextureSampler, input.texCoord)*(1-tag-0.3);
 
-	return float4(tex, alphar);
+	return float4(tex, alphar);	
+
+
 }
+
 
 //--------------------------------------------------------------------------------------
 // TECHNIQUE
