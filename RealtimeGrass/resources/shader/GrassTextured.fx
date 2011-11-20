@@ -19,7 +19,7 @@ Texture2D grass_shift;
 float cTexScal = 1;
 float time;
 float windPW=8;  // Value between 0-20
-float3 winddir= float3 (0.5,1,0.5); // y always 1
+float3 winddir= float3 (0.6,1,0.6); // y always 1
 
 //--------------------------------------------------------------------------------------
 //LIGHTING VARIABLES
@@ -127,6 +127,7 @@ PS_IN VSreal( GS_WORKING input ) {
 [maxvertexcount(40)]
 void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 {
+if (s[0].pos.y > 0) { 
     int LOD = 2;
     GS_WORKING bl;
 	GS_WORKING tl;
@@ -465,6 +466,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	triStream.Append(VSreal(tr));
 	}
 	}
+	}
 
 }
 
@@ -503,7 +505,7 @@ float4 PS( PS_IN input ) : SV_Target {
 
 	float alphar = grass_alpha.Sample(ModelTextureSampler, input.texCoord).r;
 
-	float3 tex = grass_diffuse01.Sample(ModelTextureSampler, input.texCoord).rgb*input.random.b+grass_diffuse02.Sample(ModelTextureSampler, input.texCoord).rgb*(1-input.random.b);
+	float3 tex = grass_diffuse01.Sample(ModelTextureSampler, input.texCoord)*input.random.b+grass_diffuse02.Sample(ModelTextureSampler, input.texCoord)*(1-input.random.b);
 
 	float tag = (sin((time%100)/10)+1)/2;
     tex = tex*(tag+0.3)+grass_diffuse03.Sample(ModelTextureSampler, input.texCoord)*(1-tag-0.3);
