@@ -19,13 +19,13 @@ namespace RealtimeGrass.Entities
     {
         private
         Vector4 l_color;
-        Vector3 l_dir;
+        Vector4 l_dir;
 
         public Light()
         {
         }
 
-        public void Init(Vector4 color, Vector3 dir)
+        public void Init(Vector4 color, Vector4 dir)
         {
             this.l_color = color;
             this.l_dir = dir;
