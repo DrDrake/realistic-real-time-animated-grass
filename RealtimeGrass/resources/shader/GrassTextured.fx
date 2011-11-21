@@ -18,7 +18,7 @@ Texture2D grass_shift;
 //Misc
 float cTexScal = 1;
 float time;
-float windPW=8;  // Value between 0-12
+float windPW=10;  // Value between 0-12
 float3 winddir= float3 (0.5,1,0.5); // y always 1
 
 //--------------------------------------------------------------------------------------
@@ -170,7 +170,7 @@ if (s[0].pos.y > 0) {
 
 	float offsetZ = winddir.y*windpower*(0.5+random2.b)*sin((time+random.r)+shift.rgb*3);
 
-	int LOD = 0;
+	int LOD = 2;
 
 	if (LOD == 0) {
 
@@ -197,10 +197,10 @@ if (s[0].pos.y > 0) {
 	float3 a = br.pos - bl.pos;
 	float3 b = tl.pos - bl.pos;
 
-	bl.normal = cross( a, b);
+	bl.normal = -cross( a, b);
 	tl.normal = cross( a,-b);
 	br.normal = cross(-a, b);
-	tr.normal = cross(-a,-b);
+	tr.normal = -cross(-a,-b);
 	
 	//Append
 	triStream.Append(VSreal(bl));
@@ -236,10 +236,10 @@ if (s[0].pos.y > 0) {
 	float3 a = br.pos - bl.pos;
 	float3 b = tl.pos - bl.pos;
 
-	bl.normal = cross( a, b);
+	bl.normal = -cross( a, b);
 	tl.normal = cross( a,-b);
 	br.normal = cross(-a, b);
-	tr.normal = cross(-a,-b);
+	tr.normal = -cross(-a,-b);
 	
 	//Append
 	triStream.Append(VSreal(bl));
@@ -271,7 +271,7 @@ if (s[0].pos.y > 0) {
 	b = tl.pos - bl.pos;
 
 	tl.normal = cross( a,-b);
-	tr.normal = cross(-a,-b);
+	tr.normal = -cross(-a,-b);
 	
 	//Append
 	triStream.Append(VSreal(tl));
@@ -300,9 +300,8 @@ if (s[0].pos.y > 0) {
 	a = br.pos - bl.pos;
 	b = tl.pos - bl.pos;
 
-
 	tl.normal = cross( a,-b);
-	tr.normal = cross(-a,-b);
+	tr.normal = -cross(-a,-b);
 	
 	//Append
 	triStream.Append(VSreal(tl));
