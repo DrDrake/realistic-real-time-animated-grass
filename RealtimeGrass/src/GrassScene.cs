@@ -9,6 +9,9 @@ using SlimDX.D3DCompiler;
 using SlimDX.DXGI;
 using SlimDX.DirectInput;
 
+using RealtimeGrass.Rendering.Mesh;
+using RealtimeGrass.Utility;
+
 using RealtimeGrass.Rendering;
 using RealtimeGrass.Rendering.UI;
 using RealtimeGrass.Utility;
@@ -39,6 +42,7 @@ namespace RealtimeGrass
         private readonly Bindable<float>        m_output = new Bindable<float>();
         private CoordinateSystem                m_coordSys;
         private Plane                           m_plane;
+        private SimpleGrass                     m_straw;
         private Skybox                          m_skybox;
         private float[,]                        m_strawSize;
         private Model                           m_Jupiter;
@@ -61,8 +65,8 @@ namespace RealtimeGrass
             hudText.SetBinding("Label", m_output);
             UserInterface.Container.Add(hudText);
 
-            m_camera = new Camera(
-                new Vector3(500, 3, 500), // position
+            m_camera = new RealtimeGrass.Utility.Camera(
+                new Vector3(0, 3, -10), // position
                 new Vector3(0, 0, 0), // lookat
                 Vector3.UnitZ, // direction
                 Vector3.UnitY, // up
@@ -133,17 +137,24 @@ namespace RealtimeGrass
                     DepthComparison = Comparison.Less
                 };
                 m_depthStencilState = DepthStencilState.FromDescription(Context10.Device, dssd);
-            
+                
+                // grass material
+                mat_grass = new LMaterial();
+                mat_grass.Init(0.1f, 0.9f, 0.8f, 100);
+
+                // light
+               // l_light = new Light();
+
                 //a symplistic Coordsystem---------------------------------------------------
                 m_coordSys = new CoordinateSystem();
                 m_coordSys.Init(Context10.Device, "Resources/shader/CoordinateSystem.fx", null);
 
-                //the grass plane------------------------------------------------------------
+                //the water plane------------------------------------------------------------
                 //Use FromDefaults() for correct init of ImageLoadInformation
                 ImageLoadInformation loadInfo1 = ImageLoadInformation.FromDefaults();
 
                 TextureFormat texFormat1 = new TextureFormat(
-                    "Resources/texture/grass4096x4096.jpg",
+                    "Resources/texture/wasser.jpg",
                     loadInfo1,
                     TextureType.TextureTypeDiffuse,
                     "model_texture"
@@ -153,8 +164,8 @@ namespace RealtimeGrass
                 textureFormats1.Add(texFormat1);
 
                 //ScaleX, ScaleY
-                m_plane = new Plane(100.0f, 100.0f);
-                m_plane.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats1);
+                m_plane = new Plane(1000.0f, 1000.0f);
+                m_plane.Init(Context10.Device, "Resources/shader/Water.fx", textureFormats1);
             
                 //a fancy skybox--------------------------------------------------------
                 ImageLoadInformation loadInfo2 = ImageLoadInformation.FromDefaults();
@@ -164,11 +175,20 @@ namespace RealtimeGrass
                     "Resources/texture/Sky_Miramar.dds",
                     loadInfo2,
                     TextureType.TextureTypeCube,
-                    "model_texture"
+                    "model_texture01"
+                );
+                ImageLoadInformation loadInfo22 = ImageLoadInformation.FromDefaults();
+                loadInfo22.OptionFlags = ResourceOptionFlags.TextureCube;
+                TextureFormat texFormat22 = new TextureFormat(
+                    "Resources/texture/Sky_Grimmnight.dds",
+                    loadInfo22,
+                    TextureType.TextureTypeCube,
+                    "model_texture02"
                 );
                 List<TextureFormat> textureFormats2 = new List<TextureFormat>();
                 textureFormats2.Add(texFormat2);
-            
+                textureFormats2.Add(texFormat22);
+
                 m_skybox = new Skybox();
                 m_skybox.Init(Context10.Device, "Resources/shader/Skybox.fx", textureFormats2);
 
@@ -191,51 +211,85 @@ namespace RealtimeGrass
                 ImageLoadInformation loadInfo4 = ImageLoadInformation.FromDefaults();
 
                 TextureFormat texFormat4 = new TextureFormat(
-                    "Resources/texture/boden2048x2048.jpg",
+                    "Resources/texture/boden01.jpg",
                     loadInfo4,
                     TextureType.TextureTypeDiffuse,
-                    "model_texture"
+                    "model_texture01"
+                );
+                ImageLoadInformation loadInfo42 = ImageLoadInformation.FromDefaults();
+
+                TextureFormat texFormat42 = new TextureFormat(
+                    "Resources/texture/boden02.jpg",
+                    loadInfo42,
+                    TextureType.TextureTypeDiffuse,
+                    "model_texture02"
                 );
                 List<TextureFormat> textureFormats4 = new List<TextureFormat>();
                 textureFormats4.Add(texFormat4);
 
-                m_heightmap = new Heightmap("Resources/texture/huegel1000x1000.jpg");
-                m_heightmap.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats4);
+                m_heightmap = new Heightmap("Resources/texture/huegel1000x1000.jpg",500);
+                m_heightmap.Init(Context10.Device, "Resources/shader/ModelTextured02.fx", textureFormats4);
 
                 //Grass---------------------------------------------------------------------------------
                 ImageLoadInformation loadInfo5 = ImageLoadInformation.FromDefaults();
 
                 TextureFormat texFormat5 = new TextureFormat(
-                    "Resources/texture/GrassDiffuse.jpg",
+                    "Resources/texture/GrassDiffuse01.jpg",
                     loadInfo5,
                     TextureType.TextureTypeDiffuse,
-                    "grass_diffuse"
+                    "grass_diffuse01"
                 );
-
+                ImageLoadInformation loadInfo6 = ImageLoadInformation.FromDefaults();
                 TextureFormat texFormat6 = new TextureFormat(
+                    "Resources/texture/GrassDiffuse02.jpg",
+                    loadInfo6,
+                    TextureType.TextureTypeDiffuse,
+                    "grass_diffuse02"
+                );
+                ImageLoadInformation loadInfo62 = ImageLoadInformation.FromDefaults();
+                TextureFormat texFormat62 = new TextureFormat(
+                    "Resources/texture/GrassDiffuse03.jpg",
+                    loadInfo62,
+                    TextureType.TextureTypeDiffuse,
+                    "grass_diffuse03"
+                );
+                ImageLoadInformation loadInfo7 = ImageLoadInformation.FromDefaults();
+                TextureFormat texFormat7 = new TextureFormat(
                     "Resources/texture/GrassAlpha.jpg",
-                    loadInfo5,
+                    loadInfo7,
                     TextureType.TextureTypeDiffuse,
                     "grass_alpha"
                 );
-
-                TextureFormat texFormat7 = new TextureFormat(
+                ImageLoadInformation loadInfo8 = ImageLoadInformation.FromDefaults();
+                TextureFormat texFormat8 = new TextureFormat(
                     "Resources/texture/noise1024x773.jpg",
-                    loadInfo5,
+                    loadInfo8,
                     TextureType.TextureTypeDiffuse,
                     "grass_noise"
+                );
+                ImageLoadInformation loadInfo9 = ImageLoadInformation.FromDefaults();
+                TextureFormat texFormat9 = new TextureFormat(
+                    "Resources/texture/phasenverschiebung.jpg",
+                    loadInfo9,
+                    TextureType.TextureTypeDiffuse,
+                    "grass_shift"
                 );
 
                 List<TextureFormat> textureFormats5 = new List<TextureFormat>();
                 textureFormats5.Add(texFormat5);
                 textureFormats5.Add(texFormat6);
+                textureFormats5.Add(texFormat62);
                 textureFormats5.Add(texFormat7);
+                textureFormats5.Add(texFormat8);
+                textureFormats5.Add(texFormat9);
 
                 m_grass = new Grass(m_heightmap.Roots, m_heightmap.NumberOfElements);
                 m_grass.Init(Context10.Device, "Resources/shader/GrassTextured.fx", textureFormats5);
+   
+
                 //-----------------------------------------
                 //Sounds
-                m_soundManager.playSingle("Resources/sounds/rustleWindwithBirds.wav");
+               // m_soundManager.playSingle("Resources/sounds/rustleWindwithBirds.wav");
             }
             catch(Exception e)
             {
@@ -243,7 +297,7 @@ namespace RealtimeGrass
                 OnResourceUnload();
             }
         }
-        
+
         protected void processInput()
         {
             KeyboardState keyState = m_input.ReadKeyboard();
@@ -381,6 +435,7 @@ namespace RealtimeGrass
             m_skybox.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
             m_skybox.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
             m_skybox.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+            m_skybox.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
             m_skybox.Draw();
             
             //SetDepthTest(true);
@@ -394,17 +449,55 @@ namespace RealtimeGrass
             Matrix tempMatrix;
 
             world = Matrix.Identity;
+            Matrix.Translation(0.0f, -0.001f, 0.0f, out world);
+            Matrix.Scaling(1.0f, 1.0f, 1.0f, out tempMatrix);
+            Matrix.Multiply(ref tempMatrix, ref world, out world);
             //+X
             m_heightmap.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
             m_heightmap.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
             m_heightmap.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
-            m_heightmap.Draw();//*/
+            m_heightmap.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
+            m_heightmap.Draw();//*
+
+
+            m_plane.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+            m_plane.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+            m_plane.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+            m_plane.Draw();
 
             m_grass.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
             m_grass.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
             m_grass.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
             m_grass.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
-            m_grass.Draw();            
+            m_grass.Effect.GetVariableByName("mat_Ka").AsScalar().Set(mat_grass.Ka());
+            m_grass.Effect.GetVariableByName("mat_Kd").AsScalar().Set(mat_grass.Kd());
+            m_grass.Effect.GetVariableByName("mat_Ks").AsScalar().Set(mat_grass.Ks());
+            m_grass.Effect.GetVariableByName("mat_A").AsScalar().Set(mat_grass.A());
+            //  AHHH : m_grass.Effect.GetVariableByName("ambientLight").AsVector().Set(Vector4(1.0f,1.0f,1.0f,1.0f));
+            //    m_grass.Effect.GetVariableByName("eye").AsScalar().Set(mat_grass.Kd());
+            //   m_grass.Effect.GetVariableByName("l_color").AsScalar().Set(l_light.Color());
+            //  m_grass.Effect.GetVariableByName("l_dir").AsScalar().Set(l_light.Dir());
+            m_grass.Draw();//*/
+            /*for (int col = -50; col < 0; ++col)
+            {
+                for (int row = -100; row < 0; ++row)
+                {
+                    world = Matrix.Identity;
+                    float randomHight = (float)m_strawSize.GetValue(col+50, row+100);
+                    Matrix.Scaling(0.01f, 0.01f + randomHight, 0.01f, out tempMatrix);
+                    Matrix.Translation(row * 0.1f, -0.5f, col * 0.1f, out world);
+                    Matrix rotationTemp;
+                    Matrix.RotationY(col + row + randomHight, out rotationTemp);
+                    Matrix.Multiply(ref rotationTemp, ref world, out world);
+                    Matrix.Multiply(ref tempMatrix, ref world, out world);
+                    m_straw.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+                    m_straw.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+                    m_straw.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+                    m_straw.Draw();
+                }
+            }*/
+            world = Matrix.Identity;
+            Matrix.Translation(0, 0, 100, out world);
 
             m_Jupiter.m_Rotation.Y = m_Jupiter.m_Rotation.Y + (FrameDelta * 0.1f) % 360;
             m_Jupiter.m_SelfRotation.Y = m_Jupiter.m_SelfRotation.Y + (FrameDelta * 0.5f) % 360;
@@ -430,7 +523,29 @@ namespace RealtimeGrass
             m_Jupiter.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
             m_Jupiter.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
             m_Jupiter.Draw();//*/
-            
+
+            // Geometry Shader Test
+            for (int col = 0; col < 50; ++col)
+            {
+                for (int row = 0; row < 50; ++row)
+                {
+                    /*
+                     *  Alle Wurzeln werden mit einer zufälligen Höhe und Ausrichtung erstellt.
+                     */
+                    world = Matrix.Identity;
+                    float randomHight = (float)m_strawSize.GetValue(col, row) * 0.3f;
+                    Matrix.Scaling(0.01f, 0.01f + randomHight, 0.01f, out tempMatrix);
+                    Matrix.Translation(row * 0.1f, -0.5f, col * 0.1f, out world);
+                    Matrix.RotationY(col + row + randomHight, out rotationTemp);
+                    Matrix.Multiply(ref rotationTemp, ref tempMatrix, out tempMatrix);
+                    Matrix.Multiply(ref tempMatrix, ref world, out world);
+
+                    /*root.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+                    root.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+                    root.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+                    root.Draw();//*/
+                }
+            }
             /*
             //Final Pass 
             Context10.Device.OutputMerger.DepthStencilState = m_depthStencilState;
@@ -450,6 +565,13 @@ namespace RealtimeGrass
             svQuad[2].tex = D3DXVECTOR2(0.0f, 1.0f);
             svQuad[3].pos = D3DXVECTOR4(1.0f, -1.0f, 0.5f, 1.0f);
             svQuad[3].tex = D3DXVECTOR2(1.0f, 1.0f);//*/
+
+            //world = Matrix.Identity;
+        }
+
+        private bool Vector4(float p, float p_2, float p_3, float p_4)
+        {
+            throw new NotImplementedException();
         }
 
         protected void SetDepthTest(bool isUsingDepthTest)
@@ -503,8 +625,11 @@ namespace RealtimeGrass
             m_plane.Dispose();
             m_skybox.Dispose();
             m_input.Dispose();
+            m_straw.Dispose();
         }
 
         public Heightmap m_gras { get; set; }
+
+        public LMaterial mat_grass { get; set; }
     }
 }
