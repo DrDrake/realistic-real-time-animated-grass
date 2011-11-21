@@ -169,7 +169,7 @@ if (s[0].pos.y > 0) {
 
 	float offsetZ = winddir.y*windpower*(0.5+random2.b)*sin((time+random.r)+shift.rgb*3);
 
-	int LOD = 0;
+	int LOD = 2;
 
 	if (LOD == 0) {
 
