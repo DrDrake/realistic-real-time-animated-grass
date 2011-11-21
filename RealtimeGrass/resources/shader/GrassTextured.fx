@@ -26,7 +26,7 @@ float3 winddir= float3 (0.5,1,0.5); // y always 1
 //--------------------------------------------------------------------------------------
 //DirectionalLight
 float4 l_color = float4 (1.0f,1.0f,1.0f,1.0f);
-float3 l_dir = float3 (-1,-1,1);
+float4 l_dir = float3 (-1,-1,1,0);
 
 //Material
 	float mat_Ka, mat_Kd, mat_Ks, mat_A;
@@ -489,18 +489,15 @@ float4 PS_PIXEL_LIGHTING_BLINNPHONG( PS_IN input ) : SV_Target
 
 	float3 tex = grass_diffuse01.Sample(ModelTextureSampler, input.texCoord).rgb*input.random.b+grass_diffuse02.Sample(ModelTextureSampler, input.texCoord).rgb*(1-input.random.b);
 
-	float tag = (sin((time%100)/10)+1)/2;
-    tex = tex*(tag+0.3)+grass_diffuse03.Sample(ModelTextureSampler, input.texCoord)*(1-tag-0.3);
+	float tag = (sin((time % 180)/10)+1)/2;
+    tex = tex * (tag + 0.3) + grass_diffuse03.Sample(ModelTextureSampler, input.texCoord)*(1-tag-0.3);
 	
-	tex = tex*I;
+	tex = tex * I;
 
 	if (alphar < 0.5) 
-	discard; 
+		discard; 
 	
 	return float4(tex, alphar);	
-	
-
-	
 }
 
 //--------------------------------------------------------------------------------------
