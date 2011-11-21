@@ -46,6 +46,7 @@ namespace RealtimeGrass
         private Model                           m_Jupiter;
         private Heightmap                       m_heightmap;
         private Grass                           m_grass;
+        private Light                           m_light;
 
         private Matrix                          m_proj;
         private Matrix                          m_view;
@@ -141,7 +142,8 @@ namespace RealtimeGrass
                 mat_grass.Init(0.1f, 0.9f, 0.8f, 100);
 
                 // light
-               // l_light = new Light();
+                m_light = new Light();
+                m_light.Init(new Vector4(1.0f, 0.0f, 0.0f, 0.0f), new Vector4(1.0f, 0.0f, 0.0f, 0.0f));
 
                 //a symplistic Coordsystem---------------------------------------------------
                 m_coordSys = new CoordinateSystem();
@@ -240,7 +242,7 @@ namespace RealtimeGrass
                 List<TextureFormat> textureFormats4 = new List<TextureFormat>();
                 textureFormats4.Add(texFormat4);
 
-                m_heightmap = new Heightmap("Resources/texture/huegel1000x1000.jpg",500);
+                m_heightmap = new Heightmap("Resources/texture/huegel128x128.jpg");
                 m_heightmap.Init(Context10.Device, "Resources/shader/ModelTextured02.fx", textureFormats4);
 
                 //Grass---------------------------------------------------------------------------------
@@ -493,7 +495,7 @@ namespace RealtimeGrass
             //  AHHH : m_grass.Effect.GetVariableByName("ambientLight").AsVector().Set(Vector4(1.0f,1.0f,1.0f,1.0f));
             //    m_grass.Effect.GetVariableByName("eye").AsScalar().Set(mat_grass.Kd());
             //   m_grass.Effect.GetVariableByName("l_color").AsScalar().Set(l_light.Color());
-            //  m_grass.Effect.GetVariableByName("l_dir").AsScalar().Set(l_light.Dir());
+            m_grass.Effect.GetVariableByName("l_dir").AsVector().Set(l_light.Dir());
             m_grass.Draw();//*/
             /*for (int col = -50; col < 0; ++col)
             {
