@@ -67,8 +67,11 @@ PS_IN VS( VS_IN input ) {
 float4 PS( PS_IN input ) : SV_Target {
 	float lightAmount = dot(normalize(float4(input.normalWS, 1.0)),normalize(csunWS));
 
-	float3 tex = model_texture.Sample(ModelTextureSampler, input.texCoord * cTexScal);// * lightAmount;
-	return float4(tex, 1.0f);
+	float4 tex = model_texture.Sample(ModelTextureSampler, input.texCoord * cTexScal);// * lightAmount;
+
+	if (tex.a < 0.5) 
+	discard; 
+	return float4(tex);
 }
 
 technique10 RenderSolid {

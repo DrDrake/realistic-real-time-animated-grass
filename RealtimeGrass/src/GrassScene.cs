@@ -207,6 +207,21 @@ namespace RealtimeGrass
                 m_Jupiter = new Model("Resources/mesh/Jupiter.smd");
                 m_Jupiter.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats3);
 
+                //Butterfly----------------------------------------------------------
+                ImageLoadInformation loadInfo10 = ImageLoadInformation.FromDefaults();
+
+                TextureFormat texFormat10 = new TextureFormat(
+                    "Resources/texture/butterfly.png",
+                    loadInfo10,
+                    TextureType.TextureTypeDiffuse,
+                    "model_texture"
+                );
+                List<TextureFormat> textureFormats10 = new List<TextureFormat>();
+                textureFormats10.Add(texFormat10);
+
+                m_butter = new Model("Resources/mesh/butterfly.png.smd");
+                m_butter.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats10);
+
                 //Heightmap--------------------------------------------------------------
                 ImageLoadInformation loadInfo4 = ImageLoadInformation.FromDefaults();
 
@@ -459,6 +474,10 @@ namespace RealtimeGrass
             m_heightmap.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
             m_heightmap.Draw();//*
 
+            m_butter.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+            m_butter.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+            m_butter.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);;
+            m_butter.Draw();//*/
 
             m_plane.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
             m_plane.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
@@ -523,6 +542,7 @@ namespace RealtimeGrass
             m_Jupiter.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
             m_Jupiter.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
             m_Jupiter.Draw();//*/
+
 
             // Geometry Shader Test
             for (int col = 0; col < 50; ++col)
@@ -631,5 +651,7 @@ namespace RealtimeGrass
         public Heightmap m_gras { get; set; }
 
         public LMaterial mat_grass { get; set; }
+
+        public Model m_butter { get; set; }
     }
 }
