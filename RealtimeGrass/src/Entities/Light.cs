@@ -36,7 +36,7 @@ namespace RealtimeGrass.Entities
         {
             return this.l_color;
         }
-        public Vector3 Dir()
+        public Vector4 Dir()
         {
             return this.l_dir;
         }
