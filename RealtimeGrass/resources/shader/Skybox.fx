@@ -6,6 +6,8 @@ float time;
 
 TextureCube model_texture01;
 TextureCube model_texture02;
+TextureCube model_texture03;
+TextureCube model_texture04;
 
 struct VS_IN {
 	float3 pos		: POSITION;
@@ -38,9 +40,32 @@ PS_IN VS( VS_IN input ) {
 }
 
 float4 PS( PS_IN input ) : SV_Target {
-	float tag = (sin((time%100)/10)+1)/2;
-    float4 tex = model_texture01.Sample(ModelTextureSampler, input.texCoord)*tag+model_texture02.Sample(ModelTextureSampler, input.texCoord)*(1-tag);
-	return tex;
+    float t = time/40;
+	float pi = 3.14159265358979323846f;
+	float4 tex, tex2;
+	switch(t%4)
+{
+ case 0:
+ 	tex = model_texture01.Sample(ModelTextureSampler, input.texCoord);
+ 	tex2 = model_texture04.Sample(ModelTextureSampler, input.texCoord);
+	break;
+ case 1:
+  	tex = model_texture02.Sample(ModelTextureSampler, input.texCoord);
+ 	tex2 = model_texture01.Sample(ModelTextureSampler, input.texCoord);
+	break;
+ case 2:
+  	tex = model_texture03.Sample(ModelTextureSampler, input.texCoord);
+ 	tex2 = model_texture02.Sample(ModelTextureSampler, input.texCoord);
+	break;
+ case 3:
+  	tex = model_texture04.Sample(ModelTextureSampler, input.texCoord);
+ 	tex2 = model_texture03.Sample(ModelTextureSampler, input.texCoord);
+	break;
+}
+
+    float blend = sin((t-floor(t))*pi/2);
+	float4 tex3 = tex*blend+tex2*(1-blend);
+	return tex3;
 }
 
 RasterizerState NoCulling

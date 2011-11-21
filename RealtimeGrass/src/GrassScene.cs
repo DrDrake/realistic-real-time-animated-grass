@@ -135,10 +135,6 @@ namespace RealtimeGrass
                     DepthComparison = Comparison.Less
                 };
                 m_depthStencilState = DepthStencilState.FromDescription(Context10.Device, dssd);
-                
-                // grass material
-                mat_grass = new LMaterial();
-                mat_grass.Init(0.1f, 0.9f, 0.8f, 100);
 
                 // light
                // l_light = new Light();
@@ -173,6 +169,14 @@ namespace RealtimeGrass
                     "Resources/texture/Sky_Miramar.dds",
                     loadInfo2,
                     TextureType.TextureTypeCube,
+                    "model_texture02"
+                );
+                ImageLoadInformation loadInfo21 = ImageLoadInformation.FromDefaults();
+                loadInfo21.OptionFlags = ResourceOptionFlags.TextureCube;
+                TextureFormat texFormat21 = new TextureFormat(
+                    "Resources/texture/Sky_Stormydays.dds",
+                    loadInfo21,
+                    TextureType.TextureTypeCube,
                     "model_texture01"
                 );
                 ImageLoadInformation loadInfo22 = ImageLoadInformation.FromDefaults();
@@ -181,11 +185,21 @@ namespace RealtimeGrass
                     "Resources/texture/Sky_Grimmnight.dds",
                     loadInfo22,
                     TextureType.TextureTypeCube,
-                    "model_texture02"
+                    "model_texture04"
+                );
+                ImageLoadInformation loadInfo23 = ImageLoadInformation.FromDefaults();
+                loadInfo23.OptionFlags = ResourceOptionFlags.TextureCube;
+                TextureFormat texFormat23 = new TextureFormat(
+                    "Resources/texture/Sky_Violentdays.dds",
+                    loadInfo23,
+                    TextureType.TextureTypeCube,
+                    "model_texture03"
                 );
                 List<TextureFormat> textureFormats2 = new List<TextureFormat>();
                 textureFormats2.Add(texFormat2);
+                textureFormats2.Add(texFormat21);
                 textureFormats2.Add(texFormat22);
+                textureFormats2.Add(texFormat23);
 
                 m_skybox = new Skybox();
                 m_skybox.Init(Context10.Device, "Resources/shader/Skybox.fx", textureFormats2);
@@ -221,6 +235,9 @@ namespace RealtimeGrass
                 m_butter.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats10);
 
                 //Heightmap--------------------------------------------------------------
+                // heightmap material
+                mat_heightmap = new LMaterial();
+                mat_heightmap.Init(0.1f, 0.9f, 0.8f, 100);
                 ImageLoadInformation loadInfo4 = ImageLoadInformation.FromDefaults();
 
                 TextureFormat texFormat4 = new TextureFormat(
@@ -229,14 +246,6 @@ namespace RealtimeGrass
                     TextureType.TextureTypeDiffuse,
                     "model_texture01"
                 );
-                ImageLoadInformation loadInfo42 = ImageLoadInformation.FromDefaults();
-
-                TextureFormat texFormat42 = new TextureFormat(
-                    "Resources/texture/boden02.jpg",
-                    loadInfo42,
-                    TextureType.TextureTypeDiffuse,
-                    "model_texture02"
-                );
                 List<TextureFormat> textureFormats4 = new List<TextureFormat>();
                 textureFormats4.Add(texFormat4);
 
@@ -244,6 +253,10 @@ namespace RealtimeGrass
                 m_heightmap.Init(Context10.Device, "Resources/shader/ModelTextured02.fx", textureFormats4);
 
                 //Grass---------------------------------------------------------------------------------
+                // grass material
+                mat_grass = new LMaterial();
+                mat_grass.Init(0.1f, 0.9f, 0.8f, 100);
+
                 ImageLoadInformation loadInfo5 = ImageLoadInformation.FromDefaults();
 
                 TextureFormat texFormat5 = new TextureFormat(
@@ -258,13 +271,6 @@ namespace RealtimeGrass
                     loadInfo6,
                     TextureType.TextureTypeDiffuse,
                     "grass_diffuse02"
-                );
-                ImageLoadInformation loadInfo62 = ImageLoadInformation.FromDefaults();
-                TextureFormat texFormat62 = new TextureFormat(
-                    "Resources/texture/GrassDiffuse03.jpg",
-                    loadInfo62,
-                    TextureType.TextureTypeDiffuse,
-                    "grass_diffuse03"
                 );
                 ImageLoadInformation loadInfo7 = ImageLoadInformation.FromDefaults();
                 TextureFormat texFormat7 = new TextureFormat(
@@ -291,7 +297,6 @@ namespace RealtimeGrass
                 List<TextureFormat> textureFormats5 = new List<TextureFormat>();
                 textureFormats5.Add(texFormat5);
                 textureFormats5.Add(texFormat6);
-                textureFormats5.Add(texFormat62);
                 textureFormats5.Add(texFormat7);
                 textureFormats5.Add(texFormat8);
                 textureFormats5.Add(texFormat9);
@@ -470,6 +475,10 @@ namespace RealtimeGrass
             m_heightmap.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
             m_heightmap.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
             m_heightmap.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
+            m_heightmap.Effect.GetVariableByName("mat_Ka").AsScalar().Set(mat_heightmap.Ka());
+            m_heightmap.Effect.GetVariableByName("mat_Kd").AsScalar().Set(mat_heightmap.Kd());
+            m_heightmap.Effect.GetVariableByName("mat_Ks").AsScalar().Set(mat_heightmap.Ks());
+            m_heightmap.Effect.GetVariableByName("mat_A").AsScalar().Set(mat_heightmap.A());
             m_heightmap.Draw();//*
 
             m_butter.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
@@ -650,5 +659,7 @@ namespace RealtimeGrass
         public LMaterial mat_grass { get; set; }
 
         public Model m_butter { get; set; }
+
+        public LMaterial mat_heightmap { get; set; }
     }
 }

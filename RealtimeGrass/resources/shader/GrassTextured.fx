@@ -10,7 +10,6 @@ float4x4 world;
 //Old Sampler2
 Texture2D grass_diffuse01;
 Texture2D grass_diffuse02;
-Texture2D grass_diffuse03;
 Texture2D grass_alpha;
 Texture2D grass_noise;
 Texture2D grass_shift;
@@ -170,7 +169,7 @@ if (s[0].pos.y > 0) {
 
 	float offsetZ = winddir.y*windpower*(0.5+random2.b)*sin((time+random.r)+shift.rgb*3);
 
-	int LOD = 2;
+	int LOD = 0;
 
 	if (LOD == 0) {
 
@@ -480,17 +479,42 @@ float4 PS_PIXEL_LIGHTING_BLINNPHONG( PS_IN input ) : SV_Target
 	//renormalize interpolated vectors
 	input.normalWS = normalize( input.normalWS );		
 	input.h = normalize( input.h );
-	
+
+	float4 color, color2;
+
+    float t = time/40;
+	float pi = 3.14159265358979323846f;
+	switch(t%4)
+{
+ case 0:
+ 	color = l_color*(float4(0.5f,1.0f,1.0f,1.0f));
+ 	color2 = l_color*(float4(0.1f,0.1f,0.3f,1.0f));
+	break;
+ case 1:
+ 	color = l_color*(float4(1.0f,1.0f,1.0f,1.0f));
+ 	color2 = l_color*(float4(0.5f,1.0f,1.0f,1.0f));
+	break;
+ case 2:
+ 	color = l_color*(float4(1.0f,0.6f,0.6f,1.0f));
+ 	color2 = l_color*(float4(1.0f,1.0f,1.0f,1.0f));
+	break;
+ case 3:
+ 	color = l_color*(float4(0.1f,0.1f,0.3f,1.0f));
+ 	color2 = l_color*(float4(1.0f,0.6f,0.6f,1.0f));
+	break;
+}
+
+    float blend = sin((t-floor(t))*pi/2);
+	float4 color3 = color*blend+color2*(1-blend);
+
 	//calculate lighting	
-	float4 I = calcBlinnPhongLighting( mat_Ka, mat_Kd, mat_Ks, mat_A, l_color, input.normalWS, -l_dir, input.h );
+	float4 I = calcBlinnPhongLighting( mat_Ka, mat_Kd, mat_Ks, mat_A, color3, input.normalWS, -l_dir, input.h );
 	
 	//with texturing
 	float alphar = grass_alpha.Sample(ModelTextureSampler, input.texCoord).r;
 
 	float3 tex = grass_diffuse01.Sample(ModelTextureSampler, input.texCoord).rgb*input.random.b+grass_diffuse02.Sample(ModelTextureSampler, input.texCoord).rgb*(1-input.random.b);
 
-	float tag = (sin((time%100)/10)+1)/2;
-    tex = tex*(tag+0.3)+grass_diffuse03.Sample(ModelTextureSampler, input.texCoord)*(1-tag-0.3);
 	
 	tex = tex*I;
 
@@ -501,25 +525,6 @@ float4 PS_PIXEL_LIGHTING_BLINNPHONG( PS_IN input ) : SV_Target
 	
 
 	
-}
-
-//--------------------------------------------------------------------------------------
-// PIXEL SHADER
-//--------------------------------------------------------------------------------------
-
-
-float4 PS( PS_IN input ) : SV_Target { 
-
-	float alphar = grass_alpha.Sample(ModelTextureSampler, input.texCoord).r;
-
-	float3 tex = grass_diffuse01.Sample(ModelTextureSampler, input.texCoord)*input.random.b+grass_diffuse02.Sample(ModelTextureSampler, input.texCoord)*(1-input.random.b);
-
-	float tag = (sin((time%100)/10)+1)/2;
-    tex = tex*(tag+0.3)+grass_diffuse03.Sample(ModelTextureSampler, input.texCoord)*(1-tag-0.3);
-
-	return float4(tex, alphar);	
-
-
 }
 
 
