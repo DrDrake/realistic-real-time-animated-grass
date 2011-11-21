@@ -17,7 +17,7 @@ Texture2D grass_shift;
 //Misc
 float cTexScal = 1;
 float time;
-float windPW=10;  // Value between 0-12
+float windPW=8;  // Value between 0-12
 float3 winddir= float3 (0.5,1,0.5); // y always 1
 
 //--------------------------------------------------------------------------------------
