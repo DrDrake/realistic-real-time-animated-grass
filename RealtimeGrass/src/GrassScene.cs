@@ -39,7 +39,6 @@ namespace RealtimeGrass
         private readonly Bindable<float>        m_output = new Bindable<float>();
         private CoordinateSystem                m_coordSys;
         private Plane                           m_plane;
-        private SimpleGrass                     m_straw;
         private Skybox                          m_skybox;
         private float[,]                        m_strawSize;
         private Model                           m_Jupiter;
@@ -63,7 +62,7 @@ namespace RealtimeGrass
             UserInterface.Container.Add(hudText);
 
             m_camera = new Camera(
-                new Vector3(0, 3, -10), // position
+                new Vector3(500, 3, 500), // position
                 new Vector3(0, 0, 0), // lookat
                 Vector3.UnitZ, // direction
                 Vector3.UnitY, // up
@@ -156,8 +155,6 @@ namespace RealtimeGrass
                 //ScaleX, ScaleY
                 m_plane = new Plane(100.0f, 100.0f);
                 m_plane.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats1);
-                //a single grass straw----------------------------------------------------
-                m_straw = new SimpleGrass(Context10.Device, "Resources/shader/DefaultCamera.fx", null);
             
                 //a fancy skybox--------------------------------------------------------
                 ImageLoadInformation loadInfo2 = ImageLoadInformation.FromDefaults();
@@ -397,9 +394,6 @@ namespace RealtimeGrass
             Matrix tempMatrix;
 
             world = Matrix.Identity;
-            Matrix.Translation(0.0f, -0.001f, 0.0f, out world);
-            Matrix.Scaling(1.0f, 1.0f, 1.0f, out tempMatrix);
-            Matrix.Multiply(ref tempMatrix, ref world, out world);
             //+X
             m_heightmap.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
             m_heightmap.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
@@ -410,33 +404,7 @@ namespace RealtimeGrass
             m_grass.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
             m_grass.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
             m_grass.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
-            m_grass.Draw();//*/
-            
-
-            /*for (int col = -50; col < 0; ++col)
-            {
-                for (int row = -100; row < 0; ++row)
-                {
-                    world = Matrix.Identity;
-                    float randomHight = (float)m_strawSize.GetValue(col+50, row+100);
-                    Matrix.Scaling(0.01f, 0.01f + randomHight, 0.01f, out tempMatrix);
-                    Matrix.Translation(row * 0.1f, -0.5f, col * 0.1f, out world);
-                    Matrix rotationTemp;
-                    Matrix.RotationY(col + row + randomHight, out rotationTemp);
-                    Matrix.Multiply(ref rotationTemp, ref world, out world);
-                    Matrix.Multiply(ref tempMatrix, ref world, out world);
-                    m_straw.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-                    m_straw.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
-                    m_straw.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
-                    m_straw.Draw();
-                }
-            }*/
-            world = Matrix.Identity;
-            Matrix.Translation(0, 0, 100, out world);
-            m_straw.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-            m_straw.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
-            m_straw.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
-            m_straw.Draw();
+            m_grass.Draw();            
 
             m_Jupiter.m_Rotation.Y = m_Jupiter.m_Rotation.Y + (FrameDelta * 0.1f) % 360;
             m_Jupiter.m_SelfRotation.Y = m_Jupiter.m_SelfRotation.Y + (FrameDelta * 0.5f) % 360;
@@ -462,29 +430,7 @@ namespace RealtimeGrass
             m_Jupiter.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
             m_Jupiter.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
             m_Jupiter.Draw();//*/
-
-            // Geometry Shader Test
-            for (int col = 0; col < 50; ++col)
-            {
-                for (int row = 0; row < 50; ++row)
-                {
-                    /*
-                     *  Alle Wurzeln werden mit einer zufälligen Höhe und Ausrichtung erstellt.
-                     */
-                    world = Matrix.Identity;
-                    float randomHight = (float)m_strawSize.GetValue(col, row) * 0.3f;
-                    Matrix.Scaling(0.01f, 0.01f + randomHight, 0.01f, out tempMatrix);
-                    Matrix.Translation(row * 0.1f, -0.5f, col * 0.1f, out world);
-                    Matrix.RotationY(col + row + randomHight, out rotationTemp);
-                    Matrix.Multiply(ref rotationTemp, ref tempMatrix, out tempMatrix);
-                    Matrix.Multiply(ref tempMatrix, ref world, out world);
-
-                    /*root.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-                    root.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
-                    root.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
-                    root.Draw();//*/
-                }
-            }
+            
             /*
             //Final Pass 
             Context10.Device.OutputMerger.DepthStencilState = m_depthStencilState;
@@ -504,8 +450,6 @@ namespace RealtimeGrass
             svQuad[2].tex = D3DXVECTOR2(0.0f, 1.0f);
             svQuad[3].pos = D3DXVECTOR4(1.0f, -1.0f, 0.5f, 1.0f);
             svQuad[3].tex = D3DXVECTOR2(1.0f, 1.0f);//*/
-
-            //world = Matrix.Identity;
         }
 
         protected void SetDepthTest(bool isUsingDepthTest)
@@ -559,7 +503,6 @@ namespace RealtimeGrass
             m_plane.Dispose();
             m_skybox.Dispose();
             m_input.Dispose();
-            m_straw.Dispose();
         }
 
         public Heightmap m_gras { get; set; }

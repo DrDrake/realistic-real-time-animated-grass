@@ -22,7 +22,6 @@ namespace RealtimeGrass.Entities
         public override void CreateVertexBuffer()
         {
             m_vertexBuffer = InitVertexBuffer();
-
             DataStream stream = m_vertexBuffer.Map(MapMode.WriteDiscard, MapFlags.None);
             stream.WriteRange<Vector3>(m_roots);
             m_vertexBuffer.Unmap();
