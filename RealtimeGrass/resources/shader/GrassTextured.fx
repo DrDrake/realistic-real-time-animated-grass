@@ -129,7 +129,6 @@ PS_IN VSreal( GS_WORKING input ) {
 void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 {
 if (s[0].pos.y > 0) { 
-    int LOD = 2;
     GS_WORKING bl;
 	GS_WORKING tl;
 	GS_WORKING br;
@@ -170,6 +169,8 @@ if (s[0].pos.y > 0) {
 	}
 
 	float offsetZ = winddir.y*windpower*(0.5+random2.b)*sin((time+random.r)+shift.rgb*3);
+
+	int LOD = 0;
 
 	if (LOD == 0) {
 

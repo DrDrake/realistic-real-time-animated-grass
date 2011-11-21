@@ -106,7 +106,6 @@
     <Compile Include="src\Foundation\Rendering\UI\UserInterfaceRenderer.cs" />
     <Compile Include="src\Foundation\Rendering\UI\UserInterfaceRenderer10.cs" />
     <Compile Include="src\Foundation\Rendering\UI\UserInterfaceRenderer9.cs" />
-    <Compile Include="src\Entities\SimpleGrass.cs" />
     <Compile Include="src\Foundation\SlimScene.cs" />
     <Compile Include="src\Foundation\Utility\TextureFormat.cs" />
     <Compile Include="src\Foundation\Utility\VertexBufferFormat.cs" />

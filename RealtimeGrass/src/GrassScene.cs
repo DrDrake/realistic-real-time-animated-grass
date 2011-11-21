@@ -9,12 +9,11 @@ using SlimDX.D3DCompiler;
 using SlimDX.DXGI;
 using SlimDX.DirectInput;
 
-using RealtimeGrass.Rendering.Mesh;
-using RealtimeGrass.Utility;
 
+using RealtimeGrass.Utility;
 using RealtimeGrass.Rendering;
 using RealtimeGrass.Rendering.UI;
-using RealtimeGrass.Utility;
+using RealtimeGrass.Rendering.Mesh;
 using RealtimeGrass.UI.Binding;
 using RealtimeGrass.UI;
 using RealtimeGrass.Entities;
@@ -42,7 +41,6 @@ namespace RealtimeGrass
         private readonly Bindable<float>        m_output = new Bindable<float>();
         private CoordinateSystem                m_coordSys;
         private Plane                           m_plane;
-        private SimpleGrass                     m_straw;
         private Skybox                          m_skybox;
         private float[,]                        m_strawSize;
         private Model                           m_Jupiter;
@@ -645,7 +643,6 @@ namespace RealtimeGrass
             m_plane.Dispose();
             m_skybox.Dispose();
             m_input.Dispose();
-            m_straw.Dispose();
         }
 
         public Heightmap m_gras { get; set; }
