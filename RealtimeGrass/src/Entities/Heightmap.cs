@@ -18,14 +18,15 @@ namespace RealtimeGrass.Entities
     class Heightmap : Entity
     {
         private Bitmap m_heightmap;
-        private int m_dimension;
+        private Point m_dimension;
         private Vector3[] m_roots;
         public Vector3[] Roots { get { return m_roots; } set { m_roots = value; } }
 
-        public Heightmap(string heightMapName, int dimension)
+        public Heightmap(string heightMapName)
         {
             m_heightmap = new Bitmap(heightMapName);
-            m_dimension = dimension;
+            m_dimension.X = m_heightmap.Width;
+            m_dimension.Y = m_heightmap.Height;
         }
 
         public override void CreateVertexBuffer(){
@@ -35,34 +36,34 @@ namespace RealtimeGrass.Entities
             float zf = 0;
             float interspace = 2f;
             float start = 0;
-            float y_shift = 127;
+            float y_shift = 0;
 
-            m_numberOfElements = m_dimension * m_dimension;
+            m_numberOfElements = m_dimension.X * m_dimension.Y;
             m_vertexBuffer = InitVertexBuffer();
             SVertex3P3N2T[] vertices = new SVertex3P3N2T[m_numberOfElements];
             m_roots = new Vector3[m_numberOfElements];
 
-            for (int y = 0; y < m_dimension; y++)
+            for (int y = 0; y < m_dimension.Y; y++)
             {
                 zf = y * interspace;
-                for (int x = 0; x < m_dimension; x++)
+                for (int x = 0; x < m_dimension.X; x++)
                 {
                     xf = x * interspace;
                     i = m_heightmap.GetPixel(x, y);
 
                     float b = i.GetBrightness();
 
-                    int index = (y * m_dimension) + x;
+                    int index = (y * m_dimension.X) + x;
                     Vector3 pos = new Vector3(
                         start + xf,
-                        b * 255 - 255 + y_shift, 
+                        b * (m_dimension.X/2) - (m_dimension.X/4), 
                         start + zf
                     );
 
                     vertices[index] = new SVertex3P3N2T(
                         pos, 
                         new Vector3(0.0f, 1.0f, 0.0f),
-                        new Vector2(x / (float)m_dimension, y / (float)m_dimension)
+                        new Vector2(x / (float)m_dimension.X, y / (float)m_dimension.Y)
                     );
 
                     m_roots[index] = pos;
@@ -78,28 +79,28 @@ namespace RealtimeGrass.Entities
         public override void CreateIndexBuffer()
         {
 
-            m_indexCount = ((m_dimension - 1)*(m_dimension - 1)) * 6; // -1 because points --> quads ; 6 indices per quad
+            m_indexCount = ((m_dimension.X - 1)*(m_dimension.Y - 1)) * 6; // -1 because points --> quads ; 6 indices per quad
             m_indexBuffer = InitIndexBuffer();
             UInt32[] indices = new UInt32[m_indexCount];
 
             int count = 0;
-            for (UInt32 y = 0; y < m_dimension-1; y++)
+            for (UInt32 y = 0; y < m_dimension.Y - 1; y++)
             {
 
-                for (UInt32 x = 0; x < m_dimension-1; x++)
+                for (UInt32 x = 0; x < m_dimension.X - 1; x++)
                 {
 
-                    indices[count] = y * (UInt32)m_dimension + x;
+                    indices[count] = y * (UInt32)m_dimension.X + x;
                     count++;
-                    indices[count] = y * (UInt32)m_dimension + x + (UInt32)m_dimension + 1;
+                    indices[count] = y * (UInt32)m_dimension.X + x + (UInt32)m_dimension.Y + 1;
                     count++;
-                    indices[count] = y * (UInt32)m_dimension + x + 1;
+                    indices[count] = y * (UInt32)m_dimension.X + x + 1;
                     count++;
-                    indices[count] = y * (UInt32)m_dimension + x;
+                    indices[count] = y * (UInt32)m_dimension.X + x;
                     count++;
-                    indices[count] = (y + 1) * (UInt32)m_dimension + x;
+                    indices[count] = (y + 1) * (UInt32)m_dimension.X + x;
                     count++;
-                    indices[count] = y * (UInt32)m_dimension + x + (UInt32)m_dimension + 1;
+                    indices[count] = y * (UInt32)m_dimension.X + x + (UInt32)m_dimension.Y + 1;
                     count++;
                 }
             }
