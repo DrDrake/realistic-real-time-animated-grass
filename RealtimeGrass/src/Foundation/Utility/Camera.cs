@@ -109,16 +109,23 @@ namespace RealtimeGrass.Utility
             m_Direction = Vector3.Normalize(m_LookAt - m_Position);
 
             //Rotation Up/Down
+            Vector3 Up = new Vector3(0.0f, 1.0f, 0.0f);
             Vector3 Ortho = new Vector3(-m_Direction.Z, 0.0f, m_Direction.X);
 
-            m_LookAt = m_LookAt - m_Position;
-            matRotate = Matrix.RotationAxis(Ortho, y);
+            if (
+                y > 0.0f && Vector3.Dot(Up, m_Direction) < 0.99f || 
+                y < 0.0f && Vector3.Dot(-Up, m_Direction) < 0.99f
+            )
+            {
+                m_LookAt = m_LookAt - m_Position;
+                matRotate = Matrix.RotationAxis(Ortho, y);
 
-            temp = Vector3.Transform(m_LookAt, matRotate);
-            m_LookAt.X = temp.X;
-            m_LookAt.Y = temp.Y;
-            m_LookAt.Z = temp.Z;
-            m_LookAt = m_LookAt + m_Position;
+                temp = Vector3.Transform(m_LookAt, matRotate);
+                m_LookAt.X = temp.X;
+                m_LookAt.Y = temp.Y;
+                m_LookAt.Z = temp.Z;
+                m_LookAt = m_LookAt + m_Position;
+            }
 
             Update(out m_proj, out m_view);
         }

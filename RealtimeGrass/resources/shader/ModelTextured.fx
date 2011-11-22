@@ -13,7 +13,7 @@ float4x4 world;
 Texture2D model_texture;
 
 //Misc
-float cTexScal = 3;
+float cTexScal = 1;
 float time;
 
 //--------------------------------------------------------------------------------------
@@ -89,12 +89,12 @@ float4 PS( PS_IN input ) : SV_Target
 	//with texturing
 	float4 tex = model_texture.Sample(ModelTextureSampler, input.texCoord);
 
-	tex = tex * I;
+	tex.xyz = tex.xyz * I.xyz;
 
 	if (tex.a < 0.5) 
-	discard; 
+		discard; 
 	
-	return float4(tex);	
+	return tex;	
 }
 
 technique10 RenderSolid {
