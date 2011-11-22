@@ -45,7 +45,7 @@ namespace RealtimeGrass
         private Model                           m_Jupiter;
         private Heightmap                       m_heightmap;
         private Grass                           m_grass;
-        public Model                            m_butter { get; set; }
+        public Model                            m_butterfly { get; set; }
 
         private Matrix                          m_proj;
         private Matrix                          m_view;
@@ -221,8 +221,8 @@ namespace RealtimeGrass
                 List<TextureFormat> textureFormats10 = new List<TextureFormat>();
                 textureFormats10.Add(texFormat10);
 
-                m_butter = new Model(0.1f, 0.9f, 0.8f, 64, "Resources/mesh/butterfly.png.smd");
-                m_butter.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats10);
+                m_butterfly = new Model(1.0f, 0.9f, 0.8f, 64, "Resources/mesh/butterfly.smd");
+                m_butterfly.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats10);
 
                 //Heightmap--------------------------------------------------------------
                 // heightmap material
@@ -466,16 +466,23 @@ namespace RealtimeGrass
                 m_heightmap.SetShaderMaterial();
                 m_heightmap.Draw();//*
 
-                m_butter.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-                m_butter.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
-                m_butter.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);;
-                m_butter.Draw();//*/
+                world = Matrix.Identity;
+                Matrix.Translation(0.0f, 30f, 0.0f, out world);
+
+                m_butterfly.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+                m_butterfly.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+                m_butterfly.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);;
+                m_butterfly.Draw();//*/
+
+                world = Matrix.Identity;
 
                 m_plane.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
                 m_plane.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
                 m_plane.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
                 m_plane.SetShaderMaterial();
                 m_plane.Draw();
+
+                world = Matrix.Identity;
 
                 m_grass.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
                 m_grass.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
