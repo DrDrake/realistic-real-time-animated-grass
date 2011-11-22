@@ -492,29 +492,12 @@ namespace RealtimeGrass
             m_grass.Effect.GetVariableByName("mat_Kd").AsScalar().Set(mat_grass.Kd());
             m_grass.Effect.GetVariableByName("mat_Ks").AsScalar().Set(mat_grass.Ks());
             m_grass.Effect.GetVariableByName("mat_A").AsScalar().Set(mat_grass.A());
-            //  AHHH : m_grass.Effect.GetVariableByName("ambientLight").AsVector().Set(Vector4(1.0f,1.0f,1.0f,1.0f));
-            //    m_grass.Effect.GetVariableByName("eye").AsScalar().Set(mat_grass.Kd());
+            //  AHHH : m_grass.Effect.GetVariableByName("ambientLight").AsVector().Set(Vector4(1.0f,1.0f,1.0f,1.0f));            
+            m_grass.Effect.GetVariableByName("eye").AsVector().Set(new Vector4(m_camera.m_Position, 1.0f));
             //   m_grass.Effect.GetVariableByName("l_color").AsScalar().Set(l_light.Color());
-            m_grass.Effect.GetVariableByName("l_dir").AsVector().Set(l_light.Dir());
+            m_grass.Effect.GetVariableByName("l_dir").AsVector().Set(m_light.Dir());
             m_grass.Draw();//*/
-            /*for (int col = -50; col < 0; ++col)
-            {
-                for (int row = -100; row < 0; ++row)
-                {
-                    world = Matrix.Identity;
-                    float randomHight = (float)m_strawSize.GetValue(col+50, row+100);
-                    Matrix.Scaling(0.01f, 0.01f + randomHight, 0.01f, out tempMatrix);
-                    Matrix.Translation(row * 0.1f, -0.5f, col * 0.1f, out world);
-                    Matrix rotationTemp;
-                    Matrix.RotationY(col + row + randomHight, out rotationTemp);
-                    Matrix.Multiply(ref rotationTemp, ref world, out world);
-                    Matrix.Multiply(ref tempMatrix, ref world, out world);
-                    m_straw.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-                    m_straw.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
-                    m_straw.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
-                    m_straw.Draw();
-                }
-            }*/
+
             world = Matrix.Identity;
             Matrix.Translation(0, 0, 100, out world);
 
@@ -542,30 +525,7 @@ namespace RealtimeGrass
             m_Jupiter.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
             m_Jupiter.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
             m_Jupiter.Draw();//*/
-
-
-            // Geometry Shader Test
-            for (int col = 0; col < 50; ++col)
-            {
-                for (int row = 0; row < 50; ++row)
-                {
-                    /*
-                     *  Alle Wurzeln werden mit einer zufälligen Höhe und Ausrichtung erstellt.
-                     */
-                    world = Matrix.Identity;
-                    float randomHight = (float)m_strawSize.GetValue(col, row) * 0.3f;
-                    Matrix.Scaling(0.01f, 0.01f + randomHight, 0.01f, out tempMatrix);
-                    Matrix.Translation(row * 0.1f, -0.5f, col * 0.1f, out world);
-                    Matrix.RotationY(col + row + randomHight, out rotationTemp);
-                    Matrix.Multiply(ref rotationTemp, ref tempMatrix, out tempMatrix);
-                    Matrix.Multiply(ref tempMatrix, ref world, out world);
-
-                    /*root.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-                    root.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
-                    root.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
-                    root.Draw();//*/
-                }
-            }
+            
             /*
             //Final Pass 
             Context10.Device.OutputMerger.DepthStencilState = m_depthStencilState;

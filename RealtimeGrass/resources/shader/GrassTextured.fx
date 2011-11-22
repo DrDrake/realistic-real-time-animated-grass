@@ -26,14 +26,14 @@ float3 winddir= float3 (0.5,1,0.5); // y always 1
 //--------------------------------------------------------------------------------------
 //DirectionalLight
 float4 l_color = float4 (1.0f,1.0f,1.0f,1.0f);
-float4 l_dir = float3 (-1,-1,1,0);
+float4 l_dir;
 
 //Material
-	float mat_Ka, mat_Kd, mat_Ks, mat_A;
+float mat_Ka, mat_Kd, mat_Ks, mat_A;
 
 //lighting vars
 float4 ambientLight= float4(1.0f,1.0f,1.0f,1.0f);
-float3 eye;
+float4 eye;
 
 //--------------------------------------------------------------------------------------
 //RASTERIZER STATES
@@ -59,19 +59,7 @@ SamplerState ModelTextureSampler {
 };
 
 //--------------------------------------------------------------------------------------
-// Blinn-Phong Lighting Reflection Model
-//--------------------------------------------------------------------------------------
-float4 calcBlinnPhongLighting(float M_Ka, float M_Kd, float M_Ks, float M_A, float4 LColor, float3 N, float3 L, float3 H )
-{	
-	float4 Ia = M_Ka * ambientLight;
-	float4 Id = M_Kd * saturate( dot(N,L) );
-	float4 Is = M_Ks * pow( saturate(dot(N,H)), M_A );
-	
-	return Ia + (Id + Is) * LColor;
-}
-
-//--------------------------------------------------------------------------------------
-// STRCUCTS
+// STRUCTS
 //--------------------------------------------------------------------------------------
 
 //Vertexshader Input from Pipeline
@@ -115,9 +103,9 @@ PS_IN VSreal( GS_WORKING input ) {
 	output.pos = mul(float4(input.pos, 1.0), worldViewProj);
 	output.normalWS = mul(float4(input.normal, 1.0), world).xyz;
 	output.texCoord = input.texCoord;
-	output.random = input.random;	
-	float3 V = normalize( eye - (float3) input.pos );
-	output.h = normalize( -l_dir + V );	
+	output.random = input.random;
+	float3 View = normalize( eye - input.pos.xyz );
+	output.h = normalize( l_dir + View );	
 	return output;
 }
 
@@ -469,6 +457,18 @@ if (s[0].pos.y > 0) {
 	}
 	}
 
+}
+
+//--------------------------------------------------------------------------------------
+// Blinn-Phong Lighting Reflection Model
+//--------------------------------------------------------------------------------------
+float4 calcBlinnPhongLighting(float M_Ka, float M_Kd, float M_Ks, float M_A, float4 LColor, float3 N, float3 L, float3 H )
+{	
+	float4 Ia = M_Ka * ambientLight;
+	float4 Id = M_Kd * saturate( dot(N,L) );
+	float4 Is = M_Ks * pow( saturate(dot(N,H)), M_A );
+	
+	return Ia + (Id + Is) * LColor;
 }
 
 //--------------------------------------------------------------------------------------
