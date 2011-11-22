@@ -87,11 +87,14 @@ float4 PS( PS_IN input ) : SV_Target
 	float4 I = calcBlinnPhongLighting( input.normalWS, -l_dir, input.halfway, time);
 	
 	//with texturing
-	float3 tex = model_texture.Sample(ModelTextureSampler, input.texCoord);
+	float4 tex = model_texture.Sample(ModelTextureSampler, input.texCoord);
 
 	tex = tex * I;
 
-	return float4(tex,1.0f);
+	if (tex.a < 0.5) 
+	discard; 
+	
+	return float4(tex);	
 }
 
 technique10 RenderSolid {
