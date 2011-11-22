@@ -455,7 +455,7 @@ float4 PS_PIXEL_LIGHTING_BLINNPHONG( PS_IN input ) : SV_Target
 	input.halfway = normalize( input.halfway );
 
 	//calculate lighting	
-	float4 I = calcBlinnPhongLighting(input.normalWS, -l_dir, input.halfway, time);
+	float3 I = calcBlinnPhongLighting(input.normalWS, -l_dir, input.halfway, time);
 	
 	//with texturing
 	float alphar = grass_alpha.Sample(ModelTextureSampler, input.texCoord).r;
