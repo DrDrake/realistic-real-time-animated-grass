@@ -71,7 +71,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="src\Entities\Light.cs" />
-    <Compile Include="src\Entities\LMaterial.cs" />
+    <Compile Include="src\Entities\Material.cs" />
     <Compile Include="src\Entities\CoordinateSystem.cs" />
     <Compile Include="src\Entities\Grass.cs" />
     <Compile Include="src\Entities\Heightmap.cs" />
@@ -130,10 +130,13 @@
     <None Include="Resources\mesh\butterfly.png.smd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Resources\shader\BlinnPhong.fx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\shader\Water.fx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\shader\ModelTextured02.fx">
+    <None Include="Resources\shader\ModelTextured.fx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\texture\Sky_Grimmnight.dds">
@@ -164,9 +167,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\shader\CoordinateSystem.fx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\shader\ModelTextured.fx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <EmbeddedResource Include="Resources\shader\UserInterface10.fx">

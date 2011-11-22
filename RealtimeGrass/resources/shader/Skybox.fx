@@ -9,25 +9,29 @@ TextureCube model_texture02;
 TextureCube model_texture03;
 TextureCube model_texture04;
 
-struct VS_IN {
+struct VS_IN 
+{
 	float3 pos		: POSITION;
 	float3 normal	: NORMAL;
 	float2 texCoord	: TEXCOORD;
 };
 
-struct PS_IN {
+struct PS_IN 
+{
 	float4 posPS	: SV_POSITION;
 	float4 normalWS	: NORMAL;
 	float3 texCoord	: TEXCOORD;
 };
 
-SamplerState ModelTextureSampler {
+SamplerState ModelTextureSampler 
+{
     Filter = MIN_MAG_MIP_LINEAR;
     AddressU = Wrap;
     AddressV = Wrap;
 };
 
-PS_IN VS( VS_IN input ) {
+PS_IN VS( VS_IN input ) 
+{
 	PS_IN output = (PS_IN)0;
 
 	float4x4 worldViewProj = mul(mul(world, view), proj);
@@ -39,7 +43,8 @@ PS_IN VS( VS_IN input ) {
 	return output;
 }
 
-float4 PS( PS_IN input ) : SV_Target {
+float4 PS( PS_IN input ) : SV_Target 
+{
     float t = time/40;
 	float pi = 3.14159265358979323846f;
 	float4 tex, tex2;
@@ -78,8 +83,10 @@ DepthStencilState LessEqualDSS
 	DepthFunc = LESS_EQUAL;
 };
 
-technique10 Render {
-	pass P0 {
+technique10 Render 
+{
+	pass P0 
+	{
 		SetGeometryShader( 0 );
 		SetVertexShader( CompileShader( vs_4_0, VS() ) );
 		SetPixelShader( CompileShader( ps_4_0, PS() ) );
