@@ -218,7 +218,7 @@ namespace RealtimeGrass
                 List<TextureFormat> textureFormats10 = new List<TextureFormat>();
                 textureFormats10.Add(texFormat10);
 
-                m_butterfly = new Model(0.1f, 0.9f, 0.8f, 64, "Resources/mesh/butterfly.smd");
+                m_butterfly = new Model(0.3f, 0.9f, 0.8f, 64, "Resources/mesh/butterfly.smd");
                 m_butterfly.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats10);
 
                 //Heightmap--------------------------------------------------------------
@@ -464,7 +464,12 @@ namespace RealtimeGrass
                 m_heightmap.Draw();//*
 
                 world = Matrix.Identity;
-                Matrix.Translation(0.0f, 30f, 0.0f, out world);
+                Matrix.Translation(m_camera.m_LookAt.X,m_camera.m_LookAt.Y, m_camera.m_LookAt.Z, out world);
+                Matrix.RotationY(135, out tempMatrix);
+                Matrix.Multiply(ref tempMatrix, ref world, out world);
+
+                Matrix.Scaling(1.5f, 1.5f, 1.5f, out tempMatrix);
+                Matrix.Multiply(ref tempMatrix, ref world, out world);
 
                 m_butterfly.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
                 m_butterfly.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
