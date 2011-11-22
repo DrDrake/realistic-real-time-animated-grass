@@ -42,15 +42,16 @@ namespace RealtimeGrass
         private CoordinateSystem                m_coordSys;
         private Plane                           m_plane;
         private Skybox                          m_skybox;
-        private float[,]                        m_strawSize;
         private Model                           m_Jupiter;
         private Heightmap                       m_heightmap;
         private Grass                           m_grass;
+        public Model                            m_butter { get; set; }
 
         private Matrix                          m_proj;
         private Matrix                          m_view;
         //Sound testing
         private bool                            m_played = false;
+
 
         #endregion
 
@@ -80,17 +81,6 @@ namespace RealtimeGrass
 
             m_clock = new Clock();
             m_clock.Start();
-
-            m_strawSize = new float[100,100];
-            System.Random r = new System.Random();
-
-            for (int col = 0; col < 100; ++col)
-            {
-                for (int row = 0; row < 100; ++row)
-                {
-                    m_strawSize.SetValue((float)r.NextDouble() * 0.1f, col, row);
-                }
-            }
 
             DeviceSettings10 settings = new DeviceSettings10
             {
@@ -140,7 +130,7 @@ namespace RealtimeGrass
                // l_light = new Light();
 
                 //a symplistic Coordsystem---------------------------------------------------
-                m_coordSys = new CoordinateSystem();
+                m_coordSys = new CoordinateSystem(0.1f, 0.9f, 0.8f, 64);
                 m_coordSys.Init(Context10.Device, "Resources/shader/CoordinateSystem.fx", null);
 
                 //the water plane------------------------------------------------------------
@@ -158,7 +148,7 @@ namespace RealtimeGrass
                 textureFormats1.Add(texFormat1);
 
                 //ScaleX, ScaleY
-                m_plane = new Plane(1000.0f, 1000.0f);
+                m_plane = new Plane(0.1f, 0.9f, 0.8f, 64, 1000.0f, 1000.0f);
                 m_plane.Init(Context10.Device, "Resources/shader/Water.fx", textureFormats1);
             
                 //a fancy skybox--------------------------------------------------------
@@ -201,7 +191,7 @@ namespace RealtimeGrass
                 textureFormats2.Add(texFormat22);
                 textureFormats2.Add(texFormat23);
 
-                m_skybox = new Skybox();
+                m_skybox = new Skybox(0.1f, 0.9f, 0.8f, 64);
                 m_skybox.Init(Context10.Device, "Resources/shader/Skybox.fx", textureFormats2);
 
                 //Jupiter----------------------------------------------------------
@@ -216,7 +206,7 @@ namespace RealtimeGrass
                 List<TextureFormat> textureFormats3 = new List<TextureFormat>();
                 textureFormats3.Add(texFormat3);
 
-                m_Jupiter = new Model("Resources/mesh/Jupiter.smd");
+                m_Jupiter = new Model(0.1f, 0.9f, 0.8f, 64, "Resources/mesh/Jupiter.smd");
                 m_Jupiter.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats3);
 
                 //Butterfly----------------------------------------------------------
@@ -231,29 +221,27 @@ namespace RealtimeGrass
                 List<TextureFormat> textureFormats10 = new List<TextureFormat>();
                 textureFormats10.Add(texFormat10);
 
-                m_butter = new Model("Resources/mesh/butterfly.png.smd");
+                m_butter = new Model(0.1f, 0.9f, 0.8f, 64, "Resources/mesh/butterfly.png.smd");
                 m_butter.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats10);
 
                 //Heightmap--------------------------------------------------------------
                 // heightmap material
-                mat_heightmap = new Material(0.1f, 0.9f, 0.8f, 64);
                 ImageLoadInformation loadInfo4 = ImageLoadInformation.FromDefaults();
 
                 TextureFormat texFormat4 = new TextureFormat(
                     "Resources/texture/boden01.jpg",
                     loadInfo4,
                     TextureType.TextureTypeDiffuse,
-                    "model_texture01"
+                    "model_texture"
                 );
                 List<TextureFormat> textureFormats4 = new List<TextureFormat>();
                 textureFormats4.Add(texFormat4);
 
-                m_heightmap = new Heightmap("Resources/texture/huegel128x128.jpg");
-                m_heightmap.Init(Context10.Device, "Resources/shader/ModelTextured02.fx", textureFormats4);
+                m_heightmap = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegel128x128.jpg");
+                m_heightmap.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats4);
 
                 //Grass---------------------------------------------------------------------------------
                 // grass material
-                mat_grass = new Material(0.1f, 0.9f, 0.8f, 100);
 
                 ImageLoadInformation loadInfo5 = ImageLoadInformation.FromDefaults();
 
@@ -299,7 +287,7 @@ namespace RealtimeGrass
                 textureFormats5.Add(texFormat8);
                 textureFormats5.Add(texFormat9);
 
-                m_grass = new Grass(m_heightmap.Roots, m_heightmap.NumberOfElements);
+                m_grass = new Grass(0.1f, 0.9f, 0.8f, 64, m_heightmap.Roots, m_heightmap.NumberOfElements);
                 m_grass.Init(Context10.Device, "Resources/shader/GrassTextured.fx", textureFormats5);
    
 
@@ -436,162 +424,127 @@ namespace RealtimeGrass
 
         protected override void OnRender()
         {
-            //For anything with time use 'FrameDelta', don't use anything else
-            double a = m_clock.Check();
-            m_output.Value = 5*(float)System.Math.Sin(a);
-
-            //Not needed anymore, shader does depthtest-trick
-            //SetDepthTest(false);
-
-            Matrix world = Matrix.Identity;
-            Matrix.Scaling(1.0f, 1.0f, 1.0f, out world);
-            Matrix temp;
-            Matrix.Translation(m_camera.m_Position.X, m_camera.m_Position.Y, m_camera.m_Position.Z, out temp);
-            Matrix.Multiply(ref temp, ref world, out world);
-            m_skybox.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-            m_skybox.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
-            m_skybox.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
-            m_skybox.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
-            m_skybox.Draw();
-            
-            //SetDepthTest(true);
-
-            world = Matrix.Identity;
-            m_coordSys.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-            m_coordSys.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
-            m_coordSys.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
-            m_coordSys.Draw();
-
-            Matrix tempMatrix;
-
-            world = Matrix.Identity;
-            Matrix.Translation(0.0f, -0.001f, 0.0f, out world);
-            Matrix.Scaling(1.0f, 1.0f, 1.0f, out tempMatrix);
-            Matrix.Multiply(ref tempMatrix, ref world, out world);
-            //+X
-            m_heightmap.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-            m_heightmap.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
-            m_heightmap.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
-            m_heightmap.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
-            m_heightmap.Effect.GetVariableByName("mat_Ka").AsScalar().Set(mat_heightmap.Ka());
-            m_heightmap.Effect.GetVariableByName("mat_Kd").AsScalar().Set(mat_heightmap.Kd());
-            m_heightmap.Effect.GetVariableByName("mat_Ks").AsScalar().Set(mat_heightmap.Ks());
-            m_heightmap.Effect.GetVariableByName("mat_A").AsScalar().Set(mat_heightmap.A());
-            m_heightmap.Draw();//*
-
-            m_butter.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-            m_butter.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
-            m_butter.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);;
-            m_butter.Draw();//*/
-
-            m_plane.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-            m_plane.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
-            m_plane.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
-            m_plane.Draw();
-
-            m_grass.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-            m_grass.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
-            m_grass.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
-            m_grass.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
-            m_grass.Effect.GetVariableByName("mat_Ka").AsScalar().Set(mat_grass.());
-            m_grass.Effect.GetVariableByName("mat_Kd").AsScalar().Set(mat_grass.Kd());
-            m_grass.Effect.GetVariableByName("mat_Ks").AsScalar().Set(mat_grass.Ks());
-            m_grass.Effect.GetVariableByName("mat_A").AsScalar().Set(mat_grass.A());
-            //AHHH : m_grass.Effect.GetVariableByName("ambientLight").AsVector().Set(Vector4(1.0f,1.0f,1.0f,1.0f));
-            //m_grass.Effect.GetVariableByName("eye").AsScalar().Set(mat_grass.Kd());
-            //m_grass.Effect.GetVariableByName("l_color").AsScalar().Set(l_light.Color());
-            //m_grass.Effect.GetVariableByName("l_dir").AsScalar().Set(l_light.Dir());
-            m_grass.Draw();//*/
-            /*for (int col = -50; col < 0; ++col)
+            try
             {
-                for (int row = -100; row < 0; ++row)
-                {
-                    world = Matrix.Identity;
-                    float randomHight = (float)m_strawSize.GetValue(col+50, row+100);
-                    Matrix.Scaling(0.01f, 0.01f + randomHight, 0.01f, out tempMatrix);
-                    Matrix.Translation(row * 0.1f, -0.5f, col * 0.1f, out world);
-                    Matrix rotationTemp;
-                    Matrix.RotationY(col + row + randomHight, out rotationTemp);
-                    Matrix.Multiply(ref rotationTemp, ref world, out world);
-                    Matrix.Multiply(ref tempMatrix, ref world, out world);
-                    m_straw.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-                    m_straw.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
-                    m_straw.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
-                    m_straw.Draw();
-                }
-            }*/
-            world = Matrix.Identity;
-            Matrix.Translation(0, 0, 100, out world);
+                //For anything with time use 'FrameDelta', don't use anything else
+                double a = m_clock.Check();
+                m_output.Value = 5*(float)System.Math.Sin(a);
 
-            m_Jupiter.m_Rotation.Y = m_Jupiter.m_Rotation.Y + (FrameDelta * 0.1f) % 360;
-            m_Jupiter.m_SelfRotation.Y = m_Jupiter.m_SelfRotation.Y + (FrameDelta * 0.5f) % 360;
+                //Not needed anymore, shader does depthtest-trick
+                //SetDepthTest(false);
 
-            world = Matrix.Identity;
-            Matrix rotationTemp;
-            Matrix translationTemp;
+                Matrix world = Matrix.Identity;
+                Matrix.Scaling(1.0f, 1.0f, 1.0f, out world);
+                Matrix temp;
+                Matrix.Translation(m_camera.m_Position.X, m_camera.m_Position.Y, m_camera.m_Position.Z, out temp);
+                Matrix.Multiply(ref temp, ref world, out world);
+                m_skybox.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+                m_skybox.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+                m_skybox.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+                m_skybox.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
+                m_skybox.Draw();
             
-            Matrix.RotationY(m_Jupiter.m_Rotation.Y, out rotationTemp);
-            Matrix.Multiply(ref rotationTemp, ref world, out world);
+                //SetDepthTest(true);
 
-            Matrix.Translation(0, 300, 800, out translationTemp);
-            Matrix.Multiply(ref translationTemp, ref world, out world);
+                world = Matrix.Identity;
+                m_coordSys.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+                m_coordSys.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+                m_coordSys.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+                m_coordSys.Draw();
 
-            Matrix.RotationY(m_Jupiter.m_SelfRotation.Y, out rotationTemp);
-            Matrix.Multiply(ref rotationTemp, ref world, out world);
+                Matrix tempMatrix;
 
-            //To compensate blender coord system y==z
-            Matrix.RotationX((float) Math.PI / 2, out rotationTemp);
-            Matrix.Multiply(ref rotationTemp, ref world, out world);
+                world = Matrix.Identity;
+                Matrix.Translation(0.0f, -0.001f, 0.0f, out world);
+                Matrix.Scaling(1.0f, 1.0f, 1.0f, out tempMatrix);
+                Matrix.Multiply(ref tempMatrix, ref world, out world);
+                //+X
+                m_heightmap.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+                m_heightmap.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+                m_heightmap.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+                m_heightmap.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
+                m_heightmap.SetShaderMaterial();
+                m_heightmap.Draw();//*
 
-            m_Jupiter.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-            m_Jupiter.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
-            m_Jupiter.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
-            m_Jupiter.Draw();//*/
+                m_butter.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+                m_butter.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+                m_butter.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);;
+                m_butter.Draw();//*/
 
+                m_plane.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+                m_plane.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+                m_plane.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+                m_plane.SetShaderMaterial();
+                m_plane.Draw();
 
-            // Geometry Shader Test
-            for (int col = 0; col < 50; ++col)
-            {
-                for (int row = 0; row < 50; ++row)
-                {
-                    /*
-                     *  Alle Wurzeln werden mit einer zufälligen Höhe und Ausrichtung erstellt.
-                     */
-                    world = Matrix.Identity;
-                    float randomHight = (float)m_strawSize.GetValue(col, row) * 0.3f;
-                    Matrix.Scaling(0.01f, 0.01f + randomHight, 0.01f, out tempMatrix);
-                    Matrix.Translation(row * 0.1f, -0.5f, col * 0.1f, out world);
-                    Matrix.RotationY(col + row + randomHight, out rotationTemp);
-                    Matrix.Multiply(ref rotationTemp, ref tempMatrix, out tempMatrix);
-                    Matrix.Multiply(ref tempMatrix, ref world, out world);
+                m_grass.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+                m_grass.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+                m_grass.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+                m_grass.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
+                m_grass.SetShaderMaterial();
+                //AHHH : m_grass.Effect.GetVariableByName("ambientLight").AsVector().Set(Vector4(1.0f,1.0f,1.0f,1.0f));
+                //m_grass.Effect.GetVariableByName("eye").AsScalar().Set(mat_grass.Kd());
+                //m_grass.Effect.GetVariableByName("l_color").AsScalar().Set(l_light.Color());
+                //m_grass.Effect.GetVariableByName("l_dir").AsScalar().Set(l_light.Dir());
+                m_grass.Draw();//*/
 
-                    /*root.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-                    root.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
-                    root.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
-                    root.Draw();//*/
-                }
+                world = Matrix.Identity;
+                Matrix.Translation(0, 0, 100, out world);
+
+                m_Jupiter.m_Rotation.Y = m_Jupiter.m_Rotation.Y + (FrameDelta * 0.1f) % 360;
+                m_Jupiter.m_SelfRotation.Y = m_Jupiter.m_SelfRotation.Y + (FrameDelta * 0.5f) % 360;
+
+                world = Matrix.Identity;
+                Matrix rotationTemp;
+                Matrix translationTemp;
+            
+                Matrix.RotationY(m_Jupiter.m_Rotation.Y, out rotationTemp);
+                Matrix.Multiply(ref rotationTemp, ref world, out world);
+
+                Matrix.Translation(0, 300, 800, out translationTemp);
+                Matrix.Multiply(ref translationTemp, ref world, out world);
+
+                Matrix.RotationY(m_Jupiter.m_SelfRotation.Y, out rotationTemp);
+                Matrix.Multiply(ref rotationTemp, ref world, out world);
+
+                //To compensate blender coord system y==z
+                Matrix.RotationX((float) Math.PI / 2, out rotationTemp);
+                Matrix.Multiply(ref rotationTemp, ref world, out world);
+
+                m_Jupiter.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+                m_Jupiter.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+                m_Jupiter.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+                m_Jupiter.SetShaderMaterial();
+                m_Jupiter.Draw();//*/
+
+                /*
+                //Final Pass 
+                Context10.Device.OutputMerger.DepthStencilState = m_depthStencilState;
+                //Render to backbuffer 
+                Context10.Device.OutputMerger.SetTargets(m_depthStencilView, m_mainRTView);
+
+                Context10.Device.Rasterizer.SetViewports(new Viewport(0, 0, WindowWidth, WindowHeight, 0.0f, 1.0f));
+                Context10.Device.ClearRenderTargetView(m_mainRTView, new Color4(0.3f, 0.3f, 0.3f));
+                Context10.Device.ClearDepthStencilView(m_depthStencilView, DepthStencilClearFlags.Depth, 1.0f, 0);
+
+                //Draw Fullscreen Quad
+                /*svQuad[0].pos = D3DXVECTOR4(-1.0f, 1.0f, 0.5f, 1.0f);
+                svQuad[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+                svQuad[1].pos = D3DXVECTOR4(1.0f, 1.0f, 0.5f, 1.0f);
+                svQuad[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+                svQuad[2].pos = D3DXVECTOR4(-1.0f, -1.0f, 0.5f, 1.0f);
+                svQuad[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+                svQuad[3].pos = D3DXVECTOR4(1.0f, -1.0f, 0.5f, 1.0f);
+                svQuad[3].tex = D3DXVECTOR2(1.0f, 1.0f);//*/
             }
-            /*
-            //Final Pass 
-            Context10.Device.OutputMerger.DepthStencilState = m_depthStencilState;
-            //Render to backbuffer 
-            Context10.Device.OutputMerger.SetTargets(m_depthStencilView, m_mainRTView);
-
-            Context10.Device.Rasterizer.SetViewports(new Viewport(0, 0, WindowWidth, WindowHeight, 0.0f, 1.0f));
-            Context10.Device.ClearRenderTargetView(m_mainRTView, new Color4(0.3f, 0.3f, 0.3f));
-            Context10.Device.ClearDepthStencilView(m_depthStencilView, DepthStencilClearFlags.Depth, 1.0f, 0);
-
-            //Draw Fullscreen Quad
-            /*svQuad[0].pos = D3DXVECTOR4(-1.0f, 1.0f, 0.5f, 1.0f);
-            svQuad[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-            svQuad[1].pos = D3DXVECTOR4(1.0f, 1.0f, 0.5f, 1.0f);
-            svQuad[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-            svQuad[2].pos = D3DXVECTOR4(-1.0f, -1.0f, 0.5f, 1.0f);
-            svQuad[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-            svQuad[3].pos = D3DXVECTOR4(1.0f, -1.0f, 0.5f, 1.0f);
-            svQuad[3].tex = D3DXVECTOR2(1.0f, 1.0f);//*/
-
-            //world = Matrix.Identity;
+            catch (Direct3D10Exception e)
+            {
+                Console.WriteLine("Catched Exception in main: " + e.Message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Catched Exception in main: " + e.Message);
+            }
         }
 
         private bool Vector4(float p, float p_2, float p_3, float p_4)
@@ -651,13 +604,5 @@ namespace RealtimeGrass
             m_skybox.Dispose();
             m_input.Dispose();
         }
-
-        public Heightmap m_gras { get; set; }
-
-        public Material mat_grass { get; set; }
-
-        public Model m_butter { get; set; }
-
-        public Material mat_heightmap { get; set; }
     }
 }

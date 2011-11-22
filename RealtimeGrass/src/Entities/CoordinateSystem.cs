@@ -15,7 +15,8 @@ namespace RealtimeGrass.Entities
 {
     class CoordinateSystem : Entity
     {
-        public CoordinateSystem()
+        public CoordinateSystem(float ambient, float diffuse, float specular, float shininess)
+            : base(ambient, diffuse, specular, shininess)
         {
         }
 
