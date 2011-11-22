@@ -17,28 +17,15 @@ namespace RealtimeGrass.Entities
 {
     class Light
     {
-        private
-        Vector4 l_color;
-        Vector4 l_dir;
+        private Vector4 m_color;
+        public Vector4 Color { get { return m_color; } set { m_color = value; } }
+        private Vector4 m_direction;
+        public Vector4 Direction { get { return m_direction; } set { m_direction = value; } }
 
-        public Light()
+        public Light(Vector4 color, Vector4 dir)
         {
-        }
-
-        public void Init(Vector4 color, Vector4 dir)
-        {
-            this.l_color = color;
-            this.l_dir = dir;
-
-        }
-
-        public Vector4 Color()
-        {
-            return this.l_color;
-        }
-        public Vector4 Dir()
-        {
-            return this.l_dir;
+            m_color = color;
+            m_direction = dir;
         }
     }
 }

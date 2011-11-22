@@ -126,9 +126,6 @@ namespace RealtimeGrass
                 };
                 m_depthStencilState = DepthStencilState.FromDescription(Context10.Device, dssd);
 
-                // light
-               // l_light = new Light();
-
                 //a symplistic Coordsystem---------------------------------------------------
                 m_coordSys = new CoordinateSystem(0.1f, 0.9f, 0.8f, 64);
                 m_coordSys.Init(Context10.Device, "Resources/shader/CoordinateSystem.fx", null);
@@ -367,7 +364,7 @@ namespace RealtimeGrass
                             m_isFormClosed = true;
                             Quit();
                             break;
-                        case (Key.Return & Key.LeftAlt):
+                        case (Key.LeftAlt | Key.Return):
                             OnResourceUnload();
                             isFullScreen = !isFullScreen;
 

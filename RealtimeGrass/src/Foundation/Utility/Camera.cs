@@ -109,12 +109,11 @@ namespace RealtimeGrass.Utility
             m_Direction = Vector3.Normalize(m_LookAt - m_Position);
 
             //Rotation Up/Down
-            Vector3 Up = new Vector3(0.0f, 1.0f, 0.0f);
             Vector3 Ortho = new Vector3(-m_Direction.Z, 0.0f, m_Direction.X);
 
             if (
-                y > 0.0f && Vector3.Dot(Up, m_Direction) < 0.99f || 
-                y < 0.0f && Vector3.Dot(-Up, m_Direction) < 0.99f
+                y > 0.0f && Vector3.Dot(Vector3.UnitY, m_Direction) < 0.99f ||
+                y < 0.0f && Vector3.Dot(-Vector3.UnitY, m_Direction) < 0.99f
             )
             {
                 m_LookAt = m_LookAt - m_Position;
