@@ -236,8 +236,7 @@ namespace RealtimeGrass
 
                 //Heightmap--------------------------------------------------------------
                 // heightmap material
-                mat_heightmap = new LMaterial();
-                mat_heightmap.Init(0.1f, 0.9f, 0.8f, 100);
+                mat_heightmap = new Material(0.1f, 0.9f, 0.8f, 64);
                 ImageLoadInformation loadInfo4 = ImageLoadInformation.FromDefaults();
 
                 TextureFormat texFormat4 = new TextureFormat(
@@ -249,13 +248,12 @@ namespace RealtimeGrass
                 List<TextureFormat> textureFormats4 = new List<TextureFormat>();
                 textureFormats4.Add(texFormat4);
 
-                m_heightmap = new Heightmap("Resources/texture/huegel1000x1000.jpg",500);
+                m_heightmap = new Heightmap("Resources/texture/huegel128x128.jpg");
                 m_heightmap.Init(Context10.Device, "Resources/shader/ModelTextured02.fx", textureFormats4);
 
                 //Grass---------------------------------------------------------------------------------
                 // grass material
-                mat_grass = new LMaterial();
-                mat_grass.Init(0.1f, 0.9f, 0.8f, 100);
+                mat_grass = new Material(0.1f, 0.9f, 0.8f, 100);
 
                 ImageLoadInformation loadInfo5 = ImageLoadInformation.FromDefaults();
 
@@ -495,14 +493,14 @@ namespace RealtimeGrass
             m_grass.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
             m_grass.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
             m_grass.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
-            m_grass.Effect.GetVariableByName("mat_Ka").AsScalar().Set(mat_grass.Ka());
+            m_grass.Effect.GetVariableByName("mat_Ka").AsScalar().Set(mat_grass.());
             m_grass.Effect.GetVariableByName("mat_Kd").AsScalar().Set(mat_grass.Kd());
             m_grass.Effect.GetVariableByName("mat_Ks").AsScalar().Set(mat_grass.Ks());
             m_grass.Effect.GetVariableByName("mat_A").AsScalar().Set(mat_grass.A());
-            //  AHHH : m_grass.Effect.GetVariableByName("ambientLight").AsVector().Set(Vector4(1.0f,1.0f,1.0f,1.0f));
-            //    m_grass.Effect.GetVariableByName("eye").AsScalar().Set(mat_grass.Kd());
-            //   m_grass.Effect.GetVariableByName("l_color").AsScalar().Set(l_light.Color());
-            //  m_grass.Effect.GetVariableByName("l_dir").AsScalar().Set(l_light.Dir());
+            //AHHH : m_grass.Effect.GetVariableByName("ambientLight").AsVector().Set(Vector4(1.0f,1.0f,1.0f,1.0f));
+            //m_grass.Effect.GetVariableByName("eye").AsScalar().Set(mat_grass.Kd());
+            //m_grass.Effect.GetVariableByName("l_color").AsScalar().Set(l_light.Color());
+            //m_grass.Effect.GetVariableByName("l_dir").AsScalar().Set(l_light.Dir());
             m_grass.Draw();//*/
             /*for (int col = -50; col < 0; ++col)
             {
@@ -656,10 +654,10 @@ namespace RealtimeGrass
 
         public Heightmap m_gras { get; set; }
 
-        public LMaterial mat_grass { get; set; }
+        public Material mat_grass { get; set; }
 
         public Model m_butter { get; set; }
 
-        public LMaterial mat_heightmap { get; set; }
+        public Material mat_heightmap { get; set; }
     }
 }
