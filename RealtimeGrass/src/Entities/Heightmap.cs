@@ -22,7 +22,8 @@ namespace RealtimeGrass.Entities
         private Vector3[] m_roots;
         public Vector3[] Roots { get { return m_roots; } set { m_roots = value; } }
 
-        public Heightmap(string heightMapName)
+        public Heightmap(float ambient, float diffuse, float specular, float shininess, string heightMapName)
+            :base(ambient, diffuse, specular, shininess)
         {
             m_heightmap = new Bitmap(heightMapName);
             m_dimension.X = m_heightmap.Width;

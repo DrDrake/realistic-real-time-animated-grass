@@ -1,3 +1,5 @@
+#include "BlinnPhong.fx"
+
 //don't forget to set the Matrizes
 float4x4 view;
 float4x4 proj;
@@ -10,8 +12,6 @@ Texture2D model_texture;
 float4 csunWS = float4(0,500, 0, 1);
 float4 camPosWS;
 float cTexScal = 4;
-
-
 
 //Texture Filtering
 SamplerState ModelTextureSampler {

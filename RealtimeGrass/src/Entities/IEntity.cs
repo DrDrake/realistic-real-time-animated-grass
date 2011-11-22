@@ -34,6 +34,7 @@ namespace RealtimeGrass.Entities
     class Entity : IEntity
     {
         protected List<TextureFormat>               m_textureFormats;
+        protected Material                          m_material;
 
         protected Effect                            m_effect;
         public virtual Effect                       Effect { get { return m_effect; } }
@@ -60,8 +61,9 @@ namespace RealtimeGrass.Entities
         public Vector3                              m_Translation;
 
 
-        public Entity()
+        public Entity(float ambient, float diffuse, float specular, float shininess)
         {
+            m_material = new Material(ambient, diffuse, specular, shininess);
         }
 
         public void Init(Device device, string effectName, List<TextureFormat> textureFormats)
@@ -176,6 +178,14 @@ namespace RealtimeGrass.Entities
                 new InputElement("NORMAL", 0, Format.R32G32B32_Float, 12, 0), //3 * 4 Byte(float) = 12 Bytes 
                 new InputElement("TEXCOORD", 0, Format.R32G32_Float, 24, 0) //2 * 4 Byte(float) = 8 Bytes 
             };
+        }
+
+        public void SetShaderMaterial()
+        {
+            m_effect.GetVariableByName("mat_ambient").AsScalar().Set(m_material.Ambient);
+            m_effect.GetVariableByName("mat_diffuse").AsScalar().Set(m_material.Diffuse);
+            m_effect.GetVariableByName("mat_specular").AsScalar().Set(m_material.Specular);
+            m_effect.GetVariableByName("mat_shininess").AsScalar().Set(m_material.Shininess);
         }
 
         public virtual void ChangeRasterizerState(CullMode cullMode)

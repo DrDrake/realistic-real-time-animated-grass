@@ -1,24 +1,45 @@
+#include "BlinnPhong.fx"
+
+//--------------------------------------------------------------------------------------
+// GLOBAL VARS 
+//--------------------------------------------------------------------------------------
+
 //don't forget to set the Matrizes
 float4x4 view;
 float4x4 proj;
 float4x4 world;
 
-//Old Sampler2D
+//Old Sampler2
 Texture2D model_texture;
 
 //Misc
-float4 csunWS = float4(0,500, 0, 1);
-float4 camPosWS;
-float cTexScal = 1;
+float cTexScal = 3;
+float time;
 
+//--------------------------------------------------------------------------------------
+//RASTERIZER STATES
+//--------------------------------------------------------------------------------------
+RasterizerState rsSolid
+{
+	  FillMode = Solid;
+	  CullMode = None;
+	  FrontCounterClockwise = false;
+};
 
+//--------------------------------------------------------------------------------------
+// FUNCTIONS
+//--------------------------------------------------------------------------------------
 
 //Texture Filtering
 SamplerState ModelTextureSampler {
     Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = Wrap;
-    AddressV = Wrap;
+    AddressU = Mirror;
+    AddressV = Mirror;
 };
+
+//--------------------------------------------------------------------------------------
+// STRUCTS
+//--------------------------------------------------------------------------------------
 
 //Vertexshader Input from Pipeline
 struct VS_IN {
@@ -29,13 +50,10 @@ struct VS_IN {
 
 //Vertexshader Output & Pixelshader Input
 struct PS_IN {
-	float4 pos				: SV_POSITION;
+	float4 pos				: SV_POSITION;		
 	float3 normalWS			: NORMAL;
 	float2 texCoord			: TEXCOORD;
-
-	float4 positionWS		: TEXCOORD1;
-	float4 lightDirWS		: TEXCOORD2;
-	float4 vert2CamWS		: TEXCOORD3;
+	float3 halfway 			: HVECTOR;
 };
 
 //------------------------------------------------------------
@@ -47,37 +65,40 @@ PS_IN VS( VS_IN input ) {
 	
 	float4x4 worldViewProj = mul(mul(world, view), proj);
 	output.pos = mul(float4(input.pos, 1.0), worldViewProj);
-
-	//For Lighting
-	output.positionWS = mul(float4(input.pos, 1.0), world);
-
-	// Calculate light to object vector
-	output.lightDirWS = output.positionWS - csunWS;
-
-	// Calculate object to camera vector
-	output.vert2CamWS = camPosWS - output.positionWS;
-
 	output.normalWS = mul(float4(input.normal, 1.0), world).xyz;
-
 	output.texCoord = input.texCoord;
-	
+	float3 viewDir = normalize( eye - (float3) input.pos );
+	output.halfway = normalize( -l_dir + viewDir );	
 	return output;
-}
+	
+	}
 
-float4 PS( PS_IN input ) : SV_Target {
-	float lightAmount = dot(normalize(float4(input.normalWS, 1.0)),normalize(csunWS));
+//--------------------------------------------------------------------------------------
+// PER PIXEL LIGHTING 
+//--------------------------------------------------------------------------------------
 
-	float4 tex = model_texture.Sample(ModelTextureSampler, input.texCoord * cTexScal);// * lightAmount;
+float4 PS( PS_IN input ) : SV_Target
+{     	
+	//renormalize interpolated vectors
+	input.normalWS = normalize( input.normalWS );		
+	input.halfway = normalize( input.halfway );
 
-	if (tex.a < 0.5) 
-	discard; 
-	return float4(tex);
+	//calculate lighting	
+	float4 I = calcBlinnPhongLighting( input.normalWS, -l_dir, input.halfway, time);
+	
+	//with texturing
+	float3 tex = model_texture.Sample(ModelTextureSampler, input.texCoord);
+
+	tex = tex * I;
+
+	return float4(tex,1.0f);
 }
 
 technique10 RenderSolid {
-	pass P0 {
-		SetGeometryShader( 0 );
+	pass p0 {
 		SetVertexShader( CompileShader( vs_4_0, VS() ) );
+		SetGeometryShader( 0 );
 		SetPixelShader( CompileShader( ps_4_0, PS() ) );
+        SetRasterizerState( rsSolid );
 	}
 }

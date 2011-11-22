@@ -20,7 +20,8 @@ namespace RealtimeGrass.Entities
         float m_scaleX;
         float m_scaleY;
 
-        public Plane(float scaleX, float scaleY)
+        public Plane(float ambient, float diffuse, float specular, float shininess, float scaleX, float scaleY)
+            : base(ambient, diffuse, specular, shininess)
         {
             m_scaleX = scaleX;
             m_scaleY = scaleY;

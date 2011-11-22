@@ -20,7 +20,8 @@ namespace RealtimeGrass.Entities
         private MeshData m_meshData;
 
 
-        public Model(string meshName)
+        public Model(float ambient, float diffuse, float specular, float shininess, string meshName)
+            : base(ambient, diffuse, specular, shininess)
         {
             m_meshName = meshName;
         }
