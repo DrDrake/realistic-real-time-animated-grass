@@ -36,7 +36,6 @@ namespace RealtimeGrass.Entities
             float zf = 0;
             float interspace = 2f;
             float start = 0;
-            float y_shift = 0;
 
             m_numberOfElements = m_dimension.X * m_dimension.Y;
             m_vertexBuffer = InitVertexBuffer();
