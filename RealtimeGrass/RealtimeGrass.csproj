@@ -127,8 +127,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="Resources\mesh\butterfly.png.smd">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Include="Resources\mesh\butterfly.smd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\shader\BlinnPhong.fx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
