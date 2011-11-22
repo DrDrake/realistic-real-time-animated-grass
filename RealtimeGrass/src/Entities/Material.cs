@@ -16,10 +16,18 @@ namespace RealtimeGrass.Entities
 {
     class Material
     {
-        private float m_ambient { get { return m_ambient; } set { m_ambient = value; } }
-        private float m_diffuse { get { return m_ambient; } set { m_ambient = value; } }
-        private float m_specular { get { return m_ambient; } set { m_ambient = value; } }
-        private float m_shininess { get { return m_ambient; } set { m_ambient = value; } }
+        private float m_ambient;
+        public float Ambient { get { return m_ambient; } set { m_ambient = value; } }
+
+        private float m_diffuse;
+        public float Diffuse { get { return m_diffuse; } set { m_diffuse = value; } }
+
+        private float m_specular;
+        public float Specular { get { return m_specular; } set { m_specular = value; } }
+
+        private float m_shininess;
+        public float Shininess { get { return m_shininess; } set { m_shininess = value; } }
+
 
         public Material(float ambient, float diffuse, float specular, float shininess)
         {

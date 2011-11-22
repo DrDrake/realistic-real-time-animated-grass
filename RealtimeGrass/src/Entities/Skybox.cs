@@ -15,7 +15,8 @@ namespace RealtimeGrass.Entities
 {
     class Skybox : Entity
     {
-        public Skybox()
+        public Skybox(float ambient, float diffuse, float specular, float shininess)
+            : base(ambient, diffuse, specular, shininess)
         {
         }
 

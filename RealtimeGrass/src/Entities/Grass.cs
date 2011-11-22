@@ -13,7 +13,8 @@ namespace RealtimeGrass.Entities
     {
         private Vector3[]       m_roots;
 
-        public Grass(Vector3[] roots, int numberOfElements)
+        public Grass(float ambient, float diffuse, float specular, float shininess, Vector3[] roots, int numberOfElements)
+            : base(ambient, diffuse, specular, shininess)
         {
             m_roots = roots;
             m_numberOfElements = numberOfElements;

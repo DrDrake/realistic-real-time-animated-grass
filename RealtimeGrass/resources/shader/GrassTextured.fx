@@ -1,3 +1,5 @@
+#include "BlinnPhong.fx"
+
 //--------------------------------------------------------------------------------------
 // GLOBAL VARS 
 //--------------------------------------------------------------------------------------
@@ -21,20 +23,6 @@ float windPW=8;  // Value between 0-12
 float3 winddir= float3 (0.5,1,0.5); // y always 1
 
 //--------------------------------------------------------------------------------------
-//LIGHTING VARIABLES
-//--------------------------------------------------------------------------------------
-//DirectionalLight
-float4 l_color = float4 (1.0f,1.0f,1.0f,1.0f);
-float3 l_dir = float3 (-1,-1,1);
-
-//Material
-	float mat_Ka, mat_Kd, mat_Ks, mat_A;
-
-//lighting vars
-float4 ambientLight= float4(1.0f,1.0f,1.0f,1.0f);
-float3 eye;
-
-//--------------------------------------------------------------------------------------
 //RASTERIZER STATES
 //--------------------------------------------------------------------------------------
 RasterizerState rsSolid
@@ -42,9 +30,7 @@ RasterizerState rsSolid
 	  FillMode = Solid;
 	  CullMode = None;
 	  FrontCounterClockwise = false;
-
 };
-
 
 //--------------------------------------------------------------------------------------
 // FUNCTIONS
@@ -56,18 +42,6 @@ SamplerState ModelTextureSampler {
     AddressU = Mirror;
     AddressV = Mirror;
 };
-
-//--------------------------------------------------------------------------------------
-// Blinn-Phong Lighting Reflection Model
-//--------------------------------------------------------------------------------------
-float4 calcBlinnPhongLighting(float M_Ka, float M_Kd, float M_Ks, float M_A, float4 LColor, float3 N, float3 L, float3 H )
-{	
-	float4 Ia = M_Ka * ambientLight;
-	float4 Id = M_Kd * saturate( dot(N,L) );
-	float4 Is = M_Ks * pow( saturate(dot(N,H)), M_A );
-	
-	return Ia + (Id + Is) * LColor;
-}
 
 //--------------------------------------------------------------------------------------
 // STRCUCTS
@@ -92,7 +66,7 @@ struct PS_IN {
 	float3 normalWS			: NORMAL;
 	float2 texCoord			: TEXCOORD;
 	float4 random			: RANDOM;
-	float3 h 				: HVECTOR;
+	float3 halfway			: HVECTOR;
 };
 
 //--------------------------------------------------------------------------------------
@@ -115,8 +89,8 @@ PS_IN VSreal( GS_WORKING input ) {
 	output.normalWS = mul(float4(input.normal, 1.0), world).xyz;
 	output.texCoord = input.texCoord;
 	output.random = input.random;	
-	float3 V = normalize( eye - (float3) input.pos );
-	output.h = normalize( -l_dir + V );	
+	float3 ViewDir = normalize( eye - (float3) input.pos );
+	output.halfway = normalize( -l_dir + ViewDir );	
 	return output;
 }
 
@@ -478,37 +452,10 @@ float4 PS_PIXEL_LIGHTING_BLINNPHONG( PS_IN input ) : SV_Target
 {     	
 	//renormalize interpolated vectors
 	input.normalWS = normalize( input.normalWS );		
-	input.h = normalize( input.h );
-
-	float4 color, color2;
-
-    float t = time/40;
-	float pi = 3.14159265358979323846f;
-	switch(t%4)
-{
- case 0:
- 	color = l_color*(float4(0.5f,1.0f,1.0f,1.0f));
- 	color2 = l_color*(float4(0.1f,0.1f,0.3f,1.0f));
-	break;
- case 1:
- 	color = l_color*(float4(1.0f,1.0f,1.0f,1.0f));
- 	color2 = l_color*(float4(0.5f,1.0f,1.0f,1.0f));
-	break;
- case 2:
- 	color = l_color*(float4(1.0f,0.6f,0.6f,1.0f));
- 	color2 = l_color*(float4(1.0f,1.0f,1.0f,1.0f));
-	break;
- case 3:
- 	color = l_color*(float4(0.1f,0.1f,0.3f,1.0f));
- 	color2 = l_color*(float4(1.0f,0.6f,0.6f,1.0f));
-	break;
-}
-
-    float blend = sin((t-floor(t))*pi/2);
-	float4 color3 = color*blend+color2*(1-blend);
+	input.halfway = normalize( input.halfway );
 
 	//calculate lighting	
-	float4 I = calcBlinnPhongLighting( mat_Ka, mat_Kd, mat_Ks, mat_A, color3, input.normalWS, -l_dir, input.h );
+	float4 I = calcBlinnPhongLighting(input.normalWS, -l_dir, input.halfway, time);
 	
 	//with texturing
 	float alphar = grass_alpha.Sample(ModelTextureSampler, input.texCoord).r;
