@@ -84,15 +84,14 @@ float4 PS( PS_IN input ) : SV_Target
 	input.halfway = normalize( input.halfway );
 
 	//calculate lighting	
-	float4 I = calcBlinnPhongLighting( input.normalWS, -l_dir, input.halfway, time);
+	float3 I = calcBlinnPhongLighting(input.normalWS, -l_dir, input.halfway, time);
 	
 	//with texturing
 	float4 tex = model_texture.Sample(ModelTextureSampler, input.texCoord);
+	tex.xyz = tex.xyz * I;
 
-	tex.xyz = tex.xyz * I.xyz;
-
-	if (tex.a < 0.5) 
-		discard; 
+ if (tex.a < 0.5) 
+ 		discard; 
 	
 	return tex;	
 }
