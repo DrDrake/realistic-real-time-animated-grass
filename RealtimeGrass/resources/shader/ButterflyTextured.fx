@@ -16,6 +16,8 @@ Texture2D model_texture;
 float cTexScal = 1;
 float time;
 
+float wingdimension = 1.6f;
+float speed = 7;
 //--------------------------------------------------------------------------------------
 //RASTERIZER STATES
 //--------------------------------------------------------------------------------------
@@ -63,7 +65,7 @@ struct PS_IN {
 PS_IN VS( VS_IN input ) {
 	PS_IN output = (PS_IN)0;
 	if (!(input.pos.r == 0.0000)) {
-		float shift = 1.6f*sin(time*7);
+		float shift = wingdimension*sin(time*speed);
 		input.pos.g = input.pos.g+shift;
 
 		if ((shift) < 0) shift=shift*(-1);
