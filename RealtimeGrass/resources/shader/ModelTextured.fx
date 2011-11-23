@@ -90,7 +90,7 @@ float4 PS( PS_IN input ) : SV_Target
 	float4 tex = model_texture.Sample(ModelTextureSampler, input.texCoord);
 	tex.xyz = tex.xyz * I;
 
- if (tex.a < 0.5) 
+ if (tex.a < 0.8) 
  		discard; 
 	
 	return tex;	
