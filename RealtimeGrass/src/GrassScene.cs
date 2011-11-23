@@ -237,7 +237,7 @@ namespace RealtimeGrass
                 List<TextureFormat> textureFormats4 = new List<TextureFormat>();
                 textureFormats4.Add(texFormat4);
 
-                m_heightmap = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegel256x256.jpg");
+                m_heightmap = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegel500x500.jpg");
                 m_heightmap.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats4);
 
                 //Grass---------------------------------------------------------------------------------
@@ -466,29 +466,93 @@ namespace RealtimeGrass
                 m_heightmap.SetShaderMaterial();
                 m_heightmap.Draw();//*
 
-                world = Matrix.Identity;
-                Matrix.Translation(m_camera.m_LookAt.X,m_camera.m_LookAt.Y, m_camera.m_LookAt.Z, out world);
-/*                double m_Butterfly_rotY = Math.Acos((m_camera.m_LookAt.Y) / (Math.Sqrt(m_camera.m_LookAt.X * m_camera.m_LookAt.X + m_camera.m_LookAt.Y * m_camera.m_LookAt.Y + m_camera.m_LookAt.Z * m_camera.m_LookAt.Z) + 1));
-                double m_Butterfly_rotX = Math.Acos((m_camera.m_LookAt.X) / (Math.Sqrt(m_camera.m_LookAt.X * m_camera.m_LookAt.X + m_camera.m_LookAt.Y * m_camera.m_LookAt.Y + m_camera.m_LookAt.Z * m_camera.m_LookAt.Z) + 1));
-                double m_Butterfly_rotZ = Math.Acos((m_camera.m_LookAt.Z) / (Math.Sqrt(m_camera.m_LookAt.X * m_camera.m_LookAt.X + m_camera.m_LookAt.Y * m_camera.m_LookAt.Y + m_camera.m_LookAt.Z * m_camera.m_LookAt.Z) + 1));
+                float m_speed_X;
+                float m_speed_Y;
+                float m_speed_Z;
+                float m_shift_X;
+                float m_shift_Y;
+                float m_shift_Z;
+                float m_direction;
+
+                // Schmetterlinge
+                for (int i = 1; i < 32; i=i*2)
+                {
+                    for (int j = 81*3; j >= 1; j=j/3)
+                    {
+                        world = Matrix.Identity;
+                        m_speed_X = 5;
+                        m_speed_Y = 5;
+                        m_speed_Z = 10;
+                        m_shift_X = 20 * i;
+                        m_shift_Y = 60;
+                        m_shift_Z = 20 * j;
+                        m_direction = -1;
+
+                        Matrix.Translation(m_speed_X * (float)(Math.Sin((double)m_clock.Check() * m_direction)) + m_shift_X, m_speed_Y * (float)(Math.Cos((double)m_clock.Check() * m_direction)) + m_shift_Y, m_speed_Z * (float)(Math.Cos((double)m_clock.Check() * m_direction)) + m_shift_Z, out world);
+
+                        Matrix.RotationY(-30 * m_direction + m_clock.Check() * m_direction % 360, out tempMatrix);
+                        Matrix.Multiply(ref tempMatrix, ref world, out world);
+
+                        Matrix.Scaling(1.5f, 1.5f, 1.5f, out tempMatrix);
+                        Matrix.Multiply(ref tempMatrix, ref world, out world);
+
+                        m_butterfly.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+                        m_butterfly.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+                        m_butterfly.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+                        m_butterfly.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
+                        m_butterfly.SetShaderMaterial();
+                        m_butterfly.Draw();//*/
+
+                        world = Matrix.Identity;
+                        m_speed_X = 10;
+                        m_speed_Y = 5;
+                        m_speed_Z = 5;
+                        m_shift_X = 30 * i;
+                        m_shift_Y = 65;
+                        m_shift_Z = 30 * j;
+                        m_direction = -1;
+
+                        Matrix.Translation(m_speed_X * (float)(Math.Sin((double)m_clock.Check() * m_direction)) + m_shift_X, m_speed_Y * (float)(Math.Cos((double)m_clock.Check() * m_direction)) + m_shift_Y, m_speed_Z * (float)(Math.Cos((double)m_clock.Check() * m_direction)) + m_shift_Z, out world);
+
+                        Matrix.RotationY(-30 * m_direction + m_clock.Check() * m_direction % 360, out tempMatrix);
+                        Matrix.Multiply(ref tempMatrix, ref world, out world);
+
+                        Matrix.Scaling(1.2f, 1.2f, 1.2f, out tempMatrix);
+                        Matrix.Multiply(ref tempMatrix, ref world, out world);
+
+                        m_butterfly.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+                        m_butterfly.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+                        m_butterfly.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+                        m_butterfly.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
+                        m_butterfly.SetShaderMaterial();
+                        m_butterfly.Draw();//*/
+
+                        world = Matrix.Identity;
+                        m_speed_X = 8;
+                        m_speed_Y = 2;
+                        m_speed_Z = 8;
+                        m_shift_X = 25 * i;
+                        m_shift_Y = 70;
+                        m_shift_Z = 25 * j;
+                        m_direction = 1;
+
+                        Matrix.Translation(m_speed_X * (float)(Math.Sin((double)m_clock.Check() * m_direction)) + m_shift_X, m_speed_Y * (float)(Math.Cos((double)m_clock.Check() * m_direction)) + m_shift_Y, m_speed_Z * (float)(Math.Cos((double)m_clock.Check() * m_direction)) + m_shift_Z, out world);
+
+                        Matrix.RotationY(-30 * m_direction + m_clock.Check() * m_direction % 360, out tempMatrix);
+                        Matrix.Multiply(ref tempMatrix, ref world, out world);
+
+                        Matrix.Scaling(1.4f, 1.4f, 1.4f, out tempMatrix);
+                        Matrix.Multiply(ref tempMatrix, ref world, out world);
+
+                        m_butterfly.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+                        m_butterfly.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+                        m_butterfly.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+                        m_butterfly.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
+                        m_butterfly.SetShaderMaterial();
+                        m_butterfly.Draw();//*/
+                    }
+                }
                 
-                Matrix.RotationX((float)m_Butterfly_rotY, out tempMatrix);
-                Matrix.Multiply(ref tempMatrix, ref world, out world);
-                Matrix.RotationY((float)m_Butterfly_rotZ, out tempMatrix);
-                Matrix.Multiply(ref tempMatrix, ref world, out world);
-                Matrix.RotationZ((float)m_Butterfly_rotX, out tempMatrix);
-                Matrix.Multiply(ref tempMatrix, ref world, out world);
-*/
-                Matrix.Scaling(1.5f, 1.5f, 1.5f, out tempMatrix);
-                Matrix.Multiply(ref tempMatrix, ref world, out world);
-
-                m_butterfly.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-                m_butterfly.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
-                m_butterfly.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
-                m_butterfly.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
-                m_butterfly.SetShaderMaterial();
-                m_butterfly.Draw();//*/
-
                 world = Matrix.Identity;
 
                 m_plane.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
