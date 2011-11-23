@@ -63,7 +63,16 @@ struct PS_IN {
 PS_IN VS( VS_IN input ) {
 	PS_IN output = (PS_IN)0;
 	if (!(input.pos.r == 0.0000)) {
-	input.pos.g = input.pos.g+sin(time*6);
+		float shift = 1.6f*sin(time*5);
+		input.pos.g = input.pos.g+shift;
+
+		if ((shift) < 0) shift=shift*(-1);
+
+		if (input.pos.r < 0) {
+			input.pos.r = input.pos.r+shift/2;
+		} else {
+			input.pos.r = input.pos.r-shift/2;
+		}
 	}
 	float4x4 worldViewProj = mul(mul(world, view), proj);
 	output.pos = mul(float4(input.pos, 1.0), worldViewProj);

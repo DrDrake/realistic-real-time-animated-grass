@@ -237,7 +237,7 @@ namespace RealtimeGrass
                 List<TextureFormat> textureFormats4 = new List<TextureFormat>();
                 textureFormats4.Add(texFormat4);
 
-                m_heightmap = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegel128x128.jpg");
+                m_heightmap = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegel256x256.jpg");
                 m_heightmap.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats4);
 
                 //Grass---------------------------------------------------------------------------------
@@ -468,7 +468,17 @@ namespace RealtimeGrass
 
                 world = Matrix.Identity;
                 Matrix.Translation(m_camera.m_LookAt.X,m_camera.m_LookAt.Y, m_camera.m_LookAt.Z, out world);
-
+/*                double m_Butterfly_rotY = Math.Acos((m_camera.m_LookAt.Y) / (Math.Sqrt(m_camera.m_LookAt.X * m_camera.m_LookAt.X + m_camera.m_LookAt.Y * m_camera.m_LookAt.Y + m_camera.m_LookAt.Z * m_camera.m_LookAt.Z) + 1));
+                double m_Butterfly_rotX = Math.Acos((m_camera.m_LookAt.X) / (Math.Sqrt(m_camera.m_LookAt.X * m_camera.m_LookAt.X + m_camera.m_LookAt.Y * m_camera.m_LookAt.Y + m_camera.m_LookAt.Z * m_camera.m_LookAt.Z) + 1));
+                double m_Butterfly_rotZ = Math.Acos((m_camera.m_LookAt.Z) / (Math.Sqrt(m_camera.m_LookAt.X * m_camera.m_LookAt.X + m_camera.m_LookAt.Y * m_camera.m_LookAt.Y + m_camera.m_LookAt.Z * m_camera.m_LookAt.Z) + 1));
+                
+                Matrix.RotationX((float)m_Butterfly_rotY, out tempMatrix);
+                Matrix.Multiply(ref tempMatrix, ref world, out world);
+                Matrix.RotationY((float)m_Butterfly_rotZ, out tempMatrix);
+                Matrix.Multiply(ref tempMatrix, ref world, out world);
+                Matrix.RotationZ((float)m_Butterfly_rotX, out tempMatrix);
+                Matrix.Multiply(ref tempMatrix, ref world, out world);
+*/
                 Matrix.Scaling(1.5f, 1.5f, 1.5f, out tempMatrix);
                 Matrix.Multiply(ref tempMatrix, ref world, out world);
 
@@ -559,11 +569,6 @@ namespace RealtimeGrass
             }
         }
 
-        private bool Vector4(float p, float p_2, float p_3, float p_4)
-        {
-            throw new NotImplementedException();
-        }
-
         protected void SetDepthTest(bool isUsingDepthTest)
         {
             DepthStencilStateDescription dsStateDesc = new DepthStencilStateDescription()
@@ -614,7 +619,13 @@ namespace RealtimeGrass
             m_coordSys.Dispose();
             m_plane.Dispose();
             m_skybox.Dispose();
+            m_Jupiter.Dispose();
+            m_grass.Dispose();
+            m_heightmap.Dispose();
+            m_butterfly.Dispose();
             m_input.Dispose();
+
+            //Something still alive, but what?
         }
     }
 }
