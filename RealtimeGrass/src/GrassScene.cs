@@ -471,21 +471,21 @@ namespace RealtimeGrass
                 float m_speed_Z;
                 float m_shift_X;
                 float m_shift_Y;
-                float m_shift_Ya = 75;
+                float m_shift_Ya = 70;
                 float m_shift_Z;
                 float m_direction;
 
                 // Schmetterlinge
-                for (int i = 1; i < 502; i=i+250)
+                for (int i = 1; i < 502; i=i+125)
                 {
-                    for (int j = 1; j < 502; j=j+250)
+                    for (int j = 1; j < 502; j=j+125)
                     {
                         world = Matrix.Identity;
                         m_speed_X = 5;
                         m_speed_Y = 5;
                         m_speed_Z = 10;
-                        m_shift_X = 20 + i;
-                        m_shift_Y = m_shift_Ya;
+                        m_shift_X = 20 + i + m_shift_Ya / 8 * (float)(Math.Cos((double)m_clock.Check() + i / 125));
+                        m_shift_Y = m_shift_Ya + m_shift_Ya/4 * (float)(Math.Sin((double)m_clock.Check() + j/125));
                         m_shift_Z = 10 + j;
                         m_direction = -1;
 
@@ -508,8 +508,8 @@ namespace RealtimeGrass
                         m_speed_X = 10;
                         m_speed_Y = 5;
                         m_speed_Z = 5;
-                        m_shift_X = 30 + i;
-                        m_shift_Y = m_shift_Ya+15;
+                        m_shift_X = 30 + i + m_shift_Ya / 8 * (float)(Math.Cos((double)m_clock.Check() + i / 125));
+                        m_shift_Y = m_shift_Ya + m_shift_Ya / 4 * (float)(Math.Sin((double)m_clock.Check() + j / 125)) + 15;
                         m_shift_Z = 30 + j;
                         m_direction = -1;
 
@@ -532,8 +532,8 @@ namespace RealtimeGrass
                         m_speed_X = 8;
                         m_speed_Y = 2;
                         m_speed_Z = 8;
-                        m_shift_X = 25 + i;
-                        m_shift_Y = m_shift_Ya+10;
+                        m_shift_X = 25 + i + m_shift_Ya / 4 * (float)(Math.Cos((double)m_clock.Check() + i / 125));
+                        m_shift_Y = m_shift_Ya + m_shift_Ya / 4 * (float)(Math.Sin((double)m_clock.Check() + j / 125)) + 10;
                         m_shift_Z = 25 + j;
                         m_direction = 1;
 
