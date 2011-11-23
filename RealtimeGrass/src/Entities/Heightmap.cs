@@ -56,7 +56,7 @@ namespace RealtimeGrass.Entities
                     int index = (y * m_dimension.X) + x;
                     Vector3 pos = new Vector3(
                         start + xf,
-                        b * (m_dimension.X/2) - (m_dimension.X/4), 
+                        b * (m_dimension.X/4) - (m_dimension.X/8), 
                         start + zf
                     );
 

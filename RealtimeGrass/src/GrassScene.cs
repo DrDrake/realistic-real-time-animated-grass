@@ -206,7 +206,7 @@ namespace RealtimeGrass
                 List<TextureFormat> textureFormats3 = new List<TextureFormat>();
                 textureFormats3.Add(texFormat3);
 
-                m_Jupiter = new Model(0.1f, 0.9f, 0.8f, 64, "Resources/mesh/Jupiter.smd");
+                m_Jupiter = new Model(0.8f, 0.9f, 0.8f, 64, "Resources/mesh/Jupiter.smd");
                 m_Jupiter.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats3);
 
                 //Butterfly----------------------------------------------------------
@@ -471,21 +471,22 @@ namespace RealtimeGrass
                 float m_speed_Z;
                 float m_shift_X;
                 float m_shift_Y;
+                float m_shift_Ya = 75;
                 float m_shift_Z;
                 float m_direction;
 
                 // Schmetterlinge
-                for (int i = 1; i < 32; i=i*2)
+                for (int i = 1; i < 502; i=i+250)
                 {
-                    for (int j = 81*3; j >= 1; j=j/3)
+                    for (int j = 1; j < 502; j=j+250)
                     {
                         world = Matrix.Identity;
                         m_speed_X = 5;
                         m_speed_Y = 5;
                         m_speed_Z = 10;
-                        m_shift_X = 20 * i;
-                        m_shift_Y = 60;
-                        m_shift_Z = 20 * j;
+                        m_shift_X = 20 + i;
+                        m_shift_Y = m_shift_Ya;
+                        m_shift_Z = 10 + j;
                         m_direction = -1;
 
                         Matrix.Translation(m_speed_X * (float)(Math.Sin((double)m_clock.Check() * m_direction)) + m_shift_X, m_speed_Y * (float)(Math.Cos((double)m_clock.Check() * m_direction)) + m_shift_Y, m_speed_Z * (float)(Math.Cos((double)m_clock.Check() * m_direction)) + m_shift_Z, out world);
@@ -493,7 +494,7 @@ namespace RealtimeGrass
                         Matrix.RotationY(-30 * m_direction + m_clock.Check() * m_direction % 360, out tempMatrix);
                         Matrix.Multiply(ref tempMatrix, ref world, out world);
 
-                        Matrix.Scaling(1.5f, 1.5f, 1.5f, out tempMatrix);
+                        Matrix.Scaling(3.5f, 3.5f, 3.5f, out tempMatrix);
                         Matrix.Multiply(ref tempMatrix, ref world, out world);
 
                         m_butterfly.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
@@ -507,9 +508,9 @@ namespace RealtimeGrass
                         m_speed_X = 10;
                         m_speed_Y = 5;
                         m_speed_Z = 5;
-                        m_shift_X = 30 * i;
-                        m_shift_Y = 65;
-                        m_shift_Z = 30 * j;
+                        m_shift_X = 30 + i;
+                        m_shift_Y = m_shift_Ya+15;
+                        m_shift_Z = 30 + j;
                         m_direction = -1;
 
                         Matrix.Translation(m_speed_X * (float)(Math.Sin((double)m_clock.Check() * m_direction)) + m_shift_X, m_speed_Y * (float)(Math.Cos((double)m_clock.Check() * m_direction)) + m_shift_Y, m_speed_Z * (float)(Math.Cos((double)m_clock.Check() * m_direction)) + m_shift_Z, out world);
@@ -517,7 +518,7 @@ namespace RealtimeGrass
                         Matrix.RotationY(-30 * m_direction + m_clock.Check() * m_direction % 360, out tempMatrix);
                         Matrix.Multiply(ref tempMatrix, ref world, out world);
 
-                        Matrix.Scaling(1.2f, 1.2f, 1.2f, out tempMatrix);
+                        Matrix.Scaling(3.2f, 3.2f, 3.2f, out tempMatrix);
                         Matrix.Multiply(ref tempMatrix, ref world, out world);
 
                         m_butterfly.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
@@ -531,9 +532,9 @@ namespace RealtimeGrass
                         m_speed_X = 8;
                         m_speed_Y = 2;
                         m_speed_Z = 8;
-                        m_shift_X = 25 * i;
-                        m_shift_Y = 70;
-                        m_shift_Z = 25 * j;
+                        m_shift_X = 25 + i;
+                        m_shift_Y = m_shift_Ya+10;
+                        m_shift_Z = 25 + j;
                         m_direction = 1;
 
                         Matrix.Translation(m_speed_X * (float)(Math.Sin((double)m_clock.Check() * m_direction)) + m_shift_X, m_speed_Y * (float)(Math.Cos((double)m_clock.Check() * m_direction)) + m_shift_Y, m_speed_Z * (float)(Math.Cos((double)m_clock.Check() * m_direction)) + m_shift_Z, out world);
@@ -541,7 +542,7 @@ namespace RealtimeGrass
                         Matrix.RotationY(-30 * m_direction + m_clock.Check() * m_direction % 360, out tempMatrix);
                         Matrix.Multiply(ref tempMatrix, ref world, out world);
 
-                        Matrix.Scaling(1.4f, 1.4f, 1.4f, out tempMatrix);
+                        Matrix.Scaling(3.4f, 3.4f, 3.4f, out tempMatrix);
                         Matrix.Multiply(ref tempMatrix, ref world, out world);
 
                         m_butterfly.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
