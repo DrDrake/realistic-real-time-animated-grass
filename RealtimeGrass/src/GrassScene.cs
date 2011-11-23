@@ -671,6 +671,8 @@ namespace RealtimeGrass
                         m_butterfly.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
                         m_butterfly.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
                         m_butterfly.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
+                        m_butterfly.Effect.GetVariableByName("wingdimension").AsScalar().Set(1.2f);
+                        m_butterfly.Effect.GetVariableByName("speed").AsScalar().Set(7.5f);
                         m_butterfly.SetShaderMaterial();
                         m_butterfly.Draw();//*/
 
@@ -695,6 +697,8 @@ namespace RealtimeGrass
                         m_butterfly.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
                         m_butterfly.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
                         m_butterfly.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
+                        m_butterfly.Effect.GetVariableByName("wingdimension").AsScalar().Set(1.8f);
+                        m_butterfly.Effect.GetVariableByName("speed").AsScalar().Set(8f);
                         m_butterfly.SetShaderMaterial();
                         m_butterfly.Draw();//*/
       
