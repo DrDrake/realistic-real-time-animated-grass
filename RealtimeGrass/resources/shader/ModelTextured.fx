@@ -87,7 +87,7 @@ float4 PS( PS_IN input ) : SV_Target
 	float3 I = calcBlinnPhongLighting(input.normalWS, -l_dir, input.halfway, time);
 	
 	//with texturing
-	float4 tex = model_texture.Sample(ModelTextureSampler, input.texCoord);
+	float4 tex = model_texture.Sample(ModelTextureSampler, input.texCoord* cTexScal);
 	tex.xyz = tex.xyz * I;
 
  if (tex.a < 0.8) 

@@ -463,6 +463,7 @@ namespace RealtimeGrass
                 m_heightmap.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
                 m_heightmap.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
                 m_heightmap.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
+                m_heightmap.Effect.GetVariableByName("cTexScal").AsScalar().Set(6);
                 m_heightmap.SetShaderMaterial();
                 m_heightmap.Draw();//*
 
