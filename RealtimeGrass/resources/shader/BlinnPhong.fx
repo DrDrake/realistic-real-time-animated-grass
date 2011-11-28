@@ -8,12 +8,12 @@ float mat_shininess;
 //LIGHTING VARIABLES
 //--------------------------------------------------------------------------------------
 //DirectionalLight
-float4 l_color = float4 (1.0f,1.0f,1.0f,1.0f);
-float3 l_dir = float3 (-1,-1,1);
+float4 l_color = float4 (1.0f, 1.0f, 1.0f, 1.0f);
+float4 l_dir = float4 (1.0f, -1.0f, 1.0f, 1.0f);
 
 //lighting vars
 float4 ambientLight= float4(1.0f, 1.0f, 1.0f, 1.0f);
-float3 eye;
+float4 eye= float4(1.0f, 1.0f, 1.0f, 1.0f);
 
 //--------------------------------------------------------------------------------------
 // Blinn-Phong Lighting Reflection Model

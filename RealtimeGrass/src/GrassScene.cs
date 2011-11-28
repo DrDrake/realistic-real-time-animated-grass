@@ -46,6 +46,7 @@ namespace RealtimeGrass
         private Heightmap                       m_heightmap;
         private Grass                           m_grass;
         public Model                            m_butterfly { get; set; }
+        private Light                           m_light;
 
         private Matrix                          m_proj;
         private Matrix                          m_view;
@@ -126,8 +127,8 @@ namespace RealtimeGrass
                 };
                 m_depthStencilState = DepthStencilState.FromDescription(Context10.Device, dssd);
 
-                // light
-               // l_light = new Light();
+                //a Light
+                m_light = new Light(new Vector4(1.0f, 1.0f, 1.0f, 1.0f), new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
                 //a symplistic Coordsystem---------------------------------------------------
                 m_coordSys = new CoordinateSystem(0.1f, 0.9f, 0.8f, 64);
@@ -429,6 +430,9 @@ namespace RealtimeGrass
                 //For anything with time use 'FrameDelta', don't use anything else
                 double a = m_clock.Check();
                 m_output.Value = 5*(float)System.Math.Sin(a);
+
+                //Halfway vector
+                //m_camera.CalcHalfWay();
 
                 //Not needed anymore, shader does depthtest-trick
                 //SetDepthTest(false);
