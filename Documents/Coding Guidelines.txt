@@ -25,3 +25,7 @@ void bla
 
 }
 
+Leerzeichen zwischen Operanden und Argumenten
+
+w = x + y / z statt w=x+y/z
+

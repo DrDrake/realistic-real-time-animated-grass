@@ -70,8 +70,7 @@ PS_IN VS( VS_IN input ) {
 	float3 viewDir = normalize( eye - (float3) input.pos );
 	output.halfway = normalize( -l_dir + viewDir );	
 	return output;
-	
-	}
+}
 
 //--------------------------------------------------------------------------------------
 // PER PIXEL LIGHTING 
