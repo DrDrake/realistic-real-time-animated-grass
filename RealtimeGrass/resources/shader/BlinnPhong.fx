@@ -13,6 +13,7 @@ float4 l_dir = float4 (1.0f, -1.0f, 1.0f, 1.0f);
 
 //lighting vars
 float4 ambientLight= float4(1.0f, 1.0f, 1.0f, 1.0f);
+float4 eye= float4(1.0f, 1.0f, 1.0f, 1.0f);
 
 //--------------------------------------------------------------------------------------
 // Blinn-Phong Lighting Reflection Model
