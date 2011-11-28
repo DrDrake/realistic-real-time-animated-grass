@@ -46,6 +46,7 @@ namespace RealtimeGrass
         private Heightmap                       m_heightmap;
         private Grass                           m_grass;
         public Model                            m_butterfly { get; set; }
+        private Light                           m_light;
 
         private Matrix                          m_proj;
         private Matrix                          m_view;
@@ -126,6 +127,9 @@ namespace RealtimeGrass
                 };
                 m_depthStencilState = DepthStencilState.FromDescription(Context10.Device, dssd);
 
+                //a Light
+                m_light = new Light(new Vector4(1.0f, 1.0f, 1.0f, 1.0f), new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+
                 //a symplistic Coordsystem---------------------------------------------------
                 m_coordSys = new CoordinateSystem(0.1f, 0.9f, 0.8f, 64);
                 m_coordSys.Init(Context10.Device, "Resources/shader/CoordinateSystem.fx", null);
@@ -203,7 +207,7 @@ namespace RealtimeGrass
                 List<TextureFormat> textureFormats3 = new List<TextureFormat>();
                 textureFormats3.Add(texFormat3);
 
-                m_Jupiter = new Model(0.1f, 0.9f, 0.8f, 64, "Resources/mesh/Jupiter.smd");
+                m_Jupiter = new Model(0.3f, 0.9f, 0.8f, 64, "Resources/mesh/Jupiter.smd");
                 m_Jupiter.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats3);
 
                 //Butterfly----------------------------------------------------------
@@ -427,6 +431,9 @@ namespace RealtimeGrass
                 double a = m_clock.Check();
                 m_output.Value = 5*(float)System.Math.Sin(a);
 
+                //Halfway vector
+                //m_camera.CalcHalfWay();
+
                 //Not needed anymore, shader does depthtest-trick
                 //SetDepthTest(false);
 
@@ -465,7 +472,7 @@ namespace RealtimeGrass
 
                 world = Matrix.Identity;
                 Matrix.Translation(m_camera.m_LookAt.X,m_camera.m_LookAt.Y, m_camera.m_LookAt.Z, out world);
-
+                
                 Matrix.Scaling(1.5f, 1.5f, 1.5f, out tempMatrix);
                 Matrix.Multiply(ref tempMatrix, ref world, out world);
 
@@ -494,7 +501,7 @@ namespace RealtimeGrass
                 //AHHH : m_grass.Effect.GetVariableByName("ambientLight").AsVector().Set(Vector4(1.0f,1.0f,1.0f,1.0f));
                 //m_grass.Effect.GetVariableByName("eye").AsScalar().Set(mat_grass.Kd());
                 //m_grass.Effect.GetVariableByName("l_color").AsScalar().Set(l_light.Color());
-                //m_grass.Effect.GetVariableByName("l_dir").AsScalar().Set(l_light.Dir());
+                m_grass.Effect.GetVariableByName("l_dir").AsVector().Set(m_light.Direction);
                 m_grass.Draw();//*/
 
                 world = Matrix.Identity;
