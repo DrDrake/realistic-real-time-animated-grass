@@ -60,20 +60,27 @@ struct PS_IN {
 //Vertexshader
 //------------------------------------------------------------
 
-PS_IN VS( VS_IN input ) {
+PS_IN VS( VS_IN input ) 
+{
+
 	PS_IN output = (PS_IN)0;
-	if (!(input.pos.r == 0.0000)) {
-	input.pos.g = input.pos.g+sin(time*6);
+
+	if (!(input.pos.x == 0.0000)) 
+	{
+		input.pos.y = input.pos.y + sin(time * 6);
 	}
+
 	float4x4 worldViewProj = mul(mul(world, view), proj);
 	output.pos = mul(float4(input.pos, 1.0), worldViewProj);
 	output.normalWS = mul(float4(input.normal, 1.0), world).xyz;
 	output.texCoord = input.texCoord;
+
 	float3 viewDir = normalize( eye - (float3) input.pos );
 	output.halfway = normalize( -l_dir + viewDir );	
+
 	return output;
 	
-	}
+}
 
 //--------------------------------------------------------------------------------------
 // PER PIXEL LIGHTING 

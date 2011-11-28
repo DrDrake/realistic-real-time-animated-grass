@@ -54,6 +54,11 @@ namespace RealtimeGrass.Utility
             m_aspectRatio = aspectRatio;
         }
 
+        public Vector3 CalcHalfWay(Vector3 lightDirection)
+        {
+            return Vector3.Normalize(m_Position - lightDirection);
+        }
+
         //call at init or when projective params are changed
         public void UpdateProj(out Matrix proj)
         {
