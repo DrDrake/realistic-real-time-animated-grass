@@ -1,0 +1,31 @@
+Membervariablen werden mit m_ als prefix benannt, z.B. 'private float m_diffuse;'
+
+Die Getter und Setter sehen folgendermassen aus:
+public float Diffuse { get { return m_diffuse; } set { m_diffuse = value; } }
+
+Membervariablen werden immer oberhalb der Methoden definiert.
+
+Ein typischer Konstruktor sähe demnach so aus:
+
+public Material(float ambient, float diffuse, float specular, float shininess)
+{
+	m_ambient = ambient;
+	m_diffuse = diffuse;
+	m_specular = specular;
+	m_shininess = shininess;
+}
+
+Klammerung (öffnende Klammer in neuer Zeile)
+
+void bla
+{
+	if()
+	{
+	}
+
+}
+
+Leerzeichen zwischen Operanden und Argumenten
+
+w = x + y / z statt w=x+y/z
+
