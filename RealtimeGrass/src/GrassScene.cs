@@ -46,12 +46,14 @@ namespace RealtimeGrass
         private Heightmap                       m_heightmap;
         private Grass                           m_grass;
         public Model                            m_butterfly { get; set; }
+        public Model                            m_LightDir;
         private Light                           m_light;
 
         private Matrix                          m_proj;
         private Matrix                          m_view;
         //Sound testing
         private bool                            m_played = false;
+        private ImageLoadInformation            m_defaultLoadInfo;
 
 
         #endregion
@@ -127,20 +129,19 @@ namespace RealtimeGrass
                 };
                 m_depthStencilState = DepthStencilState.FromDescription(Context10.Device, dssd);
 
-                //a Light
-                m_light = new Light(new Vector4(1.0f, 1.0f, 1.0f, 1.0f), new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+                m_defaultLoadInfo = ImageLoadInformation.FromDefaults();
+
+                //a Light-------------------------------------------------------------------
+                m_light = new Light(new Vector3(1.0f, 1.0f, 1.0f), new Vector3(0.0f, -1.0f, 0.0f));
 
                 //a symplistic Coordsystem---------------------------------------------------
                 m_coordSys = new CoordinateSystem(0.1f, 0.9f, 0.8f, 64);
                 m_coordSys.Init(Context10.Device, "Resources/shader/CoordinateSystem.fx", null);
-
+                
                 //the water plane------------------------------------------------------------
-                //Use FromDefaults() for correct init of ImageLoadInformation
-                ImageLoadInformation loadInfo1 = ImageLoadInformation.FromDefaults();
-
                 TextureFormat texFormat1 = new TextureFormat(
                     "Resources/texture/wasser.jpg",
-                    loadInfo1,
+                    m_defaultLoadInfo,
                     TextureType.TextureTypeDiffuse,
                     "model_texture"
                 );
@@ -153,39 +154,37 @@ namespace RealtimeGrass
                 m_plane.Init(Context10.Device, "Resources/shader/Water.fx", textureFormats1);
             
                 //a fancy skybox--------------------------------------------------------
-                ImageLoadInformation loadInfo2 = ImageLoadInformation.FromDefaults();
-                loadInfo2.OptionFlags = ResourceOptionFlags.TextureCube;
+                ImageLoadInformation loadInfoCube = ImageLoadInformation.FromDefaults();
+                loadInfoCube.OptionFlags = ResourceOptionFlags.TextureCube;
 
                 TextureFormat texFormat2 = new TextureFormat(
                     "Resources/texture/Sky_Miramar.dds",
-                    loadInfo2,
+                    loadInfoCube,
                     TextureType.TextureTypeCube,
                     "model_texture02"
                 );
-                ImageLoadInformation loadInfo21 = ImageLoadInformation.FromDefaults();
-                loadInfo21.OptionFlags = ResourceOptionFlags.TextureCube;
+                
                 TextureFormat texFormat21 = new TextureFormat(
                     "Resources/texture/Sky_Stormydays.dds",
-                    loadInfo21,
+                    loadInfoCube,
                     TextureType.TextureTypeCube,
                     "model_texture01"
                 );
-                ImageLoadInformation loadInfo22 = ImageLoadInformation.FromDefaults();
-                loadInfo22.OptionFlags = ResourceOptionFlags.TextureCube;
+                
                 TextureFormat texFormat22 = new TextureFormat(
                     "Resources/texture/Sky_Grimmnight.dds",
-                    loadInfo22,
+                    loadInfoCube,
                     TextureType.TextureTypeCube,
                     "model_texture04"
                 );
-                ImageLoadInformation loadInfo23 = ImageLoadInformation.FromDefaults();
-                loadInfo23.OptionFlags = ResourceOptionFlags.TextureCube;
+                
                 TextureFormat texFormat23 = new TextureFormat(
                     "Resources/texture/Sky_Violentdays.dds",
-                    loadInfo23,
+                    loadInfoCube,
                     TextureType.TextureTypeCube,
                     "model_texture03"
                 );
+
                 List<TextureFormat> textureFormats2 = new List<TextureFormat>();
                 textureFormats2.Add(texFormat2);
                 textureFormats2.Add(texFormat21);
@@ -196,11 +195,10 @@ namespace RealtimeGrass
                 m_skybox.Init(Context10.Device, "Resources/shader/Skybox.fx", textureFormats2);
 
                 //Jupiter----------------------------------------------------------
-                ImageLoadInformation loadInfo3 = ImageLoadInformation.FromDefaults();
 
                 TextureFormat texFormat3 = new TextureFormat(
                     "Resources/texture/jupiter1024x512.jpg",
-                    loadInfo3,
+                    m_defaultLoadInfo,
                     TextureType.TextureTypeDiffuse,
                     "model_texture"
                 );
@@ -210,87 +208,89 @@ namespace RealtimeGrass
                 m_Jupiter = new Model(0.8f, 0.9f, 0.8f, 64, "Resources/mesh/Jupiter.smd");
                 m_Jupiter.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats3);
 
-                //Butterfly----------------------------------------------------------
-                ImageLoadInformation loadInfo10 = ImageLoadInformation.FromDefaults();
-
-                TextureFormat texFormat10 = new TextureFormat(
-                    "Resources/texture/butterfly.png",
-                    loadInfo10,
-                    TextureType.TextureTypeDiffuse,
-                    "model_texture"
-                );
-                List<TextureFormat> textureFormats10 = new List<TextureFormat>();
-                textureFormats10.Add(texFormat10);
-
-                m_butterfly = new Model(0.3f, 0.9f, 0.8f, 64, "Resources/mesh/butterfly.smd");
-                m_butterfly.Init(Context10.Device, "Resources/shader/ButterflyTextured.fx", textureFormats10);
-
                 //Heightmap--------------------------------------------------------------
                 // heightmap material
-                ImageLoadInformation loadInfo4 = ImageLoadInformation.FromDefaults();
 
                 TextureFormat texFormat4 = new TextureFormat(
                     "Resources/texture/boden01.jpg",
-                    loadInfo4,
+                    m_defaultLoadInfo,
                     TextureType.TextureTypeDiffuse,
                     "model_texture"
                 );
                 List<TextureFormat> textureFormats4 = new List<TextureFormat>();
                 textureFormats4.Add(texFormat4);
 
-                m_heightmap = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegel500x500.jpg");
+                m_heightmap = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegel128x128.jpg");
                 m_heightmap.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats4);
 
                 //Grass---------------------------------------------------------------------------------
                 // grass material
 
-                ImageLoadInformation loadInfo5 = ImageLoadInformation.FromDefaults();
-
                 TextureFormat texFormat5 = new TextureFormat(
                     "Resources/texture/GrassDiffuse01.jpg",
-                    loadInfo5,
+                    m_defaultLoadInfo,
                     TextureType.TextureTypeDiffuse,
                     "grass_diffuse01"
                 );
-                ImageLoadInformation loadInfo6 = ImageLoadInformation.FromDefaults();
-                TextureFormat texFormat6 = new TextureFormat(
-                    "Resources/texture/GrassDiffuse02.jpg",
-                    loadInfo6,
-                    TextureType.TextureTypeDiffuse,
-                    "grass_diffuse02"
-                );
-                ImageLoadInformation loadInfo7 = ImageLoadInformation.FromDefaults();
+                
                 TextureFormat texFormat7 = new TextureFormat(
                     "Resources/texture/GrassAlpha.jpg",
-                    loadInfo7,
+                    m_defaultLoadInfo,
                     TextureType.TextureTypeDiffuse,
                     "grass_alpha"
                 );
-                ImageLoadInformation loadInfo8 = ImageLoadInformation.FromDefaults();
+                
                 TextureFormat texFormat8 = new TextureFormat(
                     "Resources/texture/noise1024x773.jpg",
-                    loadInfo8,
+                    m_defaultLoadInfo,
                     TextureType.TextureTypeDiffuse,
                     "grass_noise"
                 );
-                ImageLoadInformation loadInfo9 = ImageLoadInformation.FromDefaults();
+                
                 TextureFormat texFormat9 = new TextureFormat(
                     "Resources/texture/phasenverschiebung.jpg",
-                    loadInfo9,
+                    m_defaultLoadInfo,
                     TextureType.TextureTypeDiffuse,
                     "grass_shift"
                 );
 
                 List<TextureFormat> textureFormats5 = new List<TextureFormat>();
                 textureFormats5.Add(texFormat5);
-                textureFormats5.Add(texFormat6);
                 textureFormats5.Add(texFormat7);
                 textureFormats5.Add(texFormat8);
                 textureFormats5.Add(texFormat9);
 
-                m_grass = new Grass(0.1f, 0.9f, 0.8f, 64, m_heightmap.Roots, m_heightmap.NumberOfElements);
+                m_grass = new Grass(0.1f, 0.9f, 1.0f, 128, m_heightmap.Roots, m_heightmap.NumberOfElements);
                 m_grass.Init(Context10.Device, "Resources/shader/GrassTextured.fx", textureFormats5);
-   
+
+                //Butterfly----------------------------------------------------------
+
+                TextureFormat texFormat10 = new TextureFormat(
+                    "Resources/texture/butterfly.png",
+                    m_defaultLoadInfo,
+                    TextureType.TextureTypeDiffuse,
+                    "model_texture"
+                );
+
+                List<TextureFormat> textureFormats10 = new List<TextureFormat>();
+                textureFormats10.Add(texFormat10);
+
+                m_butterfly = new Model(0.3f, 0.9f, 0.8f, 64, "Resources/mesh/butterfly.smd");
+                m_butterfly.Init(Context10.Device, "Resources/shader/ButterflyTextured.fx", textureFormats10);
+
+                //LightDir Cylinder--------------------------------------------------------
+                TextureFormat texFormat11 = new TextureFormat(
+                    "Resources/texture/LightDir.png",
+                    m_defaultLoadInfo,
+                    TextureType.TextureTypeDiffuse,
+                    "model_texture"
+                );
+
+                List<TextureFormat> textureFormats11 = new List<TextureFormat>();
+                textureFormats10.Add(texFormat11);
+
+                m_LightDir = new Model(0.3f, 0.9f, 0.8f, 64, "Resources/mesh/LightDir.smd");
+                m_LightDir.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats11);
 
                 //-----------------------------------------
                 //Sounds
@@ -495,7 +495,7 @@ namespace RealtimeGrass
                 m_grass.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
                 m_grass.SetShaderMaterial();
                 //AHHH : m_grass.Effect.GetVariableByName("ambientLight").AsVector().Set(Vector4(1.0f,1.0f,1.0f,1.0f));
-                //m_grass.Effect.GetVariableByName("eye").AsScalar().Set(mat_grass.Kd());
+                m_grass.Effect.GetVariableByName("halfwayWS").AsVector().Set(m_camera.CalcHalfWay(m_light.Direction));
                 //m_grass.Effect.GetVariableByName("l_color").AsScalar().Set(l_light.Color());
                 //m_grass.Effect.GetVariableByName("l_dir").AsScalar().Set(l_light.Dir());
                 m_grass.Draw();//*/
@@ -527,8 +527,18 @@ namespace RealtimeGrass
                 m_Jupiter.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
                 m_Jupiter.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
                 m_Jupiter.SetShaderMaterial();
-                m_Jupiter.Draw();//*/
+                m_Jupiter.Draw();
 
+                world = Matrix.Identity;
+                //To compensate blender coord system y==z
+                Matrix.RotationX((float)Math.PI / 2, out rotationTemp);
+                Matrix.Multiply(ref rotationTemp, ref world, out world);
+
+                m_LightDir.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+                m_LightDir.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+                m_LightDir.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+                m_LightDir.SetShaderMaterial();
+                m_LightDir.Draw();
                 /*
                 //Final Pass 
                 Context10.Device.OutputMerger.DepthStencilState = m_depthStencilState;
