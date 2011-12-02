@@ -11,7 +11,7 @@ float4x4 world;
 
 //Old Sampler2
 Texture2D grass_diffuse01;
-Texture2D grass_diffuse02;
+//Texture2D grass_diffuse02;
 Texture2D grass_alpha;
 Texture2D grass_noise;
 Texture2D grass_shift;
@@ -66,7 +66,6 @@ struct PS_IN {
 	float3 normalWS			: NORMAL;
 	float2 texCoord			: TEXCOORD;
 	float4 random			: RANDOM;
-	float3 halfway			: HVECTOR;
 };
 
 //--------------------------------------------------------------------------------------
@@ -89,8 +88,6 @@ PS_IN VSreal( GS_WORKING input ) {
 	output.normalWS = mul(float4(input.normal, 1.0), world).xyz;
 	output.texCoord = input.texCoord;
 	output.random = input.random;	
-	float3 ViewDir = normalize( eye - (float3) input.pos );
-	output.halfway = normalize( -l_dir + ViewDir );	
 	return output;
 }
 
@@ -128,22 +125,22 @@ if (s[0].pos.y > 0) {
 	float4 random2 = (grass_noise.SampleLevel(ModelTextureSampler, texCoord, 0));
 	float4 shift = (grass_shift.SampleLevel(ModelTextureSampler, texCoord, 0));
 	// Motion added with x^2 influence (between 0-1)
-	float windpower = windPW*(((sin((time+random.r)+shift.rgb*3)+1)/2)+1);
+	float windpower = windPW * (((sin((time + random.r) + shift.r * 3) +1) /2) +1);
 
 	float turn = 2*(random2.b*random2.r*random2.g);
 	s[0].pos.x = s[0].pos.x+4*random2.r;
 	s[0].pos.z = s[0].pos.z-4*random2.r;
 
-    float offsetX = winddir.x*windpower*(0.5+random2.r)*sin((time+random.r)+shift.rgb*3);
+    float offsetX = winddir.x * windpower * (0.5+random2.r)*sin((time+random.r)+shift.r*3);
 
-	float offsetY = -windpower*(0.5+random2.g)*sin((time+random.r)+shift.rgb*3);
+	float offsetY = -windpower*(0.5+random2.g)*sin((time+random.r)+shift.r*3);
 	if (offsetY > 0) {
 	offsetY = offsetY*(-1);
 	}
 
-	float offsetZ = winddir.y*windpower*(0.5+random2.b)*sin((time+random.r)+shift.rgb*3);
+	float offsetZ = winddir.y*windpower*(0.5+random2.b)*sin((time+random.r)+shift.r*3);
 
-	int LOD = 2;
+	int LOD = 0;
 
 	if (LOD == 0) {
 
@@ -451,27 +448,23 @@ if (s[0].pos.y > 0) {
 float4 PS_PIXEL_LIGHTING_BLINNPHONG( PS_IN input ) : SV_Target
 {     	
 	//renormalize interpolated vectors
-	input.normalWS = normalize( input.normalWS );		
-	input.halfway = normalize( input.halfway );
+	input.normalWS = normalize( input.normalWS );
 
 	//calculate lighting	
-	float3 I = calcBlinnPhongLighting(input.normalWS, -l_dir, input.halfway, time);
+	float3 IFront = calcBlinnPhongLighting(input.normalWS, time);
+	float3 IBack = calcBlinnPhongLighting(-input.normalWS, time);
 	
 	//with texturing
-	float alphar = grass_alpha.Sample(ModelTextureSampler, input.texCoord).r;
+	float alpha = grass_alpha.Sample(ModelTextureSampler, input.texCoord).r;
 
-	float3 tex = grass_diffuse01.Sample(ModelTextureSampler, input.texCoord).rgb*input.random.b+grass_diffuse02.Sample(ModelTextureSampler, input.texCoord).rgb*(1-input.random.b);
+	if (alpha < 0.5) 
+		discard;
 
-	
-	tex = tex*I;
+	float3 tex = grass_diffuse01.Sample(ModelTextureSampler, input.texCoord).rgb;
+	//tex *= input.random.b + grass_diffuse02.Sample(ModelTextureSampler, input.texCoord).rgb * (1-input.random.b);
+	tex = tex * (IFront + IBack);
 
-	if (alphar < 0.5) 
-	discard; 
-	
-	return float4(tex, alphar);	
-	
-
-	
+	return float4(tex, 1.0f);
 }
 
 
