@@ -53,7 +53,6 @@ struct PS_IN {
 	float4 pos				: SV_POSITION;		
 	float3 normalWS			: NORMAL;
 	float2 texCoord			: TEXCOORD;
-	float3 halfway 			: HVECTOR;
 };
 
 //------------------------------------------------------------
@@ -67,8 +66,6 @@ PS_IN VS( VS_IN input ) {
 	output.pos = mul(float4(input.pos, 1.0), worldViewProj);
 	output.normalWS = mul(float4(input.normal, 1.0), world).xyz;
 	output.texCoord = input.texCoord;
-	float3 viewDir = normalize( eye - (float3) input.pos );
-	output.halfway = normalize( -l_dir + viewDir );	
 	return output;
 }
 
@@ -79,18 +76,17 @@ PS_IN VS( VS_IN input ) {
 float4 PS( PS_IN input ) : SV_Target
 {     	
 	//renormalize interpolated vectors
-	input.normalWS = normalize( input.normalWS );		
-	input.halfway = normalize( input.halfway );
+	input.normalWS = normalize( input.normalWS );
 
 	//calculate lighting	
-	float3 I = calcBlinnPhongLighting(input.normalWS, -l_dir, input.halfway, time);
+	float3 I = calcBlinnPhongLighting(input.normalWS, time);
 	
 	//with texturing
-	float4 tex = model_texture.Sample(ModelTextureSampler, input.texCoord* cTexScal);
+	float4 tex = model_texture.Sample(ModelTextureSampler, input.texCoord * cTexScal);
 	tex.xyz = tex.xyz * I;
 
- if (tex.a < 0.8) 
- 		discard; 
+	//if (tex.a < 0.8) 
+ 		//discard; 
 	
 	return tex;	
 }
