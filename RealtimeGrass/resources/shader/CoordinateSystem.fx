@@ -6,14 +6,10 @@ Texture2D model_texture;
 
 struct VS_IN {
 	float4 pos		: POSITION;
-	//float3 normal	: NORMAL;
-	//float2 texCoord	: TEXCOORD;
 };
 
 struct PS_IN {
 	float4 posPS	: SV_POSITION;
-	//float4 normalWS	: NORMAL;
-	//float2 texCoord	: TEXCOORD;
 	float3 posWS	: TEXCOORD1;
 };
 
@@ -30,14 +26,12 @@ PS_IN VS( VS_IN input ) {
 
 	output.posPS = mul(input.pos, worldViewProj);
 	output.posWS = mul(input.pos, world).xyz;
-	//output.normalWS = mul(float4(input.normal, 1.0), world);
-	//output.texCoord = input.texCoord;
 	
 	return output;
 }
 
 float4 PS( PS_IN input ) : SV_Target {
-	return float4(input.posWS, 1.0);//model_texture.Sample(ModelTextureSampler, input.texCoord);
+	return float4(input.posWS, 1.0);
 }
 
 technique10 Render {
