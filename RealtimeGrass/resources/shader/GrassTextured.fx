@@ -17,6 +17,7 @@ Texture2D grass_noise;
 Texture2D grass_shift;
 
 //Misc
+float3 cam_Pos;
 float cTexScal = 1;
 float time;
 float windPW=8;  // Value between 0-12
@@ -98,19 +99,20 @@ PS_IN VSreal( GS_WORKING input ) {
 [maxvertexcount(40)]
 void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 {
-if (s[0].pos.y > 0) { 
-    GS_WORKING bl;
-	GS_WORKING tl;
-	GS_WORKING br;
-	GS_WORKING tr;
+	if (s[0].pos.y > 0) { 
+		GS_WORKING bl;
+		GS_WORKING tl;
+		GS_WORKING br;
+		GS_WORKING tr;
 
-	float2 texCoord = float2(s[0].pos.x, s[0].pos.y);
+		float2 texCoord = float2(s[0].pos.x, s[0].pos.y);
 
-	float4 random = (grass_noise.SampleLevel(ModelTextureSampler, texCoord, 0));
-	random.r=random.r-0.5;
-	if (random.r < 0) {
-	random.r = random.r*(-1);
+		float4 random = (grass_noise.SampleLevel(ModelTextureSampler, texCoord, 0));
+		random.r=random.r-0.5;
+		if (random.r < 0) {
+		random.r = random.r*(-1);
 	}
+
 	random.r=random.r*2;
 
 	bl.random = random;
@@ -140,7 +142,20 @@ if (s[0].pos.y > 0) {
 
 	float offsetZ = winddir.y*windpower*(0.5+random2.b)*sin((time+random.r)+shift.r*3);
 
+	//------------------------------------------------
+	//change LOD depending on vertex 2 camera distance
+	float distance2Cam = length(cam_Pos - s[0].pos);
 	int LOD = 0;
+
+	if(distance2Cam < 100)
+	{
+		LOD = 2;
+	}
+	else if(distance2Cam < 200 && distance2Cam > 100)
+	{
+		LOD = 1;
+	}
+	//------------------------------------------------
 
 	if (LOD == 0) {
 
