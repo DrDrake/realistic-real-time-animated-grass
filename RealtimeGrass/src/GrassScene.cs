@@ -221,11 +221,22 @@ namespace RealtimeGrass
                 List<TextureFormat> textureFormats4 = new List<TextureFormat>();
                 textureFormats4.Add(texFormat4);
 
-                m_heightmapLOW = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegel128x128.jpg", 2f, -250f);
-                m_heightmapLOW.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats4);
 
-                m_heightmap = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegel128x128.jpg", 100f, -1280f);
+                TextureFormat texFormat12 = new TextureFormat(
+                    "Resources/texture/grass4096x4096.jpg",
+                    m_defaultLoadInfo,
+                    TextureType.TextureTypeDiffuse,
+                    "model_texture"
+                );
+                List<TextureFormat> textureFormats12 = new List<TextureFormat>();
+                textureFormats12.Add(texFormat12);
+
+
+                m_heightmap = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegel128x128.jpg", 2f, -128f,0,0);
                 m_heightmap.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats4);
+
+                m_heightmapLOW = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegelLOW128x128.jpg", 128f, -8192f,239,100);
+                m_heightmapLOW.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats12);
 
                 //Grass---------------------------------------------------------------------------------
 
@@ -476,13 +487,13 @@ namespace RealtimeGrass
                 m_heightmapLOW.Draw();//*
 
 
-                /*m_heightmap.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+                m_heightmap.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
                 m_heightmap.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
                 m_heightmap.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
                 m_heightmap.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
                 m_heightmap.Effect.GetVariableByName("cTexScal").AsScalar().Set(6);
                 m_heightmap.SetShaderMaterial();
-                m_heightmap.Draw();//*/
+                m_heightmap.Draw();//
 
                 // Butterflies
                 Place_butterfly(30, 40, 90);
@@ -502,7 +513,7 @@ namespace RealtimeGrass
 
                 world = Matrix.Identity;
 
-                /*m_grass.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+                m_grass.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
                 m_grass.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
                 m_grass.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
                 m_grass.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
@@ -511,21 +522,21 @@ namespace RealtimeGrass
                 m_grass.Effect.GetVariableByName("halfwayWS").AsVector().Set(m_camera.CalcHalfWay(m_light.Direction));
                 //m_grass.Effect.GetVariableByName("l_color").AsScalar().Set(l_light.Color());
                 //m_grass.Effect.GetVariableByName("l_dir").AsScalar().Set(l_light.Dir());
-                m_grass.Draw();//*/
+                m_grass.Draw();//
 
                 world = Matrix.Identity;
 
-                m_grassLOW.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-                m_grassLOW.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
-                m_grassLOW.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
-                m_grassLOW.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
-                m_grassLOW.SetShaderMaterial();
-                //m_grass.Effect.GetVariableByName("ambientLight").AsVector().Set(Vector4(1.0f,1.0f,1.0f,1.0f));
-                m_grassLOW.Effect.GetVariableByName("halfwayWS").AsVector().Set(m_camera.CalcHalfWay(m_light.Direction));
-                m_grassLOW.Effect.GetVariableByName("cam_Pos").AsVector().Set(m_camera.m_Position);
-                //m_grass.Effect.GetVariableByName("l_color").AsScalar().Set(l_light.Color());
-                //m_grass.Effect.GetVariableByName("l_dir").AsScalar().Set(l_light.Dir());
-                m_grassLOW.Draw();//*/
+                //m_grassLOW.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+                //m_grassLOW.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+                //m_grassLOW.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+                //m_grassLOW.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
+                //m_grassLOW.SetShaderMaterial();
+                ////m_grass.Effect.GetVariableByName("ambientLight").AsVector().Set(Vector4(1.0f,1.0f,1.0f,1.0f));
+                //m_grassLOW.Effect.GetVariableByName("halfwayWS").AsVector().Set(m_camera.CalcHalfWay(m_light.Direction));
+                //m_grassLOW.Effect.GetVariableByName("cam_Pos").AsVector().Set(m_camera.m_Position);
+                ////m_grass.Effect.GetVariableByName("l_color").AsScalar().Set(l_light.Color());
+                ////m_grass.Effect.GetVariableByName("l_dir").AsScalar().Set(l_light.Dir());
+                //m_grassLOW.Draw();//*/
 
                 world = Matrix.Identity;
                 Matrix.Translation(0, 0, 100, out world);

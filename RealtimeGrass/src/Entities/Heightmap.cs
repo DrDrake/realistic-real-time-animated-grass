@@ -21,10 +21,12 @@ namespace RealtimeGrass.Entities
         private Point m_dimension;
         private float m_interS;
         private float m_start;
+        private int m_sum;
+        private int m_sum1;
         private Vector3[] m_roots;
         public Vector3[] Roots { get { return m_roots; } set { m_roots = value; } }
 
-        public Heightmap(float ambient, float diffuse, float specular, float shininess, string heightMapName, float interS, float start)
+        public Heightmap(float ambient, float diffuse, float specular, float shininess, string heightMapName, float interS, float start, int sum, int sum1)
             :base(ambient, diffuse, specular, shininess)
         {
             m_heightmap = new Bitmap(heightMapName);
@@ -32,6 +34,8 @@ namespace RealtimeGrass.Entities
             m_dimension.Y = m_heightmap.Height;
             m_interS = interS;
             m_start = start;
+            m_sum = sum;
+            m_sum1 = sum1;
         }
 
         public override void CreateVertexBuffer(){
@@ -60,7 +64,8 @@ namespace RealtimeGrass.Entities
                     int index = (y * m_dimension.X) + x;
                     Vector3 pos = new Vector3(
                         start + xf,
-                        b * (m_dimension.X/4) - (m_dimension.X/8), 
+                        b * ((m_dimension.X/4)+m_sum) - ((m_dimension.X/800)+m_sum1), 
+                        
                         start + zf
                     );
 
