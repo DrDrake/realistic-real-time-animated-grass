@@ -104,13 +104,10 @@ float4 PS( PS_IN input ) : SV_Target
 	 tex = model_texture_high.Sample(ModelTextureSampler, input.texCoord * cTexScal)*(1-((input.distance2Cam-300)/300)) + model_texture_low.Sample(ModelTextureSampler, input.texCoord * cTexScal)*((input.distance2Cam-300)/300);
 	}
 
-
-
 	tex.xyz = tex.xyz * I;
 
-	//if (tex.a < 0.8) 
- 		//discard; 
-	
+    clip( tex.a < 0.1f ? -1:1 );
+
 	return tex;	
 }
 
