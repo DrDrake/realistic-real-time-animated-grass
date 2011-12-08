@@ -10,8 +10,8 @@ float4x4 proj;
 float4x4 world;
 
 //Old Sampler2
-Texture2D model_texture_high;
-Texture2D model_texture_low;
+Texture2D model_texture;
+
 //Misc
 float3 cam_Pos;
 float cTexScal = 1;
@@ -92,19 +92,7 @@ float4 PS( PS_IN input ) : SV_Target
 
 	//with texturing and LOD
 
-	float4 tex = model_texture_low.Sample(ModelTextureSampler, input.texCoord * cTexScal);
-
-		if(input.distance2Cam < 300)
-	{
-	tex = model_texture_high.Sample(ModelTextureSampler, input.texCoord * cTexScal);
-
-	}
-	else if(input.distance2Cam < 600 && input.distance2Cam > 300)
-	{
-	 tex = model_texture_high.Sample(ModelTextureSampler, input.texCoord * cTexScal)*(1-((input.distance2Cam-300)/300)) + model_texture_low.Sample(ModelTextureSampler, input.texCoord * cTexScal)*((input.distance2Cam-300)/300);
-	}
-
-
+	float4 tex = model_texture.Sample(ModelTextureSampler, input.texCoord * cTexScal);
 
 	tex.xyz = tex.xyz * I;
 
