@@ -9,7 +9,7 @@ float mat_shininess;
 //--------------------------------------------------------------------------------------
 //DirectionalLight
 float3 l_color = float3 (1.0f, 1.0f, 1.0f);
-float3 l_dirWS = float3 (1.0f, -1.0f, 1.0f);
+float3 l_dirWS = float3 (-1.0f, -1.0f, -1.0f);
 
 //lighting vars
 float3 ambientLight= float3(1.0f, 1.0f, 1.0f);

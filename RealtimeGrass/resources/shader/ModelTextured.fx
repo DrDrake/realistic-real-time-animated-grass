@@ -10,9 +10,10 @@ float4x4 proj;
 float4x4 world;
 
 //Old Sampler2
-Texture2D model_texture;
-
+Texture2D model_texture_high;
+Texture2D model_texture_low;
 //Misc
+float3 cam_Pos;
 float cTexScal = 1;
 float time;
 
@@ -53,6 +54,7 @@ struct PS_IN {
 	float4 pos				: SV_POSITION;		
 	float3 normalWS			: NORMAL;
 	float2 texCoord			: TEXCOORD;
+	float distance2Cam		: DISTANCE;
 };
 
 //------------------------------------------------------------
@@ -65,6 +67,13 @@ PS_IN VS( VS_IN input ) {
 	float4x4 worldViewProj = mul(mul(world, view), proj);
 	output.pos = mul(float4(input.pos, 1.0), worldViewProj);
 	output.normalWS = mul(float4(input.normal, 1.0), world).xyz;
+	if (input.pos.y < 0) 
+	{
+		output.distance2Cam = 0;
+	} 
+	else {
+		output.distance2Cam = length(cam_Pos - input.pos);
+	}
 	output.texCoord = input.texCoord;
 	return output;
 }
@@ -80,9 +89,23 @@ float4 PS( PS_IN input ) : SV_Target
 
 	//calculate lighting	
 	float3 I = calcBlinnPhongLighting(input.normalWS, time);
-	
-	//with texturing
-	float4 tex = model_texture.Sample(ModelTextureSampler, input.texCoord * cTexScal);
+
+	//with texturing and LOD
+
+	float4 tex = model_texture_low.Sample(ModelTextureSampler, input.texCoord * cTexScal);
+
+		if(input.distance2Cam < 300)
+	{
+	tex = model_texture_high.Sample(ModelTextureSampler, input.texCoord * cTexScal);
+
+	}
+	else if(input.distance2Cam < 600 && input.distance2Cam > 300)
+	{
+	 tex = model_texture_high.Sample(ModelTextureSampler, input.texCoord * cTexScal)*0.5f + model_texture_low.Sample(ModelTextureSampler, input.texCoord * cTexScal)*0.5f;
+	}
+
+
+
 	tex.xyz = tex.xyz * I;
 
 	//if (tex.a < 0.8) 
