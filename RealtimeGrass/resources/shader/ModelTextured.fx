@@ -101,7 +101,7 @@ float4 PS( PS_IN input ) : SV_Target
 	}
 	else if(input.distance2Cam < 600 && input.distance2Cam > 300)
 	{
-	 tex = model_texture_high.Sample(ModelTextureSampler, input.texCoord * cTexScal)*0.5f + model_texture_low.Sample(ModelTextureSampler, input.texCoord * cTexScal)*0.5f;
+	 tex = model_texture_high.Sample(ModelTextureSampler, input.texCoord * cTexScal)*(1-((input.distance2Cam-300)/300)) + model_texture_low.Sample(ModelTextureSampler, input.texCoord * cTexScal)*((input.distance2Cam-300)/300);
 	}
 
 
