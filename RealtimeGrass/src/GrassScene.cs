@@ -230,10 +230,10 @@ namespace RealtimeGrass
                 textureFormats4.Add(texFormat4_2);
 
                 m_heightmap = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegel500x500.jpg", 2f, -128f, 0, 60);
-                m_heightmap.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats4);
+                m_heightmap.Init(Context10.Device, "Resources/shader/ModelTexturedLOD.fx", textureFormats4);
 
                 m_heightmapLOW = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegelLOW128x128.jpg", 128f, -8192f,150,80);
-                m_heightmapLOW.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats4);
+                m_heightmapLOW.Init(Context10.Device, "Resources/shader/ModelTexturedLOD.fx", textureFormats4);
 
                 //Grass---------------------------------------------------------------------------------
 
@@ -291,12 +291,13 @@ namespace RealtimeGrass
                     TextureType.TextureTypeDiffuse,
                     "model_texture"
                 );
-
                 List<TextureFormat> textureFormats10 = new List<TextureFormat>();
                 textureFormats10.Add(texFormat10);
 
                 m_butterfly = new Model(0.3f, 0.9f, 0.8f, 64, "Resources/mesh/butterfly.smd");
                 m_butterfly.Init(Context10.Device, "Resources/shader/ButterflyTextured.fx", textureFormats10);
+
+
 
                //LightDir Cylinder--------------------------------------------------------
                TextureFormat texFormat11 = new TextureFormat(
@@ -307,7 +308,7 @@ namespace RealtimeGrass
                );
 
                 List<TextureFormat> textureFormats11 = new List<TextureFormat>();
-                textureFormats10.Add(texFormat11);
+                textureFormats11.Add(texFormat11);
 
                 m_LightDir = new Model(0.3f, 0.9f, 0.8f, 64, "Resources/mesh/LightDir.smd");
                 m_LightDir.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats11);
@@ -474,6 +475,19 @@ namespace RealtimeGrass
                 m_coordSys.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
                 m_coordSys.Draw();
 
+
+                world = Matrix.Identity;
+
+                // Butterflies
+                Place_butterfly(30, 40, 90);
+                Place_butterfly(470, 480, 100);
+                Place_butterfly(0, 540, 100);
+                Place_butterfly(500, 250, 100);
+                Place_butterfly(270, 60, 80);
+                Place_butterfly(60, 350, 80);
+
+
+
                 Matrix tempMatrix;
                 world = Matrix.Identity;
                 Matrix.Translation(0.0f, -0.001f, 0.0f, out world);
@@ -491,6 +505,7 @@ namespace RealtimeGrass
                 m_heightmapLOW.Draw();//*
 
 
+                world = Matrix.Identity;
                 m_heightmap.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
                 m_heightmap.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
                 m_heightmap.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
@@ -500,13 +515,7 @@ namespace RealtimeGrass
                 m_heightmap.SetShaderMaterial();
                 m_heightmap.Draw();//
 
-                // Butterflies
-                Place_butterfly(30, 40, 90);
-                Place_butterfly(470, 480, 100);
-                Place_butterfly(0, 540, 100);
-                Place_butterfly(500, 250, 100);
-                Place_butterfly(270, 60, 80);
-                Place_butterfly(60, 350, 80);
+
 
                 world = Matrix.Identity;
 
@@ -575,8 +584,10 @@ namespace RealtimeGrass
 
                 world = Matrix.Identity;
                 //To compensate blender coord system y==z
+
                 Matrix.RotationX((float)Math.PI / 2, out rotationTemp);
                 Matrix.Multiply(ref rotationTemp, ref world, out world);
+                Matrix.Translation(0, 80, 0, out world);
 
                 m_LightDir.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
                 m_LightDir.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
@@ -708,6 +719,8 @@ namespace RealtimeGrass
                         m_butterfly.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
                         m_butterfly.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
                         m_butterfly.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
+                        m_butterfly.Effect.GetVariableByName("halfwayWS").AsVector().Set(m_camera.CalcHalfWay(m_light.Direction));
+                        m_butterfly.Effect.GetVariableByName("l_dirWS").AsVector().Set(m_light.Direction);
                         m_butterfly.SetShaderMaterial();
                         m_butterfly.Draw();//*/
 
@@ -734,6 +747,8 @@ namespace RealtimeGrass
                         m_butterfly.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
                         m_butterfly.Effect.GetVariableByName("wingdimension").AsScalar().Set(1.2f);
                         m_butterfly.Effect.GetVariableByName("speed").AsScalar().Set(7.5f);
+                        m_butterfly.Effect.GetVariableByName("halfwayWS").AsVector().Set(m_camera.CalcHalfWay(m_light.Direction));
+                        m_butterfly.Effect.GetVariableByName("l_dirWS").AsVector().Set(m_light.Direction);
                         m_butterfly.SetShaderMaterial();
                         m_butterfly.Draw();//*/
 
@@ -760,6 +775,7 @@ namespace RealtimeGrass
                         m_butterfly.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
                         m_butterfly.Effect.GetVariableByName("wingdimension").AsScalar().Set(1.8f);
                         m_butterfly.Effect.GetVariableByName("speed").AsScalar().Set(8f);
+
                         m_butterfly.SetShaderMaterial();
                         m_butterfly.Draw();//*/
       
