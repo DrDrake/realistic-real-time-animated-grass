@@ -56,7 +56,7 @@ namespace RealtimeGrass.Utility
 
         public Vector3 CalcHalfWay(Vector3 lightDirection)
         {
-            return Vector3.Normalize(m_Position - lightDirection);
+            return Vector3.Normalize(Vector3.Normalize(m_Position) + Vector3.Normalize(lightDirection));
         }
 
         //call at init or when projective params are changed

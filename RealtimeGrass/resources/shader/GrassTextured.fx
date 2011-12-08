@@ -108,6 +108,12 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 		float2 texCoord = float2(s[0].pos.x, s[0].pos.y);
 
 		float4 random = (grass_noise.SampleLevel(ModelTextureSampler, texCoord, 0));
+
+			bl.random = random;
+			tl.random = random;
+			br.random = random;
+			tr.random = random;
+
 		random.r=random.r-0.5;
 		if (random.r < 0) {
 		random.r = random.r*(-1);
@@ -120,7 +126,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	br.random = random;
 	tr.random = random;
 
-	float dimension_x = (2+1*(random.g-0.5))/2;
+	float dimension_x = (2+1*(1-(0.5*random.g)))/2;
 	float dimension_y = 15+35*(1-(0.5*random.g));
 
 	texCoord = float2((s[0].pos.x%100)/100, (s[0].pos.y%100)/100);
@@ -146,16 +152,23 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	//change LOD depending on vertex 2 camera distance
 	float distance2Cam = length(cam_Pos - s[0].pos);
 	int LOD = 0;
+	dimension_x = dimension_x*3/4;
+	dimension_y = dimension_y*3/4;
 
 	if(distance2Cam < 100)
 	{
 		LOD = 2;
+	dimension_x = dimension_x*4/3;
+	dimension_y = dimension_y*4/3;
 	}
-	else if(distance2Cam < 300 && distance2Cam > 100)
+	else if(distance2Cam < 400 && distance2Cam > 100)
 	{
 		LOD = 1;
+	dimension_x = dimension_x*3.5f/3;
+	dimension_y = dimension_y*3.5f/3;
 	}
 	//------------------------------------------------
+
 
 	if (LOD == 0) {
 
@@ -186,7 +199,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	tl.normal = cross( a,-b);
 	br.normal = cross(-a, b);
 	tr.normal = -cross(-a,-b);
-	
+
 	//Append
 	triStream.Append(VSreal(bl));
 	triStream.Append(VSreal(br));
@@ -466,22 +479,22 @@ float4 PS_PIXEL_LIGHTING_BLINNPHONG( PS_IN input ) : SV_Target
 	input.normalWS = normalize( input.normalWS );
 
 	//calculate lighting	
-	float3 IFront = calcBlinnPhongLighting(input.normalWS, time);
+	float3 I = calcBlinnPhongLighting(input.normalWS, time);
 	float3 IBack = calcBlinnPhongLighting(-input.normalWS, time);
 	
 	//with texturing
 	float alpha = grass_alpha.Sample(ModelTextureSampler, input.texCoord).r;
 
-	if (alpha < 0.5) 
+	if (alpha < 0.4) 
 		discard;
 
-	float3 tex = grass_diffuse01.Sample(ModelTextureSampler, input.texCoord).rgb;
-	tex *= input.random.b + grass_diffuse02.Sample(ModelTextureSampler, input.texCoord).rgb * (1-input.random.b);
-	tex = tex * (IFront + IBack);
+	float3 tex = grass_diffuse01.Sample(ModelTextureSampler, input.texCoord).rgb* input.random.r + grass_diffuse02.Sample(ModelTextureSampler, input.texCoord).rgb * (1-input.random.r);
+	tex = tex * I;
 
-	return float4(tex, 1.0f);
+	return float4(tex, alpha);
+//	return float4(tex, 1.0f);
 
-
+}
 //--------------------------------------------------------------------------------------
 // TECHNIQUE
 //--------------------------------------------------------------------------------------
