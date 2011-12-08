@@ -11,7 +11,7 @@ float4x4 world;
 
 //Old Sampler2
 Texture2D grass_diffuse01;
-//Texture2D grass_diffuse02;
+Texture2D grass_diffuse02;
 Texture2D grass_alpha;
 Texture2D grass_noise;
 Texture2D grass_shift;
@@ -151,7 +151,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	{
 		LOD = 2;
 	}
-	else if(distance2Cam < 200 && distance2Cam > 100)
+	else if(distance2Cam < 300 && distance2Cam > 100)
 	{
 		LOD = 1;
 	}
@@ -476,11 +476,10 @@ float4 PS_PIXEL_LIGHTING_BLINNPHONG( PS_IN input ) : SV_Target
 		discard;
 
 	float3 tex = grass_diffuse01.Sample(ModelTextureSampler, input.texCoord).rgb;
-	//tex *= input.random.b + grass_diffuse02.Sample(ModelTextureSampler, input.texCoord).rgb * (1-input.random.b);
+	tex *= input.random.b + grass_diffuse02.Sample(ModelTextureSampler, input.texCoord).rgb * (1-input.random.b);
 	tex = tex * (IFront + IBack);
 
 	return float4(tex, 1.0f);
-}
 
 
 //--------------------------------------------------------------------------------------
