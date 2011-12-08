@@ -485,8 +485,7 @@ float4 PS_PIXEL_LIGHTING_BLINNPHONG( PS_IN input ) : SV_Target
 	//with texturing
 	float alpha = grass_alpha.Sample(ModelTextureSampler, input.texCoord).r;
 
-	if (alpha < 0.5) 
-		discard;
+    clip( alpha < 0.1f ? -1:1 );
 
 	float3 tex = grass_diffuse01.Sample(ModelTextureSampler, input.texCoord).rgb* input.random.r + grass_diffuse02.Sample(ModelTextureSampler, input.texCoord).rgb * (1-input.random.r);
 	tex = tex * I;

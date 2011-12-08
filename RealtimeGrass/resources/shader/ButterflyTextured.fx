@@ -105,10 +105,9 @@ float4 PS( PS_IN input ) : SV_Target
 	float4 tex = model_texture.Sample(ModelTextureSampler, input.texCoord);
 	tex.xyz = tex.xyz*I;
 
- if (tex.a < 0.5) 
- 		discard; 
+    clip( tex.a < 0.6f ? -1:1 );
 	
-	return float4(tex.rgb,1.0f);	
+	return float4(tex);	
 }
 
 technique10 RenderSolid {

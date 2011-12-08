@@ -93,8 +93,7 @@ float4 PS( PS_IN input ) : SV_Target
 	//with texturing
 	float alpha = model_texture_alpha.Sample(ModelTextureSampler, input.texCoord).r;
 
-	if (alpha < 0.5) 
-		discard;
+    clip( alpha < 0.1f ? -1:1 );
 
 	float3 tex = model_texture_color.Sample(ModelTextureSampler, input.texCoord * cTexScal);
 	tex = tex * I;

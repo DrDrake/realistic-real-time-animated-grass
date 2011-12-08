@@ -96,8 +96,7 @@ float4 PS( PS_IN input ) : SV_Target
 
 	tex.xyz = tex.xyz * I;
 
-	//if (tex.a < 0.8) 
- 		//discard; 
+    clip( tex.a < 0.1f ? -1:1 );
 	
 	return tex;	
 }
