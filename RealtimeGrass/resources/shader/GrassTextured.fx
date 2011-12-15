@@ -152,21 +152,16 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	//change LOD depending on vertex 2 camera distance
 	float distance2Cam = length(cam_Pos - s[0].pos);
 	int LOD = 0;
-	dimension_x = dimension_x*3/4;
-	dimension_y = dimension_y*3/4;
 
 	if(distance2Cam < 100)
 	{
 		LOD = 2;
-	dimension_x = dimension_x*4/3;
-	dimension_y = dimension_y*4/3;
 	}
 	else if(distance2Cam < 400 && distance2Cam > 100)
 	{
 		LOD = 1;
-	dimension_x = dimension_x*3.5f/3;
-	dimension_y = dimension_y*3.5f/3;
 	}
+
 	//------------------------------------------------
 
 
@@ -485,7 +480,7 @@ float4 PS_PIXEL_LIGHTING_BLINNPHONG( PS_IN input ) : SV_Target
 	//with texturing
 	float alpha = grass_alpha.Sample(ModelTextureSampler, input.texCoord).r;
 
-    clip( alpha < 0.1f ? -1:1 );
+    clip( alpha < 0.5f ? -1:1 );
 
 	float3 tex = grass_diffuse01.Sample(ModelTextureSampler, input.texCoord).rgb* input.random.r + grass_diffuse02.Sample(ModelTextureSampler, input.texCoord).rgb * (1-input.random.r);
 	tex = tex * I;

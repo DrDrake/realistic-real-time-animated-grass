@@ -229,7 +229,7 @@ namespace RealtimeGrass
                 textureFormats4.Add(texFormat4);
                 textureFormats4.Add(texFormat4_2);
 
-                m_heightmap = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegel500x500.jpg", 2f, -128f, 0, 60);
+                m_heightmap = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegel500x500.jpg", 1f, -128f, 0, 60);
                 m_heightmap.Init(Context10.Device, "Resources/shader/ModelTexturedLOD.fx", textureFormats4);
 
                 m_heightmapLOW = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegelLOW128x128.jpg", 128f, -8192f,150,80);
