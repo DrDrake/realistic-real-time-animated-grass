@@ -30,6 +30,7 @@
 		var okaySound1:Sound = new Sound();
 		var okaySound2:Sound = new Sound();
 		var okaySound3:Sound = new Sound();
+		var okaySound4:Sound = new Sound();
 		private var okaySounds:Array = new Array();
 		
 		var wrongSound1:Sound = new Sound();
@@ -42,9 +43,11 @@
 			okaySound1.load(new URLRequest("Sounds/011-04.mp3"));
 			okaySound2.load(new URLRequest("Sounds/011-05.mp3"));
 			okaySound3.load(new URLRequest("Sounds/011-07.mp3"));
+			okaySound4.load(new URLRequest("Sounds/011-03.mp3"));
 			okaySounds.push(okaySound1);
 			okaySounds.push(okaySound2);
 			okaySounds.push(okaySound3);
+			okaySounds.push(okaySound4);
 			
 			wrongSound1.load(new URLRequest("Sounds/011-06.mp3"));
 			wrongSound2.load(new URLRequest("Sounds/011-08.mp3"));
@@ -108,46 +111,60 @@
 		
 		private function mouseUpLabel(e:MouseEvent):void 
 		{
-			if(currentitem == null)
-				return;
-			
-			var lastIndexOkay:Number = indexOkay;
-			var lastindexWrong:Number = indexWrong;
-			
-			indexOkay = Math.floor(Math.random()* okaySounds.length);
-			indexWrong = Math.floor(Math.random()* wrongSounds.length);
-			
-			if(indexOkay == lastIndexOkay)
+			if(currentitem != null)
 			{
-				indexOkay = (indexOkay + 1)% okaySounds.length;
-			}
 			
-			if(indexWrong == lastindexWrong)
-			{
-				indexWrong = (indexWrong + 1)% wrongSounds.length;
-			}
-			
-			
-			currentitem.stopDrag();
-			
-			if(currentitem.objName == currentClass)
-			{
-				okaySounds[indexOkay].play();
+				var lastIndexOkay:Number = indexOkay;
+				var lastindexWrong:Number = indexWrong;
 				
-				currentitem.visible = false;
+				indexOkay = Math.floor(Math.random()* okaySounds.length);
+				indexWrong = Math.floor(Math.random()* wrongSounds.length);
 				
-				dropFail.visible = false;
-				dropWait.visible = false;
-				dropOkay.visible = true;
-				dropOkay.gotoAndPlay(0);
-				dropOkay.addEventListener(Event.ENTER_FRAME, checkLastFrameDropColor);
+				if(indexOkay == lastIndexOkay)
+				{
+					indexOkay = (indexOkay + 1)% okaySounds.length;
+				}
 				
-				decreaseClassCount(currentitem);
-				setNewClassOnLabel();
-				trace(classes);
-				pointMove.visible = true;
-				pointMove.addEventListener(Event.ENTER_FRAME, checkLastFramePoints);
-				pointMove.gotoAndPlay(0);
+				if(indexWrong == lastindexWrong)
+				{
+					indexWrong = (indexWrong + 1)% wrongSounds.length;
+				}
+				
+				
+				currentitem.stopDrag();
+				
+				if(currentitem.objName == currentClass)
+				{
+					okaySounds[indexOkay].play();
+					
+					currentitem.visible = false;
+					
+					dropFail.visible = false;
+					dropWait.visible = false;
+					dropOkay.visible = true;
+					dropOkay.gotoAndPlay(0);
+					dropOkay.addEventListener(Event.ENTER_FRAME, checkLastFrameDropColor);
+					
+					decreaseClassCount(currentitem);
+					setNewClassOnLabel();
+					trace(classes);
+					pointMove.visible = true;
+					pointMove.addEventListener(Event.ENTER_FRAME, checkLastFramePoints);
+					pointMove.gotoAndPlay(0);
+				}
+				else if(currentitem.objName != currentClass)
+				{
+					wrongSounds[indexWrong].play();
+					
+					dropWait.visible = false;
+					dropOkay.visible = false;
+					dropFail.visible = true;
+					dropFail.gotoAndPlay(0);
+					dropFail.addEventListener(Event.ENTER_FRAME, checkLastFrameDropColor);
+					currentitem.visible = false;
+					decreaseClassCount(currentitem);
+					trace(classes);
+				}
 				//Check for finish
 				if(checkFinish())
 				{
@@ -158,19 +175,7 @@
 					dropFail.visible = false;
 					dropOkay.gotoAndStop(0);
 				}
-			}
-			else if(currentitem.objName != currentClass)
-			{
-				wrongSounds[indexWrong].play();
-				
-				dropWait.visible = false;
-				dropOkay.visible = false;
-				dropFail.visible = true;
-				dropFail.gotoAndPlay(0);
-				dropFail.addEventListener(Event.ENTER_FRAME, checkLastFrameDropColor);
-				currentitem.visible = false;
-				decreaseClassCount(currentitem);
-				trace(classes);
+				currentitem = null;
 			}
 		}
 		
@@ -286,6 +291,8 @@
 			dropWait.addEventListener(MouseEvent.MOUSE_UP, mouseUpLabel);
 			dropFail.addEventListener(MouseEvent.MOUSE_UP, mouseUpLabel);
 			dropOkay.addEventListener(MouseEvent.MOUSE_UP, mouseUpLabel);
+			
+			stage.addEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
 			
 			kommode1.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
 			kommode1.objName = "Möbel";
@@ -405,6 +412,21 @@
 			bert.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
 			bert.objName = "Kuscheltier";
 			classCounts[4]++;
+		}
+		
+		private function mouseMove(e:MouseEvent):void
+		{
+			var x:Number = e.stageX;
+			var y:Number = e.stageY;
+			
+			if(x > stage.stageWidth || x < 1 || y > stage.stageHeight || y < 1)
+			{
+				//reset Label
+				currentitem.x = oldItemPosX;
+				currentitem.y = oldItemPosY;
+				currentitem.stopDrag();
+			}
+			trace("x,y: " + x + "," + y)
 		}
 	}
 }

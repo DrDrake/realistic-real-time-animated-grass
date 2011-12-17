@@ -23,9 +23,7 @@
 		private var wordsBooks:Array = new Array("Buch", "Seitenanzahl", "Einband", "lesen()");
 		private var wordsPencils:Array = new Array("Stift", "Farbe", "schreiben()", "malen()");
 		
-		private var currentWord:String = new String();
-		private var currentitem:TextField = null;
-		
+		private var currentWord:String = new String();		
 		private var index:Number = new Number();
 	
 		private var wordEqualsHit:int;
@@ -47,6 +45,7 @@
 		var okaySound1:Sound = new Sound();
 		var okaySound2:Sound = new Sound();
 		var okaySound3:Sound = new Sound();
+		var okaySound4:Sound = new Sound();
 		private var okaySounds:Array = new Array();
 		
 		var wrongSound1:Sound = new Sound();
@@ -60,9 +59,11 @@
 			okaySound1.load(new URLRequest("Sounds/011-04.mp3"));
 			okaySound2.load(new URLRequest("Sounds/011-05.mp3"));
 			okaySound3.load(new URLRequest("Sounds/011-07.mp3"));
+			okaySound4.load(new URLRequest("Sounds/011-03.mp3"));
 			okaySounds.push(okaySound1);
 			okaySounds.push(okaySound2);
 			okaySounds.push(okaySound3);
+			okaySounds.push(okaySound4);
 			
 			wrongSound1.load(new URLRequest("Sounds/011-06.mp3"));
 			wrongSound2.load(new URLRequest("Sounds/011-08.mp3"));
@@ -116,14 +117,10 @@
 		private function mouseDown(e:MouseEvent):void 
 		{
 			dragLabelMC.startDrag();
-			currentitem = TextField(e.target);
 		}
 		
 		private function mouseUp(e:MouseEvent):void 
 		{
-			if(currentitem == null)
-				return;
-			
 			var lastIndexOkay:Number = indexOkay;
 			var lastindexWrong:Number = indexWrong;
 			
@@ -146,7 +143,7 @@
 			
 			//Hit proper Item with the label
 			if(wordEqualsHit > -1)
-			{				
+			{					
 				okaySounds[indexOkay].play();
 				words.splice(index, 1);
 				trace(words);
@@ -160,20 +157,6 @@
 				dropOkay.visible = true;
 				dropOkay.gotoAndPlay(0);
 				dropOkay.addEventListener(Event.ENTER_FRAME, checkLastFrameDropColor);
-				
-				//Check for finish
-				if(checkFinish())
-				{
-					var str:String = new String('<font size="30">Fertig!</font>');
-					var dragLabel:Label = Label(dragLabelMC.getChildByName("dragLabel"));
-					dragLabel.htmlText = str;
-					dragLabelMC.removeEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-					dragLabelMC.removeEventListener(MouseEvent.MOUSE_UP, mouseUp);
-					dropWait.visible = false;
-					dropOkay.visible = true;
-					dropFail.visible = false;
-					dropOkay.gotoAndStop(0);
-				}
 			}
 			//Didn't hit proper item 
 			else if(wordEqualsHit == -1)
@@ -192,6 +175,20 @@
 			//reset Label
 			dragLabelMC.x = oldItemPosX;
 			dragLabelMC.y = oldItemPosY;
+			
+			//Check for finish
+			if(checkFinish())
+			{
+				var str:String = new String('<font size="30">Fertig!</font>');
+				var dragLabel:Label = Label(dragLabelMC.getChildByName("dragLabel"));
+				dragLabel.htmlText = str;
+				dragLabelMC.removeEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
+				dragLabelMC.removeEventListener(MouseEvent.MOUSE_UP, mouseUp);
+				dropWait.visible = false;
+				dropOkay.visible = true;
+				dropFail.visible = false;
+				dropOkay.gotoAndStop(0);
+			}
 		}
 		
 		private function checkHit(e:MouseEvent):void
@@ -295,10 +292,26 @@
 			dragLabel.htmlText = str;
 		}
 		
+		private function mouseMove(e:MouseEvent):void
+		{
+			var x:Number = e.stageX;
+			var y:Number = e.stageY;
+			
+			if(x > stage.stageWidth || x < 1 || y > stage.stageHeight || y < 1)
+			{
+				//reset Label
+				dragLabelMC.x = oldItemPosX;
+				dragLabelMC.y = oldItemPosY;
+				dragLabelMC.stopDrag();
+			}
+			trace("x,y: " + x + "," + y + " stage: " + stage.stageWidth + "/" + stage.stageHeight)
+		}
+		
 		private function attachListener():void
 		{
 			dragLabelMC.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
 			dragLabelMC.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
+			stage.addEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
 		}
 	}
 }
