@@ -7,6 +7,8 @@
 	import flash.text.*;
 	import flash.text.TextFieldType;
 	import flash.events.*;
+	import flash.media.Sound;
+	import flash.net.*;
 	
 	public class MainSleep extends MovieClip
 	{
@@ -16,14 +18,39 @@
 		private var currentClass:String = new String();
 		private var targetLabel:Label = new Label();
 		private var pointLabel:Label = new Label();
-		private var currentitem:MovieClip = new MovieClip();
+		private var currentitem:MovieClip = null;
 		private var oldItemPosX:int;
 		private var oldItemPosY:int;
 		private var points:int = 0;
 		
+		//audio
+		var indexOkay:Number;
+		var indexWrong:Number;
+		
+		var okaySound1:Sound = new Sound();
+		var okaySound2:Sound = new Sound();
+		var okaySound3:Sound = new Sound();
+		private var okaySounds:Array = new Array();
+		
+		var wrongSound1:Sound = new Sound();
+		var wrongSound2:Sound = new Sound();
+		private var wrongSounds:Array = new Array();
 		
 		public function MainSleep() 
 		{
+			//audio
+			okaySound1.load(new URLRequest("Sounds/011-04.mp3"));
+			okaySound2.load(new URLRequest("Sounds/011-05.mp3"));
+			okaySound3.load(new URLRequest("Sounds/011-07.mp3"));
+			okaySounds.push(okaySound1);
+			okaySounds.push(okaySound2);
+			okaySounds.push(okaySound3);
+			
+			wrongSound1.load(new URLRequest("Sounds/011-06.mp3"));
+			wrongSound2.load(new URLRequest("Sounds/011-08.mp3"));
+			wrongSounds.push(wrongSound1);
+			wrongSounds.push(wrongSound2);
+			
 			var xPos:int = 10;
 			var yPos:int = 10;
 			
@@ -74,20 +101,45 @@
 		private function mouseUp(e:MouseEvent):void 
 		{
 			currentitem.stopDrag();
+			currentitem.x = oldItemPosX;
+			currentitem.y = oldItemPosY;
+			currentitem = null;
 		}
 		
 		private function mouseUpLabel(e:MouseEvent):void 
 		{
+			if(currentitem == null)
+				return;
+			
+			var lastIndexOkay:Number = indexOkay;
+			var lastindexWrong:Number = indexWrong;
+			
+			indexOkay = Math.floor(Math.random()* okaySounds.length);
+			indexWrong = Math.floor(Math.random()* wrongSounds.length);
+			
+			if(indexOkay == lastIndexOkay)
+			{
+				indexOkay = (indexOkay + 1)% okaySounds.length;
+			}
+			
+			if(indexWrong == lastindexWrong)
+			{
+				indexWrong = (indexWrong + 1)% wrongSounds.length;
+			}
+			
+			
 			currentitem.stopDrag();
 			
 			if(currentitem.objName == currentClass)
 			{
+				okaySounds[indexOkay].play();
+				
 				currentitem.visible = false;
 				
 				dropFail.visible = false;
 				dropWait.visible = false;
 				dropOkay.visible = true;
-				dropOkay.play();
+				dropOkay.gotoAndPlay(0);
 				dropOkay.addEventListener(Event.ENTER_FRAME, checkLastFrameDropColor);
 				
 				decreaseClassCount(currentitem);
@@ -95,23 +147,30 @@
 				trace(classes);
 				pointMove.visible = true;
 				pointMove.addEventListener(Event.ENTER_FRAME, checkLastFramePoints);
-				pointMove.play();
+				pointMove.gotoAndPlay(0);
 				//Check for finish
 				if(checkFinish())
 				{
 					var str:String = new String('<font size="30">Fertig!</font>');
 					targetLabel.htmlText = str;
+					dropWait.visible = false;
+					dropOkay.visible = true;
+					dropFail.visible = false;
+					dropOkay.gotoAndStop(0);
 				}
 			}
 			else if(currentitem.objName != currentClass)
 			{
+				wrongSounds[indexWrong].play();
+				
 				dropWait.visible = false;
 				dropOkay.visible = false;
 				dropFail.visible = true;
-				dropFail.play();
+				dropFail.gotoAndPlay(0);
 				dropFail.addEventListener(Event.ENTER_FRAME, checkLastFrameDropColor);
-				currentitem.x = oldItemPosX;
-				currentitem.y = oldItemPosY;
+				currentitem.visible = false;
+				decreaseClassCount(currentitem);
+				trace(classes);
 			}
 		}
 		

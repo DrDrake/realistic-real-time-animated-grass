@@ -7,23 +7,68 @@
 	import flash.text.*;
 	import flash.text.TextFieldType;
 	import flash.events.*;
+	import flash.media.Sound;
+	import flash.net.*;
 	
 	public class MainWork extends MovieClip
 	{
-		private var classes:Array = new Array("Möbel", "Technik", "Bettzeug", "Kleidung", "Kuscheltier");
-		private var classCounts:Array = new Array(0, 0, 0, 0, 0);
+		private var words:Array = new Array(
+											  "Möbel", "Computer", "Buch", "Stift", "Seitenanzahl", 
+											  "Einband", "Farbe", "Holzart", "Abmessungen", "Prozessor", 
+											  "Speicher", "lesen()", "schreiben()", "malen()", "aufbauen()", 
+											  "abstauben()", "rechnen()", "einschalten()"
+		);
+		private var wordsFurniture:Array = new Array("Möbel", "Holzart", "Abmessungen", "aufbauen()", "abstauben()");
+		private var wordsTechnique:Array = new Array("Computer", "Prozessor", "Speicher", "rechnen()", "einschalten()");
+		private var wordsBooks:Array = new Array("Buch", "Seitenanzahl", "Einband", "lesen()");
+		private var wordsPencils:Array = new Array("Stift", "Farbe", "schreiben()", "malen()");
+		
+		private var currentWord:String = new String();
+		private var currentitem:TextField = null;
+		
 		private var index:Number = new Number();
-		private var currentClass:String = new String();
-		private var targetLabel:Label = new Label();
+	
+		private var wordEqualsHit:int;
+		
+		private var dragLabel:Label = new Label();
+		private var dragLabelMC:MovieClip = new MovieClip();
+		
+		private var typeLabel:Label = new Label();
+		
 		private var pointLabel:Label = new Label();
-		private var currentitem:MovieClip = new MovieClip();
 		private var oldItemPosX:int;
 		private var oldItemPosY:int;
 		private var points:int = 0;
 		
+		//audio
+		var indexOkay:Number;
+		var indexWrong:Number;
+		
+		var okaySound1:Sound = new Sound();
+		var okaySound2:Sound = new Sound();
+		var okaySound3:Sound = new Sound();
+		private var okaySounds:Array = new Array();
+		
+		var wrongSound1:Sound = new Sound();
+		var wrongSound2:Sound = new Sound();
+		private var wrongSounds:Array = new Array();
+		
 		
 		public function MainWork() 
 		{
+			//audio
+			okaySound1.load(new URLRequest("Sounds/011-04.mp3"));
+			okaySound2.load(new URLRequest("Sounds/011-05.mp3"));
+			okaySound3.load(new URLRequest("Sounds/011-07.mp3"));
+			okaySounds.push(okaySound1);
+			okaySounds.push(okaySound2);
+			okaySounds.push(okaySound3);
+			
+			wrongSound1.load(new URLRequest("Sounds/011-06.mp3"));
+			wrongSound2.load(new URLRequest("Sounds/011-08.mp3"));
+			wrongSounds.push(wrongSound1);
+			wrongSounds.push(wrongSound2);
+			
 			var xPos:int = 10;
 			var yPos:int = 10;
 			
@@ -39,13 +84,19 @@
 			dropFail.y = yPos;
 			dropFail.visible = false;
 			
-			//Classes for droping
-			addChild(targetLabel);
-			targetLabel.autoSize = TextFieldAutoSize.CENTER; 
-			targetLabel.x = 55; 
-			targetLabel.y = 15;
-			targetLabel.name = "targetLabel";
-			setNewClassOnLabel();
+			oldItemPosX = 75;
+			oldItemPosY = 15;
+			
+			addChild(dragLabelMC);
+			dragLabelMC.x = oldItemPosX;
+			dragLabelMC.y = oldItemPosY;
+			
+			
+			dragLabelMC.addChild(dragLabel);
+			dragLabel.visible = true;
+			dragLabel.autoSize = TextFieldAutoSize.CENTER;
+			dragLabel.name = "dragLabel";
+			setNewWordOnLabel();
 			
 			//Points
 			addChild(pointLabel);
@@ -64,106 +115,148 @@
 		
 		private function mouseDown(e:MouseEvent):void 
 		{
-			var item:MovieClip = MovieClip(e.target);
-			oldItemPosX = item.x;
-			oldItemPosY = item.y;
-			item.startDrag();
-			currentitem = item;
+			dragLabelMC.startDrag();
+			currentitem = TextField(e.target);
 		}
 		
 		private function mouseUp(e:MouseEvent):void 
 		{
-			currentitem.stopDrag();
-		}
-		
-		private function mouseUpLabel(e:MouseEvent):void 
-		{
-			currentitem.stopDrag();
+			if(currentitem == null)
+				return;
 			
-			if(currentitem.objName == currentClass)
+			var lastIndexOkay:Number = indexOkay;
+			var lastindexWrong:Number = indexWrong;
+			
+			indexOkay = Math.floor(Math.random()* okaySounds.length);
+			indexWrong = Math.floor(Math.random()* wrongSounds.length);
+			
+			if(indexOkay == lastIndexOkay)
 			{
-				currentitem.visible = false;
+				indexOkay = (indexOkay + 1)% okaySounds.length;
+			}
+			
+			if(indexWrong == lastindexWrong)
+			{
+				indexWrong = (indexWrong + 1)% wrongSounds.length;
+			}
+			
+			dragLabelMC.stopDrag();
+			wordEqualsHit = -10;
+			checkHit(e);
+			
+			//Hit proper Item with the label
+			if(wordEqualsHit > -1)
+			{				
+				okaySounds[indexOkay].play();
+				words.splice(index, 1);
+				trace(words);
+				setNewWordOnLabel();
+				pointMove.visible = true;
+				pointMove.addEventListener(Event.ENTER_FRAME, checkLastFramePoints);
+				pointMove.gotoAndPlay(0);
 				
 				dropFail.visible = false;
 				dropWait.visible = false;
 				dropOkay.visible = true;
-				dropOkay.play();
+				dropOkay.gotoAndPlay(0);
 				dropOkay.addEventListener(Event.ENTER_FRAME, checkLastFrameDropColor);
 				
-				decreaseClassCount(currentitem);
-				setNewClassOnLabel();
-				trace(classes);
-				pointMove.visible = true;
-				pointMove.addEventListener(Event.ENTER_FRAME, checkLastFramePoints);
-				pointMove.play();
 				//Check for finish
 				if(checkFinish())
 				{
 					var str:String = new String('<font size="30">Fertig!</font>');
-					targetLabel.htmlText = str;
+					var dragLabel:Label = Label(dragLabelMC.getChildByName("dragLabel"));
+					dragLabel.htmlText = str;
+					dragLabelMC.removeEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
+					dragLabelMC.removeEventListener(MouseEvent.MOUSE_UP, mouseUp);
+					dropWait.visible = false;
+					dropOkay.visible = true;
+					dropFail.visible = false;
+					dropOkay.gotoAndStop(0);
 				}
 			}
-			else if(currentitem.objName != currentClass)
+			//Didn't hit proper item 
+			else if(wordEqualsHit == -1)
 			{
+				wrongSounds[indexWrong].play();
+				words.splice(index, 1);
+				trace(words);
+				setNewWordOnLabel();
+				
 				dropWait.visible = false;
 				dropOkay.visible = false;
 				dropFail.visible = true;
-				dropFail.play();
+				dropFail.gotoAndPlay(0);
 				dropFail.addEventListener(Event.ENTER_FRAME, checkLastFrameDropColor);
-				currentitem.x = oldItemPosX;
-				currentitem.y = oldItemPosY;
 			}
+			//reset Label
+			dragLabelMC.x = oldItemPosX;
+			dragLabelMC.y = oldItemPosY;
 		}
 		
-		function decreaseClassCount(item:MovieClip):void
+		private function checkHit(e:MouseEvent):void
 		{
-			switch (item.objName)
-			{
-				//"Möbel", "Technik", "Bettzeug", "Kleidung", "Kuscheltier"
-				case "Möbel":
-				classCounts[0]--;
-				break;
-
-				case "Technik":
-				classCounts[1]--;
-				break;
-
-				case "Bettzeug":
-				classCounts[2]--;
-				break;
-				
-				case "Kleidung":
-				classCounts[3]--;
-				break;
-				
-				case "Kuscheltier":
-				classCounts[4]--;
-				break;
-			}
+			var mouseX:Number = e.stageX;
+			var mouseY:Number = e.stageY;
 			
-			var i:int; 
-			for(i = 0; i < classCounts.length; i++)
+			if
+			(
+			 	stifte.hitTestPoint(mouseX, mouseY) ||
+				stift1.hitTestPoint(mouseX, mouseY) ||
+				stift2.hitTestPoint(mouseX, mouseY) ||
+				stift3.hitTestPoint(mouseX, mouseY)
+			)
 			{
-				if(classCounts[i] == 0)
-				{
-					classes[i] = "null";
-					classCounts[i] = -1;
-				}
+				trace("Hit: Pencils");
+				wordEqualsHit = wordsPencils.indexOf(currentWord);  
 			}
-			
+			else if
+			(
+				computer.hitTestPoint(mouseX, mouseY) ||
+				calc.hitTestPoint(mouseX, mouseY) ||
+				laptop.hitTestPoint(mouseX, mouseY) ||
+				telefon.hitTestPoint(mouseX, mouseY)
+			)
+			{
+				trace("Hit: Tech");
+				wordEqualsHit = wordsTechnique.indexOf(currentWord);  
+			}
+			else if
+			(
+			 	book1.hitTestPoint(mouseX, mouseY) ||
+				book2.hitTestPoint(mouseX, mouseY) ||
+				book3.hitTestPoint(mouseX, mouseY) ||
+				book4.hitTestPoint(mouseX, mouseY) ||
+				book5.hitTestPoint(mouseX, mouseY) ||
+				book6.hitTestPoint(mouseX, mouseY)
+			)
+			{
+				trace("Hit: Books");
+				wordEqualsHit = wordsBooks.indexOf(currentWord);  
+			}
+			else if
+			(
+			 	regal1.hitTestPoint(mouseX, mouseY) ||
+				regal2.hitTestPoint(mouseX, mouseY) ||
+			   	desk.hitTestPoint(mouseX, mouseY) ||
+			   	couch.hitTestPoint(mouseX, mouseY) ||
+			   	chair.hitTestPoint(mouseX, mouseY)
+			)
+			{
+				trace("Hit: Furniture");
+				wordEqualsHit = wordsFurniture.indexOf(currentWord);
+			}
 		}
-		
+			
 		function checkFinish():Boolean
 		{
-			var toReturn:Boolean = true;
-			var i:int; 
-			for(i = 0; i < classes.length; i++)
+			var toReturn:Boolean = false;
+			
+			if(words.length == 0)
 			{
-				if(classes[i] != "null")
-				{
-					toReturn = false;
-				}
+				toReturn = true;
 			}
+			
 			return toReturn;
 		}
 		
@@ -186,168 +279,26 @@
 			var item:MovieClip = MovieClip(e.target);
 			if(item.currentFrame == item.totalFrames)
 			{
-				dropWait.visible = true;
-				dropOkay.visible = false;
-				dropFail.visible = false;
 				item.stop();
 				item.removeEventListener(Event.ENTER_FRAME, checkLastFrameDropColor);
 			}
 		}
 		
-		private function setNewClassOnLabel():void
+		private function setNewWordOnLabel():void
 		{
-			var notNull:Array = new Array();
-			var i:int; 
-			for(i = 0; i < classes.length; i++)
-			{
-				if(classes[i] != "null")
-				{
-					notNull.splice(notNull.length, 0, classes[i]);
-				}
-			}
+			index = Math.floor(Math.random()* words.length);
 			
+			currentWord = words[index];
 			
-			var lastIndex:Number = index;
-			index = Math.floor(Math.random()* notNull.length);
-			
-			if(index == lastIndex)
-			{
-				index = (index + 1)% notNull.length;
-			}
-			
-			currentClass = notNull[index];
-			
-			var str:String = new String('<font size="30">' + currentClass + '</font>');
-			targetLabel.htmlText = str;
+			var str:String = new String('<font size="30">' + currentWord + '</font>');
+			var dragLabel:Label = Label(dragLabelMC.getChildByName("dragLabel"));
+			dragLabel.htmlText = str;
 		}
 		
 		private function attachListener():void
 		{
-			targetLabel.addEventListener(MouseEvent.MOUSE_UP, mouseUpLabel);
-			dropWait.addEventListener(MouseEvent.MOUSE_UP, mouseUpLabel);
-			dropFail.addEventListener(MouseEvent.MOUSE_UP, mouseUpLabel);
-			dropOkay.addEventListener(MouseEvent.MOUSE_UP, mouseUpLabel);
-			
-			//"Möbel", "Technik", "Bettzeug", "Kleidung", "Kuscheltier"
-			kommode1.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			kommode1.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			kommode1.objName = "Möbel";
-			classCounts[0]++;
-			
-			kommode2.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			kommode2.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			kommode2.objName = "Möbel";
-			classCounts[0]++;
-			
-			kommode3.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			kommode3.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			kommode3.objName = "Möbel";
-			classCounts[0]++;
-			
-			schrank.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			schrank.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			schrank.objName = "Möbel";
-			classCounts[0]++;
-			
-			bett.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			bett.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			bett.objName = "Möbel";
-			classCounts[0]++;
-			
-			lcd.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			lcd.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			lcd.objName = "Technik";
-			classCounts[1]++;
-			
-			wecker.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			wecker.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			wecker.objName = "Technik";
-			classCounts[1]++;
-			
-			decke1.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			decke1.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			decke1.objName = "Bettzeug";
-			classCounts[2]++;
-			
-			decke2.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			decke2.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			decke2.objName = "Bettzeug";
-			classCounts[2]++;
-			
-			decke3.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			decke3.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			decke3.objName = "Bettzeug";
-			classCounts[2]++;
-			
-			decke4.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			decke4.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			decke4.objName = "Bettzeug";
-			classCounts[2]++;
-			
-			kissen1.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			kissen1.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			kissen1.objName = "Bettzeug";
-			classCounts[2]++;
-			
-			kissen2.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			kissen2.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			kissen2.objName = "Bettzeug";
-			classCounts[2]++;
-			
-			kissen3.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			kissen3.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			kissen3.objName = "Bettzeug";
-			classCounts[2]++;
-			
-			kissen4.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			kissen4.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			kissen4.objName = "Bettzeug";
-			classCounts[2]++;
-			
-			mütze1.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			mütze1.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			mütze1.objName = "Kleidung";
-			classCounts[3]++;
-			
-			mütze2.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			mütze2.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			mütze2.objName = "Kleidung";
-			classCounts[3]++;
-			
-			mütze3.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			mütze3.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			mütze3.objName = "Kleidung";
-			classCounts[3]++;
-			
-			pyjama1.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			pyjama1.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			pyjama1.objName = "Kleidung";
-			classCounts[3]++;
-			
-			pyjama2.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			pyjama2.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			pyjama2.objName = "Kleidung";
-			classCounts[3]++;
-			
-			panda1.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			panda1.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			panda1.objName = "Kuscheltier";
-			classCounts[4]++;
-			
-			teddy.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			teddy.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			teddy.objName = "Kuscheltier";
-			classCounts[4]++;
-			
-			ernie.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			ernie.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			ernie.objName = "Kuscheltier";
-			classCounts[4]++;
-			
-			bert.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-			bert.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-			bert.objName = "Kuscheltier";
-			classCounts[4]++;
+			dragLabelMC.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
+			dragLabelMC.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
 		}
 	}
 }
