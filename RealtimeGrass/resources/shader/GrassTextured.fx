@@ -74,6 +74,13 @@ struct PS_IN {
 //--------------------------------------------------------------------------------------
 
 VS_IN VS(VS_IN input) {
+	float distance2Cam = length(cam_Pos - input.pos);
+	if (distance2Cam > 800) 
+	{
+		input.pos.x=0;
+		input.pos.y=0;
+		input.pos.z=0;
+	}
 	return input;
 }
 
@@ -99,6 +106,7 @@ PS_IN VSreal( GS_WORKING input ) {
 [maxvertexcount(40)]
 void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 {
+
 	if (s[0].pos.y > 0) { 
 		GS_WORKING bl;
 		GS_WORKING tl;
@@ -117,7 +125,6 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 		random.r=random.r-0.5;
 		if (random.r < 0) {
 		random.r = random.r*(-1);
-	}
 
 	random.r=random.r*2;
 
@@ -131,43 +138,58 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 
 	texCoord = float2((s[0].pos.x%100)/100, (s[0].pos.y%100)/100);
 	float4 random2 = (grass_noise.SampleLevel(ModelTextureSampler, texCoord, 0));
+
 	float4 shift = (grass_shift.SampleLevel(ModelTextureSampler, texCoord, 0));
-	// Motion added with x^2 influence (between 0-1)
-	float windpower = windPW * (((sin((time + random.r) + shift.r * 3) +1) /2) +1);
 
 	float turn = 2*(random2.b*random2.r*random2.g);
 	s[0].pos.x = s[0].pos.x+4*random2.r;
 	s[0].pos.z = s[0].pos.z-4*random2.r;
 
-    float offsetX = winddir.x * windpower * (0.5+random2.r)*sin((time+random.r)+shift.r*3);
-
-	float offsetY = -windpower*(0.5+random2.g)*sin((time+random.r)+shift.r*3);
-	if (offsetY > 0) {
-	offsetY = offsetY*(-1);
-	}
-
-	float offsetZ = winddir.y*windpower*(0.5+random2.b)*sin((time+random.r)+shift.r*3);
 
 	//------------------------------------------------
 	//change LOD depending on vertex 2 camera distance
 	float distance2Cam = length(cam_Pos - s[0].pos);
 	int LOD = 0;
 
-	if(distance2Cam < 100)
-	{
-		LOD = 2;
-	}
-	else if(distance2Cam < 400 && distance2Cam > 100)
+	if (distance2Cam < 300 && distance2Cam >= 100)
 	{
 		LOD = 1;
 	}
+	else if(distance2Cam < 500 && distance2Cam >= 300)
+	{
+		LOD = 2;
+	}
+	else if(distance2Cam >= 500)
+	{
+		LOD = 3;
+	}
+
 
 	//------------------------------------------------
 
+	float windpower = 0.0f;
+	float offsetX = 1.0f;
+	float offsetY = 0.0f;
+	float offsetZ = 1.0f;
 
-	if (LOD == 0) {
+	if (LOD < 3)
+	{
+		// Motion added with x^2 influence (between 0-1)
+		windpower = windPW * (((sin((time + random.r) + shift.r * 3) +1) /2) +1);
+		offsetX = winddir.x * windpower * (0.5+random2.r)*sin((time+random.r)+shift.r*3);
+		offsetY = -windpower*(0.5+random2.g)*sin((time+random.r)+shift.r*3);
+		if (offsetY > 0) {
+			offsetY = offsetY*(-1);
+		}
+		offsetZ = winddir.y*windpower*(0.5+random2.b)*sin((time+random.r)+shift.r*3);
+	} 
 
-	//create gras // LOD = 0
+
+
+
+	if (LOD > 1) {
+
+	//create gras // LOD = 2 / 3
 	//--------------------------------------------
 
 	//bottom left
@@ -201,12 +223,11 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	triStream.Append(VSreal(tl));
 	triStream.Append(VSreal(tr));
 
-	} else {
-	if (LOD == 1) {
+	} else if (LOD == 1) {
 
 	dimension_y = dimension_y/3;
 
-	//create gras // LOD = 1 Seg = 0
+	//create gras // LOD = 1 Seg = 1
 	//--------------------------------------------
 
 	//bottom left
@@ -304,7 +325,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 
 	dimension_y = dimension_y/5;
 
-	//create gras // LOD = 2 Seg = 0
+	//create gras // LOD = 0 Seg = 0
 	//--------------------------------------------
 
 	//bottom left
@@ -338,7 +359,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	triStream.Append(VSreal(tl));
 	triStream.Append(VSreal(tr));
 
-	//create gras // LOD = 2 Seg = 1
+	//create gras // LOD = 0 Seg = 1
 	//--------------------------------------------
 
 	//bottom left
@@ -368,7 +389,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	triStream.Append(VSreal(tl));
 	triStream.Append(VSreal(tr));
 
-	//create gras // LOD = 2 Seg = 2
+	//create gras // LOD = 0 Seg = 2
 	//--------------------------------------------
 
 	//bottom left
@@ -399,7 +420,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	triStream.Append(VSreal(tl));
 	triStream.Append(VSreal(tr));
 
-	//create gras // LOD = 2 Seg = 3
+	//create gras // LOD = 0 Seg = 3
 	//--------------------------------------------
 
 	//bottom left
@@ -429,7 +450,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	triStream.Append(VSreal(tl));
 	triStream.Append(VSreal(tr));
 
-	//create gras // LOD = 2 Seg = 4
+	//create gras // LOD = 0 Seg = 4
 	//--------------------------------------------
 
 	//bottom left
@@ -461,7 +482,6 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	}
 	}
 	}
-
 }
 
 //--------------------------------------------------------------------------------------
