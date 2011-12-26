@@ -19,19 +19,21 @@ namespace RealtimeGrass.Entities
     {
         float m_scaleX;
         float m_scaleY;
+        float m_shift;
 
-        public Plane(float ambient, float diffuse, float specular, float shininess, float scaleX, float scaleY)
+        public Plane(float ambient, float diffuse, float specular, float shininess, float scaleX, float scaleY, float shift)
             : base(ambient, diffuse, specular, shininess)
         {
             m_scaleX = scaleX;
             m_scaleY = scaleY;
+            m_shift = shift;
         }
 
         public override void CreateVertexBuffer()
         {
             m_numberOfElements = 6;
 
-            float y_shift = 0f;
+            float y_shift = m_shift;
 
             //Create Vertex Buffer
             m_vertexBuffer = InitVertexBuffer();
