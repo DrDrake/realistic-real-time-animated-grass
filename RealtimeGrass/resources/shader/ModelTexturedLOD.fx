@@ -63,7 +63,13 @@ struct PS_IN {
 
 PS_IN VS( VS_IN input ) {
 	PS_IN output = (PS_IN)0;
-	
+		float distance2Cam = length(cam_Pos - input.pos);
+	if (distance2Cam > 1000) 
+	{
+		input.pos.x=cam_Pos.x;
+		input.pos.y=-30;
+		input.pos.z=cam_Pos.z;
+	}
 	float4x4 worldViewProj = mul(mul(world, view), proj);
 	output.pos = mul(float4(input.pos, 1.0), worldViewProj);
 	output.normalWS = mul(float4(input.normal, 1.0), world).xyz;
