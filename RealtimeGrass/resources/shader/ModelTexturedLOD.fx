@@ -66,9 +66,9 @@ PS_IN VS( VS_IN input ) {
 		float distance2Cam = length(cam_Pos - input.pos);
 	if (distance2Cam > 1000) 
 	{
-		input.pos.x=cam_Pos.x;
-		input.pos.y=-30;
-		input.pos.z=cam_Pos.z;
+		input.pos.x=cam_Pos.x/100;
+		input.pos.y=-70;
+		input.pos.z=cam_Pos.z/100;
 	}
 	float4x4 worldViewProj = mul(mul(world, view), proj);
 	output.pos = mul(float4(input.pos, 1.0), worldViewProj);

@@ -46,7 +46,6 @@ namespace RealtimeGrass
         private Heightmap                       m_heightmap;
         private Heightmap                       m_heightmapLOW;
         private Grass                           m_grass;
-        private Grass                           m_grassLOW;
         public Model                            m_butterfly { get; set; }
         public Model                            m_LightDir;
         private Light                           m_light;
@@ -56,6 +55,7 @@ namespace RealtimeGrass
         //Sound testing
         private bool                            m_played = false;
         private ImageLoadInformation            m_defaultLoadInfo;
+        private Plane m_water;
 
 
         #endregion
@@ -140,9 +140,9 @@ namespace RealtimeGrass
                 m_coordSys = new CoordinateSystem(0.1f, 0.9f, 0.8f, 64);
                 m_coordSys.Init(Context10.Device, "Resources/shader/CoordinateSystem.fx", null);
                 
-                //the water plane------------------------------------------------------------
+                //the floor plane------------------------------------------------------------
                 TextureFormat texFormat1 = new TextureFormat(
-                    "Resources/texture/wasser.jpg",
+                    "Resources/texture/boden01.jpg",
                     m_defaultLoadInfo,
                     TextureType.TextureTypeDiffuse,
                     "model_texture"
@@ -152,9 +152,24 @@ namespace RealtimeGrass
                 textureFormats1.Add(texFormat1);
 
                 //Water ScaleX, ScaleY
-                m_plane = new Plane(0.1f, 0.9f, 0.8f, 64, 10000.0f, 10000.0f);
-                m_plane.Init(Context10.Device, "Resources/shader/Water.fx", textureFormats1);
-            
+                m_plane = new Plane(0.1f, 0.9f, 0.8f, 64, 10000.0f, 10000.0f, -30.0f);
+                m_plane.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats1);
+
+                //the water plane------------------------------------------------------------
+                TextureFormat texFormat1_2 = new TextureFormat(
+                    "Resources/texture/wasser.jpg",
+                    m_defaultLoadInfo,
+                    TextureType.TextureTypeDiffuse,
+                    "model_texture"
+                );
+                //For storing Info about used Textures
+                List<TextureFormat> textureFormats1_2 = new List<TextureFormat>();
+                textureFormats1_2.Add(texFormat1_2);
+
+                //Water ScaleX, ScaleY
+                m_water = new Plane(0.1f, 0.9f, 0.8f, 64, 10000.0f, 10000.0f, 0.0f);
+                m_water.Init(Context10.Device, "Resources/shader/Water.fx", textureFormats1_2);            
+
                 //a fancy skybox--------------------------------------------------------
                 ImageLoadInformation loadInfoCube = ImageLoadInformation.FromDefaults();
                 loadInfoCube.OptionFlags = ResourceOptionFlags.TextureCube;
@@ -487,24 +502,6 @@ namespace RealtimeGrass
                 Place_butterfly(60, 350, 80);
 
 
-
-                Matrix tempMatrix;
-                world = Matrix.Identity;
-                Matrix.Translation(0.0f, -0.001f, 0.0f, out world);
-                Matrix.Scaling(1.0f, 1.0f, 1.0f, out tempMatrix);
-                Matrix.Multiply(ref tempMatrix, ref world, out world);
-
-                //+X
-                m_heightmapLOW.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
-                m_heightmapLOW.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
-                m_heightmapLOW.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
-                m_heightmapLOW.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
-                m_heightmapLOW.Effect.GetVariableByName("cTexScal").AsScalar().Set(36);
-                m_heightmapLOW.Effect.GetVariableByName("cam_Pos").AsVector().Set(m_camera.m_Position);
-                m_heightmapLOW.SetShaderMaterial();
-                m_heightmapLOW.Draw();//*
-
-
                 world = Matrix.Identity;
                 m_heightmap.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
                 m_heightmap.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
@@ -512,18 +509,31 @@ namespace RealtimeGrass
                 m_heightmap.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
                 m_heightmap.Effect.GetVariableByName("cTexScal").AsScalar().Set(6);
                 m_heightmap.Effect.GetVariableByName("cam_Pos").AsVector().Set(m_camera.m_Position);
+                m_heightmap.Effect.GetVariableByName("halfwayWS").AsVector().Set(m_camera.CalcHalfWay(m_light.Direction));
+                m_heightmap.Effect.GetVariableByName("l_dirWS").AsVector().Set(m_light.Direction);
                 m_heightmap.SetShaderMaterial();
                 m_heightmap.Draw();//
-
-
 
                 world = Matrix.Identity;
 
                 m_plane.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
                 m_plane.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
                 m_plane.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+                m_plane.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
+                m_plane.Effect.GetVariableByName("cTexScal").AsScalar().Set(300);
+                m_plane.Effect.GetVariableByName("cam_Pos").AsVector().Set(m_camera.m_Position);
+                m_plane.Effect.GetVariableByName("halfwayWS").AsVector().Set(m_camera.CalcHalfWay(m_light.Direction));
+                m_plane.Effect.GetVariableByName("l_dirWS").AsVector().Set(m_light.Direction);
                 m_plane.SetShaderMaterial();
                 m_plane.Draw();
+
+                world = Matrix.Identity;
+
+                m_water.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
+                m_water.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
+                m_water.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+                m_water.SetShaderMaterial();
+                m_water.Draw();
 
                 world = Matrix.Identity;
 
