@@ -66,7 +66,7 @@ namespace RealtimeGrass.Entities
             m_material = new Material(ambient, diffuse, specular, shininess);
         }
 
-        public void Init(Device device, string effectName, List<TextureFormat> textureFormats)
+        public virtual void Init(Device device, string effectName, List<TextureFormat> textureFormats)
         {
             m_SelfRotation = new Vector3(0.0f, 0.0f, 0.0f);
             m_Rotation = new Vector3(0.0f, 0.0f, 0.0f);

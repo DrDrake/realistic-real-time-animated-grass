@@ -63,17 +63,17 @@ struct PS_IN {
 
 PS_IN VS( VS_IN input ) {
 	PS_IN output = (PS_IN)0;
-		float distance2Cam = length(cam_Pos - input.pos);
-	if (distance2Cam > 1000) 
+	float distance2Cam = length(cam_Pos - input.pos);
+	if (distance2Cam > 1000 && false) //Never use this
 	{
-		input.pos.x=cam_Pos.x/100;
+		input.pos.x=cam_Pos.x;// /100; //Why "/100" ? looks way better without.
 		input.pos.y=-70;
-		input.pos.z=cam_Pos.z/100;
+		input.pos.z=cam_Pos.z;// /100;
 	}
 	float4x4 worldViewProj = mul(mul(world, view), proj);
 	output.pos = mul(float4(input.pos, 1.0), worldViewProj);
 	output.normalWS = mul(float4(input.normal, 1.0), world).xyz;
-	if (input.pos.y < 0) 
+	if (input.pos.y < 0)
 	{
 		output.distance2Cam = 0;
 	} 
@@ -100,14 +100,14 @@ float4 PS( PS_IN input ) : SV_Target
 
 	float4 tex = model_texture_low.Sample(ModelTextureSampler, input.texCoord * cTexScal);
 
-		if(input.distance2Cam < 300)
+	if(input.distance2Cam < 300)
 	{
 	tex = model_texture_high.Sample(ModelTextureSampler, input.texCoord * cTexScal);
 
 	}
 	else if(input.distance2Cam < 600 && input.distance2Cam > 300)
 	{
-	 tex = model_texture_high.Sample(ModelTextureSampler, input.texCoord * cTexScal)*(1-((input.distance2Cam-300)/300)) + model_texture_low.Sample(ModelTextureSampler, input.texCoord * cTexScal)*((input.distance2Cam-300)/300);
+	tex = model_texture_high.Sample(ModelTextureSampler, input.texCoord * cTexScal)*(1-((input.distance2Cam-300)/300)) + model_texture_low.Sample(ModelTextureSampler, input.texCoord * cTexScal)*((input.distance2Cam-300)/300);
 	}
 
 	tex.xyz = tex.xyz * I;
