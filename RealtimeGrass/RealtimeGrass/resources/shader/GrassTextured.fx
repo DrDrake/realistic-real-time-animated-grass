@@ -75,7 +75,7 @@ struct PS_IN {
 
 VS_IN VS(VS_IN input) {
 	float distance2Cam = length(cam_Pos - input.pos);
-	if (distance2Cam > 2500) 
+	if (distance2Cam > 2200) 
 	{
 		input.pos.x=0;
 		input.pos.y=0;
@@ -151,19 +151,21 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	float distance2Cam = length(cam_Pos - s[0].pos);
 	int LOD = 0;
 
-	if (distance2Cam < 600 && distance2Cam >= 300)
+	if (distance2Cam < 300 && distance2Cam >= 100)
 	{
 		LOD = 1;
 	}
-	else if(distance2Cam < 1000 && distance2Cam >= 600)
+	else if(distance2Cam < 500 && distance2Cam >= 300)
 	{
 		LOD = 2;
 	}
-	else if(distance2Cam >= 1000)
+	else if(distance2Cam >= 500)
 	{
 		LOD = 3;
 	}
 
+
+	float size = exp(-pow(distance2Cam/200,2));
 
 	//------------------------------------------------
 
@@ -171,6 +173,12 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	float offsetX = 1.0f;
 	float offsetY = 0.0f;
 	float offsetZ = 1.0f;
+
+	dimension_y = dimension_y*size;
+	dimension_x = dimension_x*size;
+	offsetX = offsetX*size;
+	offsetY = offsetY*size;
+	offsetZ = offsetZ*size;
 
 	if (LOD < 3)
 	{
