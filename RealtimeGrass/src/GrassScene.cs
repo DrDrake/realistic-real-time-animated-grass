@@ -44,7 +44,8 @@ namespace RealtimeGrass
         private Skybox                          m_skybox;
         private Model                           m_Jupiter;
         private Heightmap                       m_heightmap;
-        private Heightmap                       m_heightmapLOW;
+        //private Heightmap                       m_heightmapLOW;
+        private Terrain                         m_terrain;
         private Grass                           m_grass;
         public Model                            m_butterfly { get; set; }
         public Model                            m_LightDir;
@@ -75,9 +76,9 @@ namespace RealtimeGrass
                 Vector3.UnitZ, // direction
                 Vector3.UnitY, // up
                 1.0f, // moveSpeedMouse
-                80.0f, // moveSpeedKeys
+                800.0f, // moveSpeedKeys
                 1.0f, // near
-                3000.0f, // far
+                30000.0f, //3000.0f, // far
                 45.0f, // fov
                 WindowWidth / WindowHeight //aspect ratio
             );
@@ -244,11 +245,33 @@ namespace RealtimeGrass
                 textureFormats4.Add(texFormat4);
                 textureFormats4.Add(texFormat4_2);
 
-                m_heightmap = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegel500x500.jpg", 1f, -128f, 0, 60);
+                m_heightmap = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegel500x500.jpg", 20f, -128f, 0, 60); //50f
                 m_heightmap.Init(Context10.Device, "Resources/shader/ModelTexturedLOD.fx", textureFormats4);
 
-                m_heightmapLOW = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegelLOW128x128.jpg", 128f, -8192f,150,80);
-                m_heightmapLOW.Init(Context10.Device, "Resources/shader/ModelTexturedLOD.fx", textureFormats4);
+                //m_heightmapLOW = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegelLOW128x128.jpg", 128f, -8192f,150,80);
+                //m_heightmapLOW.Init(Context10.Device, "Resources/shader/ModelTexturedLOD.fx", textureFormats4);
+
+                //Terrain-------------------------------------------------------------------------------
+
+                TextureFormat texFormat4_1 = new TextureFormat(
+                    "Resources/texture/boden01.jpg",
+                    m_defaultLoadInfo,
+                    TextureType.TextureTypeDiffuse,
+                    "model_texture_high"
+                );
+
+                TextureFormat texFormat4_2_1 = new TextureFormat(
+                    "Resources/texture/grass.png",
+                    m_defaultLoadInfo,
+                    TextureType.TextureTypeDiffuse,
+                    "model_texture_low"
+                );
+                List<TextureFormat> textureFormats4_1 = new List<TextureFormat>();
+                textureFormats4_1.Add(texFormat4_1);
+                textureFormats4_1.Add(texFormat4_2_1);
+
+                //m_terrain = new Terrain(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegel500x500.jpg", 1f, -128f, 0, 60);
+                //m_terrain.Init(Context10.Device, "Resources/shader/ModelTexturedLOD.fx", textureFormats4_1);
 
                 //Grass---------------------------------------------------------------------------------
 
@@ -292,7 +315,9 @@ namespace RealtimeGrass
                 textureFormats5.Add(texFormat8);
                 textureFormats5.Add(texFormat9);
 
-                m_grass = new Grass(0.1f, 0.9f, 0.8f, 100, m_heightmap.Roots, m_heightmap.NumberOfElements);
+                //m_grass = new Grass(0.1f, 0.9f, 0.8f, 100, m_heightmap.Roots, m_heightmap.numberOfRootElements);//m_heightmap.NumberOfElements);
+                m_heightmap.prepareGrassNodes();
+                m_grass = new Grass(0.1f, 0.9f, 0.8f, 100, m_heightmap.RootsNode, m_heightmap.numberOfRootElements);
                 m_grass.Init(Context10.Device, "Resources/shader/GrassTextured.fx", textureFormats5);
 
 //                m_grassLOW = new Grass(0.1f, 0.9f, 1.0f, 128, m_heightmapLOW.Roots, m_heightmapLOW.NumberOfElements);
@@ -547,8 +572,16 @@ namespace RealtimeGrass
                 //m_grass.Effect.GetVariableByName("l_color").AsScalar().Set(l_light.Color());
                 m_grass.Effect.GetVariableByName("l_dirWS").AsVector().Set(m_light.Direction);
                 m_grass.Effect.GetVariableByName("cam_Pos").AsVector().Set(m_camera.m_Position);
+                m_grass.m_world = world;
+                m_grass.m_view = m_view;
+                m_grass.m_proj = m_proj;
+                m_grass.m_frameDelta = m_clock.Check();
+                m_grass.m_halfWay = m_camera.CalcHalfWay(m_light.Direction);
+                m_grass.m_light = m_light.Direction;
+                m_grass.m_camera = m_camera.m_Position;
+                m_grass.m_cameraDirection = m_camera.m_Direction;
                 m_grass.Draw();//
-
+                //System.Console.WriteLine(m_camera.m_Position);
                 world = Matrix.Identity;
 
                 //m_grassLOW.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
@@ -688,7 +721,7 @@ namespace RealtimeGrass
             m_Jupiter.Dispose();
             m_grass.Dispose();
             m_heightmap.Dispose();
-            m_heightmapLOW.Dispose();
+            //m_heightmapLOW.Dispose();
             m_butterfly.Dispose();
             m_input.Dispose();
 

@@ -71,12 +71,14 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="src\Entities\Light.cs" />
+    <Compile Include="src\Entities\LODNode.cs" />
     <Compile Include="src\Entities\Material.cs" />
     <Compile Include="src\Entities\CoordinateSystem.cs" />
     <Compile Include="src\Entities\Grass.cs" />
     <Compile Include="src\Entities\Heightmap.cs" />
     <Compile Include="src\Entities\IEntity.cs" />
     <Compile Include="src\Entities\Skybox.cs" />
+    <Compile Include="src\Entities\Terrain.cs" />
     <Compile Include="src\Foundation\Components\IResource.cs" />
     <Compile Include="src\Foundation\Configuration.cs" />
     <Compile Include="src\Foundation\Utility\TextConsole.cs" />
