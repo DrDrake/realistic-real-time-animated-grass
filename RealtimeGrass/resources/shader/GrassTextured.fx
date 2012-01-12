@@ -75,7 +75,7 @@ struct PS_IN {
 
 VS_IN VS(VS_IN input) {
 	float distance2Cam = length(cam_Pos - input.pos);
-	if (distance2Cam > 800) 
+	if (distance2Cam > 1800) 
 	{
 		input.pos.x=0;
 		input.pos.y=0;
@@ -504,6 +504,7 @@ float4 PS_PIXEL_LIGHTING_BLINNPHONG( PS_IN input ) : SV_Target
 
 	float3 tex = grass_diffuse01.Sample(ModelTextureSampler, input.texCoord).rgb* input.random.r + grass_diffuse02.Sample(ModelTextureSampler, input.texCoord).rgb * (1-input.random.r);
 	tex = tex * I;
+	tex = tex * input.texCoord.x;
 
 //	return float4(tex, alpha);
 	return float4(tex, 1.0f);
