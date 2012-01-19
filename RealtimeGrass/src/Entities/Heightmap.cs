@@ -209,15 +209,16 @@ namespace RealtimeGrass.Entities
             stream.WriteRange<SVertex3P3N2T>(vertices);
             m_vertexBuffer.Unmap();                                                                                             
         }
-
+        static Random r = new Random(); 
         public void prepareGrassNodes()
         {
             LODNode<GrassRootsChunk> root = new LODNode<GrassRootsChunk>();
             GrassRootsChunk rootChunk = new GrassRootsChunk();
+
             rootChunk.roots = m_roots;
             rootChunk.width = m_dimension.X * m_interS;
             rootChunk.height = m_dimension.Y * m_interS;
-            rootChunk.originX = -((m_dimension.X / 2) * m_interS);
+            rootChunk.originX = -((m_dimension.X / 2) * m_interS) + (((float) r.Next())%100)/100;
             rootChunk.originY = -((m_dimension.Y / 2) * m_interS);
             rootChunk.entity = new Grass[1];
             rootChunk.entity[0] = new Grass(0.1f, 0.9f, 0.8f, 100, m_roots, m_numberOfRootElements);
