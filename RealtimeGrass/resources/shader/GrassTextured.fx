@@ -75,7 +75,7 @@ struct PS_IN {
 
 VS_IN VS(VS_IN input) {
 	float distance2Cam = length(cam_Pos - input.pos);
-	if (distance2Cam > 1800) 
+	if (distance2Cam > 2500) 
 	{
 		input.pos.x=0;
 		input.pos.y=0;
@@ -151,15 +151,15 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	float distance2Cam = length(cam_Pos - s[0].pos);
 	int LOD = 0;
 
-	if (distance2Cam < 300 && distance2Cam >= 100)
+	if (distance2Cam < 400 && distance2Cam >= 100)
 	{
 		LOD = 1;
 	}
-	else if(distance2Cam < 500 && distance2Cam >= 300)
+	else if(distance2Cam < 1500 && distance2Cam >= 400)
 	{
 		LOD = 2;
 	}
-	else if(distance2Cam >= 500)
+	else if(distance2Cam >= 1500)
 	{
 		LOD = 3;
 	}
@@ -167,26 +167,36 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 
 	//------------------------------------------------
 
-	float windpower = 0.0f;
-	float offsetX = 1.0f;
-	float offsetY = 0.0f;
-	float offsetZ = 1.0f;
+			float size = exp(-pow(distance2Cam/1500,2));
+			//size =1;
+			float windpower = 0.0f;
+			float offsetX = 1.0f;
+			float offsetY = 0.0f;
+			float offsetZ = 1.0f;
 
-	if (LOD < 3)
-	{
-		// Motion added with x^2 influence (between 0-1)
-		windpower = windPW * (((sin((time + random.r) + shift.r * 3) +1) /2) +1);
-		offsetX = winddir.x * windpower * (0.5+random2.r)*sin((time+random.r)+shift.r*3);
-		offsetY = -windpower*(0.5+random2.g)*sin((time+random.r)+shift.r*3);
-		if (offsetY > 0) {
-			offsetY = offsetY*(-1);
-		}
-		offsetZ = winddir.y*windpower*(0.5+random2.b)*sin((time+random.r)+shift.r*3);
-	} 
+			dimension_y = dimension_y*size;
+			dimension_x = dimension_x*size;
+			
 
+			if (LOD < 3)
+			{
+				float sinus = sin(time + random.r);
 
+				// Motion added with x^2 influence (between 0-1)
+				windpower = windPW; // * (((sinus + shift.r * 3) +1) /2) +1;
+				offsetX = winddir.x * windpower * (0.5+random2.r)*sinus+shift.r*3;
+				offsetY = -windpower*(0.5+random2.g)*sinus+shift.r*3;
 
+				if (offsetY > 0) 
+				{
+					offsetY = offsetY*(-1);
+				}
+				offsetZ = winddir.y*windpower*(0.5+random2.b)*sinus+shift.r*3;
+			} 
 
+			offsetX = offsetX*size;
+			offsetY = offsetY*size;
+			offsetZ = offsetZ*size;
 	if (LOD > 1) {
 
 	//create gras // LOD = 2 / 3

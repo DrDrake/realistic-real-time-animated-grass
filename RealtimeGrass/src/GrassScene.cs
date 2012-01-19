@@ -245,7 +245,7 @@ namespace RealtimeGrass
                 textureFormats4.Add(texFormat4);
                 textureFormats4.Add(texFormat4_2);
 
-                m_heightmap = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegel500x500.jpg", 20f, -128f, 0, 60); //50f
+                m_heightmap = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegel1000x1000.jpg", 15f, -128f, 128, 60); //50f
                 m_heightmap.Init(Context10.Device, "Resources/shader/ModelTexturedLOD.fx", textureFormats4);
 
                 //m_heightmapLOW = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegelLOW128x128.jpg", 128f, -8192f,150,80);
@@ -532,7 +532,7 @@ namespace RealtimeGrass
                 m_heightmap.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
                 m_heightmap.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
                 m_heightmap.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
-                m_heightmap.Effect.GetVariableByName("cTexScal").AsScalar().Set(6);
+                m_heightmap.Effect.GetVariableByName("cTexScal").AsScalar().Set(30);
                 m_heightmap.Effect.GetVariableByName("cam_Pos").AsVector().Set(m_camera.m_Position);
                 m_heightmap.Effect.GetVariableByName("halfwayWS").AsVector().Set(m_camera.CalcHalfWay(m_light.Direction));
                 m_heightmap.Effect.GetVariableByName("l_dirWS").AsVector().Set(m_light.Direction);
@@ -545,7 +545,7 @@ namespace RealtimeGrass
                 m_plane.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
                 m_plane.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
                 m_plane.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
-                m_plane.Effect.GetVariableByName("cTexScal").AsScalar().Set(300);
+                m_plane.Effect.GetVariableByName("cTexScal").AsScalar().Set(200);
                 m_plane.Effect.GetVariableByName("cam_Pos").AsVector().Set(m_camera.m_Position);
                 m_plane.Effect.GetVariableByName("halfwayWS").AsVector().Set(m_camera.CalcHalfWay(m_light.Direction));
                 m_plane.Effect.GetVariableByName("l_dirWS").AsVector().Set(m_light.Direction);

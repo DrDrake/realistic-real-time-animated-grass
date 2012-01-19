@@ -373,7 +373,7 @@ namespace RealtimeGrass.Entities
                 //This is not yet real frustum culling. Its just a check if the node is behind the camera. If so, it is not added to the selection list.
                 return true;
             }
-            if (lodLevel == 4) // @HACK This is a temporary hack. Should be 0.
+            if (lodLevel == 0) // @HACK This is a temporary hack. Should be 0.
             {
                 //We reached the last node with the highest avaliable detail.
                 AddToSelectionList();

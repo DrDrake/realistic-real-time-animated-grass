@@ -13,8 +13,8 @@
         public Configuration()
         {
             WindowTitle = "Realtime Grass";
-            WindowWidth = 1000;
-            WindowHeight = 800;
+            WindowWidth = 1680;
+            WindowHeight = 1050;
         }
 
         /// <summary>
