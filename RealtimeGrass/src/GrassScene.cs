@@ -247,9 +247,9 @@ namespace RealtimeGrass
                 textureFormats4.Add(texFormat4);
                 textureFormats4.Add(texFormat4_2);
 
-                m_heightmap = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegel1000x1000.jpg", 15f, -128f, 128, 60); //50f
+                m_heightmap = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegel512x512.jpg", 15f, -128f, 128, 60); //50f
                 m_heightmap.Init(Context10.Device, "Resources/shader/ModelTexturedLOD.fx", textureFormats4);
-
+                
                 //m_heightmapLOW = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegelLOW128x128.jpg", 128f, -8192f,150,80);
                 //m_heightmapLOW.Init(Context10.Device, "Resources/shader/ModelTexturedLOD.fx", textureFormats4);
 
@@ -658,7 +658,7 @@ namespace RealtimeGrass
                 m_Jupiter.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
                 m_Jupiter.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
                 m_Jupiter.SetShaderMaterial();
-                m_Jupiter.Draw();
+                //m_Jupiter.Draw();
 
                 world = Matrix.Identity;
                 //To compensate blender coord system y==z
@@ -671,7 +671,7 @@ namespace RealtimeGrass
                 m_LightDir.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
                 m_LightDir.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
                 m_LightDir.SetShaderMaterial();
-                m_LightDir.Draw();
+                //m_LightDir.Draw();
 
                 //Final Pass 
                 Context10.Device.OutputMerger.DepthStencilState = m_depthStencilState;
