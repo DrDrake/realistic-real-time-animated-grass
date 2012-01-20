@@ -168,7 +168,6 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 	//------------------------------------------------
 
 			float size = exp(-pow(distance2Cam/1200,2))+0.1;
-			//size =1;
 			float windpower = 0.0f;
 			float offsetX = 1.0f;
 			float offsetY = 0.0f;
@@ -514,7 +513,7 @@ float4 PS_PIXEL_LIGHTING_BLINNPHONG( PS_IN input ) : SV_Target
 
 	float3 tex = grass_diffuse01.Sample(ModelTextureSampler, input.texCoord).rgb* input.random.r + grass_diffuse02.Sample(ModelTextureSampler, input.texCoord).rgb * (1-input.random.r);
 	tex = tex * I;
-	tex = tex * input.texCoord.x;
+	tex = tex* (input.texCoord.x+1)/2;
 
 //	return float4(tex, alpha);
 	return float4(tex, 1.0f);

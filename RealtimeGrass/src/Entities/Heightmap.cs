@@ -55,10 +55,10 @@ namespace RealtimeGrass.Entities
             m_numberOfElements = m_dimension.X * m_dimension.Y;
             m_vertexBuffer = InitVertexBuffer();
             SVertex3P3N2T[] vertices = new SVertex3P3N2T[m_numberOfElements];
-            int rootsPerIntersectionMultiplicator = 51;//51; //Needs to be at least 2! //21
+            int rootsPerIntersectionMultiplicator = 64;//51; //Needs to be at least 2! //21
             m_numberOfRootElements = m_numberOfElements * rootsPerIntersectionMultiplicator;
             //m_roots = new Vector3[m_numberOfRootElements];
-            m_roots = new ArrayList[m_dimension.X-1, m_dimension.Y-1];
+            m_roots = new ArrayList[m_dimension.X, m_dimension.Y];
             Vector3 lastPos = new Vector3();
             int rootNextIndex = 0;
             //Bad constants that only look good on a certain heighmap texture. Should be replaced in future versions to support any texture equaly good ...
@@ -78,7 +78,7 @@ namespace RealtimeGrass.Entities
                     i = m_heightmap.GetPixel(x, y);
 
                     float b = i.GetBrightness();
-
+                    
                     int index = (y * m_dimension.X) + x;
                     Vector3 pos = new Vector3(
                         /*start +*/ xf - ((m_dimension.X/2) * interspace),
@@ -114,20 +114,39 @@ namespace RealtimeGrass.Entities
                     lastPos = pos;*/
                 }
             }
-
             Random randomNumber = new Random();
-            for (int y = 0; y < m_dimension.Y-1; ++y)
+            for (int y = 0; y < m_dimension.Y; y++)
             {
-                for (int x = 0; x < m_dimension.X-1; ++x)
+                for (int x = 0; x < m_dimension.X; x++)
                 {
                     //Read a quad.
+                    int y2, x2;
+                    if ((y + 1) != (m_dimension.Y))
+                    {
+                        y2 = y + 1;
+                    }
+                    else {
+                        y2 = y;
+                    }
+                    if ((x + 1) != (m_dimension.X))
+                    {
+                        x2 = x + 1;
+                    }
+                    else
+                    {
+                        x2 = x;
+                    }
+
                     int index = (y * m_dimension.X) + x;
                     Vector3 pos1 = vertices[index].Position;
-                    index = ((y + 1) * m_dimension.X) + x;
+
+                    index = (y2 * m_dimension.X) + x;
                     Vector3 pos2 = vertices[index].Position;
-                    index = (y * m_dimension.X) + (x + 1);
+
+                    index = (y * m_dimension.X) + x2;
                     Vector3 pos3 = vertices[index].Position;
-                    index = ((y + 1) * m_dimension.X) + (x + 1);
+
+                    index = (y2 * m_dimension.X) + x2;
                     Vector3 pos4 = vertices[index].Position;
 
                     //Make random roots the amount of 'rootsPerIntersectioMultiplicator'
@@ -142,51 +161,35 @@ namespace RealtimeGrass.Entities
                     rootNextIndex = 0;
                     ArrayList list = new ArrayList();
                     list.Add(new Vector3(0,0,0));
-                    for (UInt32 roots = 0; roots < rootsPerIntersectionMultiplicator / 2; ++roots)
+                    for (UInt32 roots = 0; roots <= rootsPerIntersectionMultiplicator / 2; roots++)
                     {
                         //random pos in pol 1;
                         double rand1 = randomNumber.NextDouble();
                         double rand2 = randomNumber.NextDouble();
-                        if (rand1 + rand2 >= 1)
+                        if (rand1 + rand2 > 1)
                         {
                             rand1 = 1 - rand1;
                             rand2 = 1 - rand2;
                         }
                         Vector3 randomPoint = pos1 + (float)rand1 * ab + (float)rand2 * ac;
-                        if (rootNextIndex < m_numberOfRootElements)
-                        {
-                            //System.Console.WriteLine(rootNextIndex);
-                            //m_roots[rootNextIndex++] = randomPoint;
-                            m_roots[x, y].Add(randomPoint);
-                        }
-                        else
-                        {
-                            System.Console.WriteLine("Generated to much roots. Current total: "+rootNextIndex);
-                        }
+                         m_roots[x, y].Add(randomPoint);
                     }
                     ac = pos4 - pos1;
                     rootNextIndex = 0;
-                    for (UInt32 roots = 0; roots < rootsPerIntersectionMultiplicator / 2; ++roots)
+                    
+                    for (UInt32 roots = 0; roots <= rootsPerIntersectionMultiplicator / 2; roots++)
                     {
                         //random pos in pol 2;                        
                         double rand1 = randomNumber.NextDouble();
                         double rand2 = randomNumber.NextDouble();
-                        if (rand1 + rand2 >= 1)
+                        if (rand1 + rand2 > 1)
                         {
                             rand1 = 1 - rand1;
                             rand2 = 1 - rand2;
                         }
                         Vector3 randomPoint = pos1 + (float)rand1 * ab + (float)rand2 * ac;
-                        if (rootNextIndex < m_numberOfRootElements)
-                        {
-                            //System.Console.WriteLine(rootNextIndex);
-                            //m_roots[rootNextIndex++] = randomPoint;
-                            m_roots[x, y].Add(randomPoint);
-                        }
-                        else
-                        {
-                            System.Console.WriteLine("Generated to much roots. Current total: " + rootNextIndex);
-                        }
+                       m_roots[x, y].Add(randomPoint);
+
                     }
                 }
             }
@@ -218,16 +221,16 @@ namespace RealtimeGrass.Entities
             rootChunk.roots = m_roots;
             rootChunk.width = m_dimension.X * m_interS;
             rootChunk.height = m_dimension.Y * m_interS;
-            rootChunk.originX = -((m_dimension.X / 2) * m_interS) + (((float) r.Next())%100)/10;
+            rootChunk.originX = -((m_dimension.X / 2) * m_interS);
             rootChunk.originY = -((m_dimension.Y / 2) * m_interS);
             rootChunk.entity = new Grass[1];
-            rootChunk.entity[0] = new Grass(0.1f, 0.9f, 0.8f, 100, m_roots, m_numberOfRootElements);
+            rootChunk.entity[0] = new Grass(0.1f, 0.9f, 0.8f, 40, m_roots, m_numberOfRootElements);
             //rootChunk.entity[0].Init(device, effectName, textureFormats);
             root.data = rootChunk;
             //LODNode<Grass> testn = new LODNode<Grass>();
 
             GrassNodesLoader loader = new GrassNodesLoader();
-            loader.InitWithMaximalDepth(ref root, 4);
+            loader.InitWithMaximalDepth(ref root, 4); // 4
 
             m_rootsNode = root;
         }

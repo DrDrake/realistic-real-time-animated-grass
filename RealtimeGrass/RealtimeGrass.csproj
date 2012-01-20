@@ -268,6 +268,9 @@
     <Content Include="Resources\texture\huegel1000x1000.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\texture\huegel1024x1024.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\texture\huegel128x128.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -276,6 +279,9 @@
     </Content>
     <Content Include="Resources\texture\huegel500x500.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\texture\huegel512x512.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\texture\jupiter1024x512.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
