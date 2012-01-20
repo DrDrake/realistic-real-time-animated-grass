@@ -167,7 +167,7 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 
 	//------------------------------------------------
 
-			float size = exp(-pow(distance2Cam/1500,2));
+			float size = exp(-pow(distance2Cam/1200,2))+0.1;
 			//size =1;
 			float windpower = 0.0f;
 			float offsetX = 1.0f;
@@ -180,18 +180,18 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 
 			if (LOD < 3)
 			{
-				float sinus = sin(time + random.r);
+				float sinus = sin(time + random.r + shift.r * 3);
 
 				// Motion added with x^2 influence (between 0-1)
-				windpower = windPW; // * (((sinus + shift.r * 3) +1) /2) +1;
-				offsetX = winddir.x * windpower * (0.5+random2.r)*sinus+shift.r*3;
-				offsetY = -windpower*(0.5+random2.g)*sinus+shift.r*3;
+				windpower = windPW; // * (((sinus) +1) /2) +1;
+				offsetX = winddir.x * windpower * (0.5+random2.r)*sinus;
+				offsetY = -windpower*(0.5+random2.g)*sinus;
 
 				if (offsetY > 0) 
 				{
 					offsetY = offsetY*(-1);
 				}
-				offsetZ = winddir.y*windpower*(0.5+random2.b)*sinus+shift.r*3;
+				offsetZ = winddir.y*windpower*(0.5+random2.b)*sinus;
 			} 
 
 			offsetX = offsetX*size;

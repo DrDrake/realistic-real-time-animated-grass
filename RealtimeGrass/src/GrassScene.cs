@@ -50,6 +50,8 @@ namespace RealtimeGrass
         public Model                            m_butterfly { get; set; }
         public Model                            m_LightDir;
         private Light                           m_light;
+        private FullScreenQuad m_fullScreenQuad;
+        private Texture2D m_texturePost;
 
         private Matrix                          m_proj;
         private Matrix                          m_view;
@@ -71,12 +73,12 @@ namespace RealtimeGrass
             UserInterface.Container.Add(hudText);
 
             m_camera = new RealtimeGrass.Utility.Camera(
-                new Vector3(0, 3, -10), // position
+                new Vector3(-2000, 200, -2000), // position
                 new Vector3(0, 0, 0), // lookat
                 Vector3.UnitZ, // direction
                 Vector3.UnitY, // up
                 1.0f, // moveSpeedMouse
-                800.0f, // moveSpeedKeys
+                400.0f, // moveSpeedKeys
                 1.0f, // near
                 30000.0f, //3000.0f, // far
                 45.0f, // fov
@@ -105,7 +107,7 @@ namespace RealtimeGrass
             {
                 Texture2D texture = Texture2D.FromSwapChain<Texture2D>(Context10.SwapChain, 0);
                 m_mainRTView = new RenderTargetView(Context10.Device, texture);
-            
+
                 //Setting up a float Rendertarget
                 Texture2DDescription texturePostDesc = new Texture2DDescription();
                 texturePostDesc.Format = Format.R16G16B16A16_Float;
@@ -118,9 +120,9 @@ namespace RealtimeGrass
                 texturePostDesc.SampleDescription = new SampleDescription(1, 0);
                 texture.Dispose();
 
-                Texture2D texturePost = new Texture2D(Context10.Device, texturePostDesc);
-                m_postProcessRTView = new RenderTargetView(Context10.Device, texturePost);
-                texturePost.Dispose();            
+                m_texturePost = new Texture2D(Context10.Device, texturePostDesc);
+                m_postProcessRTView = new RenderTargetView(Context10.Device, m_texturePost);
+                            
 
                 CreateDepthBuffer();
                 var dssd = new DepthStencilStateDescription
@@ -317,7 +319,7 @@ namespace RealtimeGrass
 
                 //m_grass = new Grass(0.1f, 0.9f, 0.8f, 100, m_heightmap.Roots, m_heightmap.numberOfRootElements);//m_heightmap.NumberOfElements);
                 m_heightmap.prepareGrassNodes();
-                m_grass = new Grass(0.1f, 0.9f, 0.8f, 100, m_heightmap.RootsNode, m_heightmap.numberOfRootElements);
+                m_grass = new Grass(0.1f, 0.9f, 0.8f, 20, m_heightmap.RootsNode, m_heightmap.numberOfRootElements);
                 m_grass.Init(Context10.Device, "Resources/shader/GrassTextured.fx", textureFormats5);
 
 //                m_grassLOW = new Grass(0.1f, 0.9f, 1.0f, 128, m_heightmapLOW.Roots, m_heightmapLOW.NumberOfElements);
@@ -352,6 +354,10 @@ namespace RealtimeGrass
 
                 m_LightDir = new Model(0.3f, 0.9f, 0.8f, 64, "Resources/mesh/LightDir.smd");
                 m_LightDir.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats11);
+
+                //FullScreenQuad---------------------------
+
+                m_fullScreenQuad = new FullScreenQuad(0.3f, 0.9f, 0.8f, 64);
 
                 //-----------------------------------------
                 //Sounds
@@ -473,10 +479,10 @@ namespace RealtimeGrass
         {
             Context10.Device.OutputMerger.DepthStencilState = m_depthStencilState;
             //Render to offscreen RenderTarget
-            Context10.Device.OutputMerger.SetTargets(m_depthStencilView, m_mainRTView);
+            Context10.Device.OutputMerger.SetTargets(m_depthStencilView, m_postProcessRTView);
 
             Context10.Device.Rasterizer.SetViewports(new Viewport(0, 0, WindowWidth, WindowHeight, 0.0f, 1.0f));
-            Context10.Device.ClearRenderTargetView(m_mainRTView, new Color4(0.3f, 0.3f, 0.3f));
+            Context10.Device.ClearRenderTargetView(m_postProcessRTView, new Color4(0.3f, 0.3f, 0.3f));
             Context10.Device.ClearDepthStencilView(m_depthStencilView, DepthStencilClearFlags.Depth, 1.0f, 0);
 
             processInput();
@@ -519,13 +525,42 @@ namespace RealtimeGrass
                 world = Matrix.Identity;
 
                 // Butterflies
+                Place_butterfly(230, 40, 90);
+                Place_butterfly(2470, 480, 100);
+                Place_butterfly(20, 540, 100);
+                Place_butterfly(2500, 250, 100);
+                Place_butterfly(2270, 60, 80);
+                Place_butterfly(260, 350, 80);
+                Place_butterfly(5700, 40, 90);
+                Place_butterfly(-2470, 480, 100);
+                Place_butterfly(-5000, 540, 120);
+                Place_butterfly(-2000, 1250, 100);
+                Place_butterfly(-1270, 160, 80);
+                Place_butterfly(-60, -3350, 80);
+                Place_butterfly(-2230, 40, 90);
+                Place_butterfly(-1470, -6480, 100);
+                Place_butterfly(6701, -3529, 100);
+                Place_butterfly(-1312, -5174, 100);
+                Place_butterfly(2117, 6337, 80);
+                Place_butterfly(-3468, 7000, 80);
                 Place_butterfly(30, 40, 90);
                 Place_butterfly(470, 480, 100);
                 Place_butterfly(0, 540, 100);
                 Place_butterfly(500, 250, 100);
                 Place_butterfly(270, 60, 80);
                 Place_butterfly(60, 350, 80);
-
+                Place_butterfly(7000, 40, 90);
+                Place_butterfly(-6470, 480, 100);
+                Place_butterfly(5000, 540, 120);
+                Place_butterfly(2000, 1250, 100);
+                Place_butterfly(1270, 160, 80);
+                Place_butterfly(60, 3350, 80);
+                Place_butterfly(30, 40, 90);
+                Place_butterfly(1470, 480, 100);
+                Place_butterfly(6001, 3529, 100);
+                Place_butterfly(-1312, 5174, 100);
+                Place_butterfly(2117, -1337, 80);
+                Place_butterfly(-3468, -7000, 80);
 
                 world = Matrix.Identity;
                 m_heightmap.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
@@ -545,7 +580,7 @@ namespace RealtimeGrass
                 m_plane.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
                 m_plane.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
                 m_plane.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
-                m_plane.Effect.GetVariableByName("cTexScal").AsScalar().Set(200);
+                m_plane.Effect.GetVariableByName("cTexScal").AsScalar().Set(60);
                 m_plane.Effect.GetVariableByName("cam_Pos").AsVector().Set(m_camera.m_Position);
                 m_plane.Effect.GetVariableByName("halfwayWS").AsVector().Set(m_camera.CalcHalfWay(m_light.Direction));
                 m_plane.Effect.GetVariableByName("l_dirWS").AsVector().Set(m_light.Direction);
@@ -606,7 +641,7 @@ namespace RealtimeGrass
                 Matrix rotationTemp;
                 Matrix translationTemp;
             
-                Matrix.RotationY(m_Jupiter.m_Rotation.Y, out rotationTemp);
+                /*Matrix.RotationY(m_Jupiter.m_Rotation.Y, out rotationTemp);
                 Matrix.Multiply(ref rotationTemp, ref world, out world);
 
                 Matrix.Translation(0, 300, 800, out translationTemp);
@@ -618,7 +653,7 @@ namespace RealtimeGrass
                 //To compensate blender coord system y==z
                 Matrix.RotationX((float) Math.PI / 2, out rotationTemp);
                 Matrix.Multiply(ref rotationTemp, ref world, out world);
-
+                */
                 m_Jupiter.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
                 m_Jupiter.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
                 m_Jupiter.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
@@ -638,25 +673,17 @@ namespace RealtimeGrass
                 m_LightDir.SetShaderMaterial();
                 m_LightDir.Draw();
 
-                /*
                 //Final Pass 
                 Context10.Device.OutputMerger.DepthStencilState = m_depthStencilState;
                 //Render to backbuffer 
                 Context10.Device.OutputMerger.SetTargets(m_depthStencilView, m_mainRTView);
 
                 Context10.Device.Rasterizer.SetViewports(new Viewport(0, 0, WindowWidth, WindowHeight, 0.0f, 1.0f));
-                Context10.Device.ClearRenderTargetView(m_mainRTView, new Color4(0.3f, 0.3f, 0.3f));
+                Context10.Device.ClearRenderTargetView(m_mainRTView, new Color4(0.8f, 0.3f, 0.3f));
                 Context10.Device.ClearDepthStencilView(m_depthStencilView, DepthStencilClearFlags.Depth, 1.0f, 0);
 
-                //Draw Fullscreen Quad
-                /*svQuad[0].pos = D3DXVECTOR4(-1.0f, 1.0f, 0.5f, 1.0f);
-                svQuad[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-                svQuad[1].pos = D3DXVECTOR4(1.0f, 1.0f, 0.5f, 1.0f);
-                svQuad[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-                svQuad[2].pos = D3DXVECTOR4(-1.0f, -1.0f, 0.5f, 1.0f);
-                svQuad[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-                svQuad[3].pos = D3DXVECTOR4(1.0f, -1.0f, 0.5f, 1.0f);
-                svQuad[3].tex = D3DXVECTOR2(1.0f, 1.0f);//*/
+                m_fullScreenQuad.setTexture(Context10.Device, m_texturePost, "Resources/shader/PostProcess.fx");
+                m_fullScreenQuad.Draw();
             }
             catch (Direct3D10Exception e)
             {
