@@ -70,6 +70,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="src\Entities\FullScreenQuad.cs" />
     <Compile Include="src\Entities\Light.cs" />
     <Compile Include="src\Entities\LODNode.cs" />
     <Compile Include="src\Entities\Material.cs" />
@@ -146,6 +147,9 @@
     </None>
     <None Include="Resources\shader\ModelTextured.fx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\shader\PostProcess.fx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Resources\shader\Water.fx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
