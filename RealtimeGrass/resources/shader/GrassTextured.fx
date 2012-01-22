@@ -106,8 +106,10 @@ PS_IN VSreal( GS_WORKING input ) {
 [maxvertexcount(40)]
 void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 {
+	
 
 	if (s[0].pos.y > 0) { 
+		
 		GS_WORKING bl;
 		GS_WORKING tl;
 		GS_WORKING br;
@@ -167,7 +169,14 @@ void GS(point VS_IN s[1],  inout TriangleStream<PS_IN> triStream)
 
 	//------------------------------------------------
 
-			float size = exp(-pow(distance2Cam/1200,2))+0.1;
+
+		float size = exp(-pow(distance2Cam/1200,2))+0.1;
+	
+			if (s[0].pos.y < 20) { 
+			size=size*(s[0].pos.y/40 + 0.5);
+			}
+
+
 			float windpower = 0.0f;
 			float offsetX = 1.0f;
 			float offsetY = 0.0f;

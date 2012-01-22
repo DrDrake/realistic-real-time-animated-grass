@@ -170,7 +170,7 @@ namespace RealtimeGrass
                 textureFormats1_2.Add(texFormat1_2);
 
                 //Water ScaleX, ScaleY
-                m_water = new Plane(0.1f, 0.9f, 0.8f, 64, 10000.0f, 10000.0f, 0.0f);
+                m_water = new Plane(0.0f, 0.5f, 0.0f, 500, 10000.0f, 10000.0f, 0.0f);
                 m_water.Init(Context10.Device, "Resources/shader/Water.fx", textureFormats1_2);            
 
                 //a fancy skybox--------------------------------------------------------
@@ -511,13 +511,13 @@ namespace RealtimeGrass
                 Place_butterfly(0, 0, 130);
                 Place_butterfly(300, 780, 170);
                 Place_butterfly(-200, -540, 180);
-                Place_butterfly(-1400, -940, 100);
-                Place_butterfly(1400, -440, 100);
+                Place_butterfly(-1100, -940, 100);
+                Place_butterfly(1200, -440, 100);
                 Place_butterfly(-800, -640, 150);
-                Place_butterfly(-1300, 1040, 100);
+                Place_butterfly(-1100, 1040, 100);
                 Place_butterfly(800, 800, 150);
                 Place_butterfly(-100, 700, 130);
-                Place_butterfly(-1300, 1040, 100);
+                Place_butterfly(-1200, 1040, 100);
 
                 world = Matrix.Identity;
                 m_heightmap.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
@@ -549,6 +549,7 @@ namespace RealtimeGrass
                 m_water.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
                 m_water.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
                 m_water.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
+                m_water.Effect.GetVariableByName("cTexScal").AsScalar().Set(15);
                 m_water.SetShaderMaterial();
                 m_water.Draw();
 
