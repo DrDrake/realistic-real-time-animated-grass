@@ -72,7 +72,7 @@ PS_IN VS( VS_IN input ) {
 	}
 	float4x4 worldViewProj = mul(mul(world, view), proj);
 	output.pos = mul(float4(input.pos, 1.0), worldViewProj);
-	output.normalWS = mul(float4(input.normal, 1.0), world).xyz;
+	output.normalWS = -mul(float4(input.normal, 1.0), world).xyz;
 	if (input.pos.y < 0)
 	{
 		output.distance2Cam = 0;

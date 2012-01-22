@@ -61,7 +61,7 @@ float4 PS( PS_IN input ) : SV_Target
     weight3 = 0.18f;
 
     // Create a normalized value to average the weights out a bit.
-    normalization = (weight0 + 2.0f * (weight1 + weight2 + weight3+weight1 + weight2 + weight3));
+    normalization = (weight0 + 2.0f * (weight1 + weight2 + weight3)); // 4.0f*
 
     // Normalize the weights.
     weight0 = weight0 / normalization;
@@ -74,23 +74,23 @@ float4 PS( PS_IN input ) : SV_Target
 		
 	color += model_texture.Sample(ModelTextureSampler, input.texCoord0)* weight0;	
 	//Vergleich aus
-	if(input.texCoord0.x > 0.501)
-	{
+/*	if(input.texCoord0.x > 0.501)
+	{*/
 		color += model_texture.Sample(ModelTextureSampler, float2(input.texCoord0.x+0.0009,input.texCoord0.y))* weight3; 
 		color += model_texture.Sample(ModelTextureSampler, float2(input.texCoord0.x+0.0005,input.texCoord0.y))* weight2; 
 		color += model_texture.Sample(ModelTextureSampler, float2(input.texCoord0.x+0.0003,input.texCoord0.y))* weight1; 
 		color += model_texture.Sample(ModelTextureSampler, float2(input.texCoord0.x-0.0003,input.texCoord0.y))* weight1; 
 		color += model_texture.Sample(ModelTextureSampler, float2(input.texCoord0.x-0.0005,input.texCoord0.y))* weight2;
 		color += model_texture.Sample(ModelTextureSampler, float2(input.texCoord0.x-0.0009,input.texCoord0.y))* weight3;	
-		
+/*
 		color += model_texture.Sample(ModelTextureSampler, float2(input.texCoord0.x,input.texCoord0.y+0.0009))* weight3; 
 		color += model_texture.Sample(ModelTextureSampler, float2(input.texCoord0.x,input.texCoord0.y+0.0005))* weight2; 
 		color += model_texture.Sample(ModelTextureSampler, float2(input.texCoord0.x,input.texCoord0.y+0.0003))* weight1; 
 		color += model_texture.Sample(ModelTextureSampler, float2(input.texCoord0.x,input.texCoord0.y-0.0003))* weight1; 
 		color += model_texture.Sample(ModelTextureSampler, float2(input.texCoord0.x,input.texCoord0.y-0.0005))* weight2;
 		color += model_texture.Sample(ModelTextureSampler, float2(input.texCoord0.x,input.texCoord0.y-0.0009))* weight3;	 
-		
-	}	else
+*/		
+/*	}	else
 	
 	{ 
 	if(input.texCoord0.x > 0.499) {
@@ -101,7 +101,7 @@ float4 PS( PS_IN input ) : SV_Target
 	color = model_texture.Sample(ModelTextureSampler, input.texCoord0);	
 	}
 	}																    
-	
+*/	
 																    
 	color.a = 1.0f;														    
 

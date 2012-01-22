@@ -9,7 +9,7 @@ float mat_shininess;
 //--------------------------------------------------------------------------------------
 //DirectionalLight
 float3 l_color = float3 (1.0f, 1.0f, 1.0f);
-float3 l_dirWS = float3 (-1.0f, -1.0f, -1.0f);
+float3 l_dirWS = float3 (-1.0f, -1.0f, 1.0f);
 
 //lighting vars
 float3 ambientLight= float3(1.0f, 1.0f, 1.0f);
@@ -46,11 +46,14 @@ float3 calcBlinnPhongLighting(float3 NormalWS, float time)
 
     float blend = sin((t-floor(t)) * pi/2);
 	float3 finalcolor = color * blend + color2 * (1-blend);
+	float3 halfwayWS2 = halfwayWS; 
+
+	halfwayWS2 = -l_dirWS; // Faken von Highlights
 
 
 	float3 Ia = mat_ambient * ambientLight;
 	float3 Id = mat_diffuse * saturate( dot(NormalWS, -l_dirWS) );
-	float3 Is = mat_specular * pow( saturate(dot(NormalWS, halfwayWS)), mat_shininess );
+	float3 Is = mat_specular * pow( saturate(dot(NormalWS, halfwayWS2)), mat_shininess )* finalcolor;
 	
-	return saturate((Ia + Id + Is) * finalcolor);
+   return saturate((Ia + Id + Is) * finalcolor);
 }

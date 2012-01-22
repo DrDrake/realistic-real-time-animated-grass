@@ -91,7 +91,7 @@ namespace RealtimeGrass.Entities
         }
         private void Traverse(ref LODNode<GrassRootsChunk> node, int depth)
         {
-            node.data.entity[0] = new Grass(0.1f, 0.9f, 0.8f, 20, node.data.roots, node.data.roots.Length*node.data.roots[0,0].Count);
+            node.data.entity[0] = new Grass(0.5f, 0.3f, 0.15f, 500, node.data.roots, node.data.roots.Length*node.data.roots[0,0].Count);
             ++depth;
             if (depth > m_maximalDepth) return;
             if (node.data.roots.Length < 10) //If a node has less than 10 roots, it wont be devided into new children.
