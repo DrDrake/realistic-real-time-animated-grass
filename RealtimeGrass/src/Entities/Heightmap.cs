@@ -55,7 +55,7 @@ namespace RealtimeGrass.Entities
             m_numberOfElements = m_dimension.X * m_dimension.Y;
             m_vertexBuffer = InitVertexBuffer();
             SVertex3P3N2T[] vertices = new SVertex3P3N2T[m_numberOfElements];
-            int rootsPerIntersectionMultiplicator = 64;//51; //Needs to be at least 2! //21
+            int rootsPerIntersectionMultiplicator = 90;//51; //Needs to be at least 2! //21
             m_numberOfRootElements = m_numberOfElements * rootsPerIntersectionMultiplicator;
             //m_roots = new Vector3[m_numberOfRootElements];
             m_roots = new ArrayList[m_dimension.X, m_dimension.Y];
