@@ -73,12 +73,12 @@ namespace RealtimeGrass
             UserInterface.Container.Add(hudText);
 
             m_camera = new RealtimeGrass.Utility.Camera(
-                new Vector3(-2000, 200, -2000), // position
+                new Vector3(-1500, 200, -1500), // position
                 new Vector3(0, 0, 0), // lookat
                 Vector3.UnitZ, // direction
                 Vector3.UnitY, // up
-                1.0f, // moveSpeedMouse
-                400.0f, // moveSpeedKeys
+                0.2f, // moveSpeedMouse
+                150.0f, // moveSpeedKeys
                 1.0f, // near
                 30000.0f, //3000.0f, // far
                 45.0f, // fov
@@ -137,7 +137,7 @@ namespace RealtimeGrass
                 m_defaultLoadInfo = ImageLoadInformation.FromDefaults();
 
                 //a Light-------------------------------------------------------------------
-                m_light = new Light(new Vector3(1.0f, 1.0f, 1.0f), new Vector3(-1.0f, -1.0f, 1.0f));
+                m_light = new Light(new Vector3(1.0f, 1.0f, 1.0f), new Vector3(1.0f, 1.0f, 1.0f));
 
                 //a symplistic Coordsystem---------------------------------------------------
                 m_coordSys = new CoordinateSystem(0.1f, 0.9f, 0.8f, 64);
@@ -155,7 +155,7 @@ namespace RealtimeGrass
                 textureFormats1.Add(texFormat1);
 
                 //Water ScaleX, ScaleY
-                m_plane = new Plane(0.1f, 0.9f, 0.8f, 64, 10000.0f, 10000.0f, -30.0f);
+                m_plane = new Plane(0.1f, 0.5f, 0.4f, 64, 10000.0f, 10000.0f, -30.0f);
                 m_plane.Init(Context10.Device, "Resources/shader/ModelTextured.fx", textureFormats1);
 
                 //the water plane------------------------------------------------------------
@@ -247,33 +247,11 @@ namespace RealtimeGrass
                 textureFormats4.Add(texFormat4);
                 textureFormats4.Add(texFormat4_2);
 
-                m_heightmap = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegel512x512.jpg", 15f, -128f, 128, 60); //50f
+                m_heightmap = new Heightmap(0.1f, 0.5f, 0.4f, 64, "Resources/texture/huegel256x256.jpg", 12f, -128f, 64, 60); //50f
                 m_heightmap.Init(Context10.Device, "Resources/shader/ModelTexturedLOD.fx", textureFormats4);
                 
                 //m_heightmapLOW = new Heightmap(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegelLOW128x128.jpg", 128f, -8192f,150,80);
                 //m_heightmapLOW.Init(Context10.Device, "Resources/shader/ModelTexturedLOD.fx", textureFormats4);
-
-                //Terrain-------------------------------------------------------------------------------
-
-                TextureFormat texFormat4_1 = new TextureFormat(
-                    "Resources/texture/boden01.jpg",
-                    m_defaultLoadInfo,
-                    TextureType.TextureTypeDiffuse,
-                    "model_texture_high"
-                );
-
-                TextureFormat texFormat4_2_1 = new TextureFormat(
-                    "Resources/texture/grass.png",
-                    m_defaultLoadInfo,
-                    TextureType.TextureTypeDiffuse,
-                    "model_texture_low"
-                );
-                List<TextureFormat> textureFormats4_1 = new List<TextureFormat>();
-                textureFormats4_1.Add(texFormat4_1);
-                textureFormats4_1.Add(texFormat4_2_1);
-
-                //m_terrain = new Terrain(0.1f, 0.9f, 0.8f, 64, "Resources/texture/huegel500x500.jpg", 1f, -128f, 0, 60);
-                //m_terrain.Init(Context10.Device, "Resources/shader/ModelTexturedLOD.fx", textureFormats4_1);
 
                 //Grass---------------------------------------------------------------------------------
 
@@ -319,7 +297,7 @@ namespace RealtimeGrass
 
                 //m_grass = new Grass(0.1f, 0.9f, 0.8f, 100, m_heightmap.Roots, m_heightmap.numberOfRootElements);//m_heightmap.NumberOfElements);
                 m_heightmap.prepareGrassNodes();
-                m_grass = new Grass(0.1f, 0.9f, 0.8f, 20, m_heightmap.RootsNode, m_heightmap.numberOfRootElements);
+                m_grass = new Grass(0.5f, 0.3f, 0.15f, 500, m_heightmap.RootsNode, m_heightmap.numberOfRootElements);
                 m_grass.Init(Context10.Device, "Resources/shader/GrassTextured.fx", textureFormats5);
 
 //                m_grassLOW = new Grass(0.1f, 0.9f, 1.0f, 128, m_heightmapLOW.Roots, m_heightmapLOW.NumberOfElements);
@@ -336,7 +314,7 @@ namespace RealtimeGrass
                 List<TextureFormat> textureFormats10 = new List<TextureFormat>();
                 textureFormats10.Add(texFormat10);
 
-                m_butterfly = new Model(0.3f, 0.9f, 0.8f, 64, "Resources/mesh/butterfly.smd");
+                m_butterfly = new Model(0.6f, 0.9f, 0.8f, 64, "Resources/mesh/butterfly.smd");
                 m_butterfly.Init(Context10.Device, "Resources/shader/ButterflyTextured.fx", textureFormats10);
 
 
@@ -361,7 +339,7 @@ namespace RealtimeGrass
 
                 //-----------------------------------------
                 //Sounds
-               // m_soundManager.playSingle("Resources/sounds/rustleWindwithBirds.wav");
+                //m_soundManager.playSingle("Resources/sounds/rustleWindwithBirds.wav");
             }
             catch(Exception e)
             {
@@ -400,7 +378,9 @@ namespace RealtimeGrass
                             if (! m_played)
                             {
                                 m_played = true;
-                                m_soundManager.playSingle("resources/music/C_C_Red_Alert_2_music_Hell_March_2.wav");
+                                //m_soundManager.playSingle("resources/music/C_C_Red_Alert_2_music_Hell_March_2.wav");
+                                m_soundManager.playSingle("Resources/sounds/rustleWindwithBirds.wav");
+                                
                             }
                             break;
                         case (Key.W):
@@ -424,6 +404,9 @@ namespace RealtimeGrass
                         case (Key.C):
                             m_camera.AddToCamera(0f, -FrameDelta, 0f, out m_proj, out m_view);
                             break;
+                        case (Key.L):
+                            m_played = false;
+                            break;
                         case (Key.LeftShift):
                             if (m_camera.isSlowMoving == false)
                             {
@@ -435,7 +418,7 @@ namespace RealtimeGrass
                             m_isFormClosed = true;
                             Quit();
                             break;
-                        case (Key.Return & Key.LeftAlt):
+                        case (Key.Return):
                             OnResourceUnload();
                             isFullScreen = !isFullScreen;
 
@@ -519,55 +502,29 @@ namespace RealtimeGrass
                 m_coordSys.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
                 m_coordSys.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
                 m_coordSys.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
-                m_coordSys.Draw();
+                //m_coordSys.Draw();
 
 
                 world = Matrix.Identity;
 
                 // Butterflies
-                Place_butterfly(230, 40, 90);
-                Place_butterfly(2470, 480, 100);
-                Place_butterfly(20, 540, 100);
-                Place_butterfly(2500, 250, 100);
-                Place_butterfly(2270, 60, 80);
-                Place_butterfly(260, 350, 80);
-                Place_butterfly(5700, 40, 90);
-                Place_butterfly(-2470, 480, 100);
-                Place_butterfly(-5000, 540, 120);
-                Place_butterfly(-2000, 1250, 100);
-                Place_butterfly(-1270, 160, 80);
-                Place_butterfly(-60, -3350, 80);
-                Place_butterfly(-2230, 40, 90);
-                Place_butterfly(-1470, -6480, 100);
-                Place_butterfly(6701, -3529, 100);
-                Place_butterfly(-1312, -5174, 100);
-                Place_butterfly(2117, 6337, 80);
-                Place_butterfly(-3468, 7000, 80);
-                Place_butterfly(30, 40, 90);
-                Place_butterfly(470, 480, 100);
-                Place_butterfly(0, 540, 100);
-                Place_butterfly(500, 250, 100);
-                Place_butterfly(270, 60, 80);
-                Place_butterfly(60, 350, 80);
-                Place_butterfly(7000, 40, 90);
-                Place_butterfly(-6470, 480, 100);
-                Place_butterfly(5000, 540, 120);
-                Place_butterfly(2000, 1250, 100);
-                Place_butterfly(1270, 160, 80);
-                Place_butterfly(60, 3350, 80);
-                Place_butterfly(30, 40, 90);
-                Place_butterfly(1470, 480, 100);
-                Place_butterfly(6001, 3529, 100);
-                Place_butterfly(-1312, 5174, 100);
-                Place_butterfly(2117, -1337, 80);
-                Place_butterfly(-3468, -7000, 80);
+                Place_butterfly(0, 0, 130);
+                Place_butterfly(300, 780, 170);
+                Place_butterfly(-200, -540, 180);
+                Place_butterfly(-1400, -940, 100);
+                Place_butterfly(1400, -440, 100);
+                Place_butterfly(-800, -640, 150);
+                Place_butterfly(-1300, 1040, 100);
+                Place_butterfly(800, 800, 150);
+                Place_butterfly(-100, 700, 130);
+                Place_butterfly(-1300, 1040, 100);
 
                 world = Matrix.Identity;
                 m_heightmap.Effect.GetVariableByName("world").AsMatrix().SetMatrix(world);
                 m_heightmap.Effect.GetVariableByName("view").AsMatrix().SetMatrix(m_view);
                 m_heightmap.Effect.GetVariableByName("proj").AsMatrix().SetMatrix(m_proj);
                 m_heightmap.Effect.GetVariableByName("time").AsScalar().Set(m_clock.Check());
-                m_heightmap.Effect.GetVariableByName("cTexScal").AsScalar().Set(30);
+                m_heightmap.Effect.GetVariableByName("cTexScal").AsScalar().Set(15);
                 m_heightmap.Effect.GetVariableByName("cam_Pos").AsVector().Set(m_camera.m_Position);
                 m_heightmap.Effect.GetVariableByName("halfwayWS").AsVector().Set(m_camera.CalcHalfWay(m_light.Direction));
                 m_heightmap.Effect.GetVariableByName("l_dirWS").AsVector().Set(m_light.Direction);
